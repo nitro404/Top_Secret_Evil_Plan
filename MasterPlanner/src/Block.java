@@ -8,8 +8,9 @@ public class Block {
 	private Position m_estimatedPosition;
 	private int m_state;
 	
-	public static int size = 2 * 3; // size in cm * pixel scaling
-	public static Color colour = Color.ORANGE;
+	final public static int SIZE = (int) (2.8 * 3); // size in cm * pixel scaling
+	final public static Color DEFAULT_COLOUR = Color.ORANGE;
+	final public static Color MISSING_COLOUR = Color.GRAY;
 	
 	public Block(int id, Position estimatedPosition) {
 		m_id = id;
@@ -51,13 +52,13 @@ public class Block {
 	public void draw(Graphics2D g) {
 		if(g == null) { return; }
 		
-		g.setColor(colour);
+		g.setColor(m_state == BlockState.Missing ? MISSING_COLOUR : DEFAULT_COLOUR);
 		
-		if(m_state == BlockState.Unknown) {
-			g.drawOval(m_estimatedPosition.x - (size/2), m_estimatedPosition.y - (size/2), size, size);
+		if(m_state == BlockState.Unknown || m_state == BlockState.Missing) {
+			g.drawOval(m_estimatedPosition.x - (SIZE/2), m_estimatedPosition.y - (SIZE/2), SIZE, SIZE);
 		}
 		else {
-			g.fillOval(m_actualPosition.x - (size/2), m_actualPosition.y - (size/2), size, size);
+			g.fillOval(m_actualPosition.x - (SIZE/2), m_actualPosition.y - (SIZE/2), SIZE, SIZE);
 		}
 	}
 	

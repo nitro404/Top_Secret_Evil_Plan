@@ -709,6 +709,7 @@ public class VariableSystem {
 		
 		BufferedReader in;
 		String input, data;
+		
 		try {
 			// open the file
 			in = new BufferedReader(new FileReader(file));
@@ -728,7 +729,7 @@ public class VariableSystem {
 				
 				// parse a category
 				if(data.charAt(0) == '[' && data.charAt(data.length() - 1) == ']') {
-					category = data.substring(1, data.length() - 2);
+					category = data.substring(1, data.length() - 1).trim();
 					categoryIndex = variables.addCategory(category);
 				}
 				// parse a variable
@@ -767,7 +768,7 @@ public class VariableSystem {
 	 * @return true if writing to the file was successful.
 	 */
 	public boolean writeTo(File file) {
-		if(file == null || !file.exists() || !file.isFile()) { return false; }
+		if(file == null) { return false; }
 		
 		PrintWriter out;
 		try {
@@ -790,7 +791,7 @@ public class VariableSystem {
 	 */
 	public void writeTo(PrintWriter out) throws IOException {
 		int lastCategory = Variable.NO_CATEGORY;
-
+		
 		boolean firstLine = true;
 		
 		// output all of the variables to the file, grouped under corresponding categories
@@ -804,7 +805,6 @@ public class VariableSystem {
 				lastCategory = m_variables.elementAt(i).getCategory();
 			}
 			m_variables.elementAt(i).writeTo(out);
-			out.println();
 			firstLine = false;
 		}
 	}

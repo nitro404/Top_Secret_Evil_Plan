@@ -2,6 +2,7 @@ public class SystemManager {
 	
 	public static SettingsManager settings;
 	public static MasterPlanner planner;
+	public static PathSystem paths;
 	public static DisplayWindow displayWindow;
 	public static DebugWindow debugWindow;
 	
@@ -11,7 +12,9 @@ public class SystemManager {
 		settings = new SettingsManager();
 		settings.load();
 		
-		planner.setTrackerFrameRate(settings.getFrameRate());
+		if(planner != null) { planner.setTrackerFrameRate(settings.getFrameRate()); }
+		
+		paths = PathSystem.readFrom(settings.getPathDataFile());
 		
 		displayWindow = new DisplayWindow();
 		debugWindow = new DebugWindow();

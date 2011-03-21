@@ -2,15 +2,16 @@ public class BlockState {
 	
 	final public static int Unknown = 0;
 	final public static int Located = 1;
-	final public static int Moving = 2;
-	final public static int Delivered = 3;
+	final public static int Missing = 2;
+	final public static int Moving = 3;
+	final public static int Delivered = 4;
 	
 	final public static String[] blockStates = {
-		"Unknown", "Located", "Moving", "Delivered"
+		"Unknown", "Located", "Missing", "Moving", "Delivered"
 	};
 	
 	public static boolean isValid(int state) {
-		return state >= 0 && state <= 3;
+		return state >= 0 && state < blockStates.length;
 	}
 	
 	public static int parseFrom(String data) {
