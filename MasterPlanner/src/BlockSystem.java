@@ -46,7 +46,7 @@ public class BlockSystem {
 		return m_blocks.elementAt(id).setState(state);
 	}
 	
-	public boolean updateActualBlockPosition(int id, Position actualPosition) {
+	public boolean updateActualPosition(int id, Position actualPosition) {
 		if(id < 0 || id >= m_blocks.size() || !Position.isValid(actualPosition)) { return false; }
 		return m_blocks.elementAt(id).setActualPosition(actualPosition);
 	}
