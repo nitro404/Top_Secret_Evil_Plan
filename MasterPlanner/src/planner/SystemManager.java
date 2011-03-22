@@ -2,6 +2,7 @@ package planner;
 
 import path.*;
 import settings.*;
+import shared.Position;
 
 public class SystemManager {
 	

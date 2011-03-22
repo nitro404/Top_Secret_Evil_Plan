@@ -10,6 +10,7 @@ public class ClientInputSignalQueue extends Thread {
 	private ArrayDeque<Signal> m_inSignalQueue;
 	private DataInputStream m_in;
 	private ClientOutputSignalQueue m_outSignalQueue;
+	private Server m_server;
 	private Client m_client;
 	private SystemConsole m_console;
 
@@ -17,7 +18,8 @@ public class ClientInputSignalQueue extends Thread {
 		m_inSignalQueue = new ArrayDeque<Signal>();
 	}
 
-	public void initialize(Client client, DataInputStream in, ClientOutputSignalQueue out, SystemConsole console) {
+	public void initialize(Server server, Client client, DataInputStream in, ClientOutputSignalQueue out, SystemConsole console) {
+		m_server = server;
 		m_client = client;
 		m_in = in;
 		m_outSignalQueue = out;
@@ -56,9 +58,36 @@ public class ClientInputSignalQueue extends Thread {
 		else if(s.getSignalType() == SignalType.Pong) {
 			s2 = s;
 		}
-		/*else if(s.getSignalType() == SignalType.LoginRequest) {
-			s2 = LoginRequestSignal.readFrom(ByteStream.readFrom(m_in, LoginRequestSignal.LENGTH)); 
-		}*/
+		else if(s.getSignalType() == SignalType.StartSimulation) {
+			s2 = s;
+		}
+		else if(s.getSignalType() == SignalType.BlockStateChange) {
+			s2 = BlockStateChangeSignal.readFrom(ByteStream.readFrom(m_in, BlockStateChangeSignal.LENGTH)); 
+		}
+		else if(s.getSignalType() == SignalType.RobotStateChange) {
+			s2 = RobotStateChangeSignal.readFrom(ByteStream.readFrom(m_in, RobotStateChangeSignal.LENGTH)); 
+		}
+		else if(s.getSignalType() == SignalType.PotStateChange) {
+			s2 = PotStateChangeSignal.readFrom(ByteStream.readFrom(m_in, PotStateChangeSignal.LENGTH)); 
+		}
+		else if(s.getSignalType() == SignalType.TaskStarted) {
+			s2 = TaskStartedSignal.readFrom(ByteStream.readFrom(m_in, TaskStartedSignal.LENGTH)); 
+		}
+		else if(s.getSignalType() == SignalType.TaskCompleted) {
+			s2 = TaskCompletedSignal.readFrom(ByteStream.readFrom(m_in, TaskCompletedSignal.LENGTH)); 
+		}
+		else if(s.getSignalType() == SignalType.UpdateBlockPosition) {
+			s2 = UpdateBlockPositionSignal.readFrom(ByteStream.readFrom(m_in, UpdateBlockPositionSignal.LENGTH)); 
+		}
+		else if(s.getSignalType() == SignalType.UpdatePotPosition) {
+			s2 = UpdatePotPositionSignal.readFrom(ByteStream.readFrom(m_in, UpdatePotPositionSignal.LENGTH)); 
+		}
+		else if(s.getSignalType() == SignalType.UpdateActualRobotPose) {
+			s2 = UpdateActualRobotPoseSignal.readFrom(ByteStream.readFrom(m_in, UpdateActualRobotPoseSignal.LENGTH)); 
+		}
+		else if(s.getSignalType() == SignalType.UpdateEstimatedRobotPose) {
+			s2 = UpdateEstimatedRobotPoseSignal.readFrom(ByteStream.readFrom(m_in, UpdateEstimatedRobotPoseSignal.LENGTH)); 
+		}
 		else {
 			m_console.writeLine("Unexpected input signal of type: " + s.getSignalType());
 		}
@@ -77,14 +106,9 @@ public class ClientInputSignalQueue extends Thread {
 				else if(s.getSignalType() == SignalType.Pong) {
 					m_client.pong();
 				}
-				/*else if(s.getSignalType() == SignalType.LoginRequest) {
-					LoginRequestSignal s2 = (LoginRequestSignal) s;
-					
-					boolean authenticated = m_server.userLogin(m_client, s2.getUserName(), s2.getPassword());
-					sendSignal(new LoginAuthenticatedSignal(m_client.getUserName(), m_client.getNickName(), m_client.getPersonalMessage(), authenticated, m_client.getPort()));
-					
-					m_logger.addCommand(s2.getUserName(), "Login Request: " + ((authenticated) ? "Accepted" : "Rejected"));
-				}*/
+				else if(SignalType.isValid(s.getSignalType())) {
+					m_server.forwardSignal(m_client, s);
+				}
 				else {
 					m_console.writeLine("Unexpected input signal of type: " + s.getSignalType());
 				}

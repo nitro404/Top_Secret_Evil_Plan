@@ -5,6 +5,7 @@ import java.net.*;
 import java.util.*;
 import javax.swing.*;
 import shared.*;
+import signal.*;
 
 public class Server extends Thread {
 	
@@ -53,7 +54,7 @@ public class Server extends Thread {
 			
 			// if a connection was established to the client, store the client object
 			if(newClient != null) {
-				newClient.initialize(m_console);
+				newClient.initialize(this, m_console);
 				m_clients.add(newClient);
 				m_console.writeLine("Established connection to client #" + newClient.getClientNumber() + " at " + newClient.getIPAddressString());
 			}
@@ -68,6 +69,16 @@ public class Server extends Thread {
 	public Client getClient(int index) {
 		if(index < 0 || index >= m_clients.size()) { return null; }
 		return m_clients.elementAt(index);
+	}
+	
+	public void forwardSignal(Client sourceClient, Signal signal) {
+		if(sourceClient == null || signal == null) { return; }
+		
+		for(int i=0;i<m_clients.size();i++) {
+			if(!sourceClient.equals(m_clients.elementAt(i))) {
+				m_clients.elementAt(i).sendSignal(signal);
+			}
+		}
 	}
 	
 }

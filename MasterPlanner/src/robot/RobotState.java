@@ -2,25 +2,25 @@ package robot;
 
 public class RobotState {
 	
-	final public static int Idle = 0;
-	final public static int Moving = 1;
-	final public static int FindingBlock = 2;
-	final public static int DeliveringBlock = 3;
-	final public static int FindingPot = 4;
-	final public static int DeliveringPot = 4;
+	final public static byte Idle = 0;
+	final public static byte Moving = 1;
+	final public static byte FindingBlock = 2;
+	final public static byte DeliveringBlock = 3;
+	final public static byte FindingPot = 4;
+	final public static byte DeliveringPot = 4;
 	
 	final public static String[] robotStates = {
 		"Idle", "Moving", "FindingBlock", "DeliveringBlock", "FindingPot", "DeliveringPot"
 	};
 	
-	public static boolean isValid(int state) {
+	public static boolean isValid(byte state) {
 		return state >= 0 && state < robotStates.length;
 	}
 	
-	public static int parseFrom(String data) {
+	public static byte parseFrom(String data) {
 		if(data == null) { return -1; }
 		String temp = data.trim();
-		for(int i=0;i<robotStates.length;i++) {
+		for(byte i=0;i<robotStates.length;i++) {
 			if(temp.equalsIgnoreCase(robotStates[i])) {
 				return i;
 			}
@@ -28,7 +28,7 @@ public class RobotState {
 		return -1;
 	}
 	
-	public static String toString(int robotState) {
+	public static String toString(byte robotState) {
 		return !isValid(robotState) ? "Invalid" : robotStates[robotState];
 	}
 	

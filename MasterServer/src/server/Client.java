@@ -21,6 +21,7 @@ public class Client {
 	private int m_timeElapsed = 0;
 	private boolean m_awaitingResponse = false;
 	
+	private Server m_server;
 	private SystemConsole m_console;
 	
 	public static int currentPort = 25502;
@@ -33,14 +34,15 @@ public class Client {
 		m_ipAddress = connection.getInetAddress();
 	}
 	
-	public void initialize(SystemConsole console) {
+	public void initialize(Server server, SystemConsole console) {
 		m_connected = true;
 		
 		try {
+			m_server = server;
 			m_console = console;
 			m_out = new DataOutputStream(m_connection.getOutputStream());
 			m_in = new DataInputStream(m_connection.getInputStream());
-			m_inSignalQueue.initialize(this, m_in, m_outSignalQueue, m_console);
+			m_inSignalQueue.initialize(m_server, this, m_in, m_outSignalQueue, m_console);
 			m_outSignalQueue.initialize(this, m_out, m_console);
 			
 			if(m_clientThread == null || m_clientThread.isTerminated()) {

@@ -1,4 +1,4 @@
-package planner;
+package shared;
 
 import java.awt.Point;
 

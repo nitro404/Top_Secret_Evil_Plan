@@ -1,5 +1,7 @@
 package planner;
 
+import shared.Position;
+
 import com.rbcapp.planner.*;
 
 public class MasterPlanner extends Planner {

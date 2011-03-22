@@ -3,7 +3,7 @@ package pot;
 import java.util.Vector;
 import java.awt.Graphics2D;
 
-import planner.Position;
+import shared.Position;
 
 public class PotSystem {
 	
@@ -17,22 +17,22 @@ public class PotSystem {
 	
 	public PotSystem() {
 		m_pots = new Vector<Pot>(estimatedPotPositions.length);
-		for(int i=0;i<estimatedPotPositions.length;i++) {
+		for(byte i=0;i<estimatedPotPositions.length;i++) {
 			m_pots.add(new Pot(i, estimatedPotPositions[i]));
 		}
 	}
 	
-	public Pot getBlock(int id) {
+	public Pot getBlock(byte id) {
 		if(id < 0 || id >= m_pots.size()) { return null; }
 		return m_pots.elementAt(id);
 	}
 	
-	public boolean setBlockState(int id, int state) {
+	public boolean setBlockState(byte id, byte state) {
 		if(id < 0 || id >= m_pots.size() || !PotState.isValid(state)) { return false; }
 		return m_pots.elementAt(id).setState(state);
 	}
 	
-	public boolean updatePosition(int id, Position position) {
+	public boolean updatePosition(byte id, Position position) {
 		if(id < 0 || id >= m_pots.size() || !Position.isValid(position)) { return false; }
 		return m_pots.elementAt(id).setPosition(position);
 	}

@@ -2,38 +2,36 @@ package robot;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-
-import planner.Position;
-
-import block.BlockState;
+import block.*;
+import shared.*;
 
 public class Robot {
 	
-	private int m_id;
-	private int m_robotNumber;
+	private byte m_id;
+	private byte m_robotNumber;
 	private String m_name;
 	private RobotPose m_actualPose;
 	private RobotPose m_estimatedPose;
 	private RobotPose m_defaultPose;
 	private RobotPose m_initialPose;
-	private int m_state;
+	private byte m_state;
 	
 	final public static int SIZE = (int) (10 * 3); // size in cm * pixel scaling
 	final public static Color DEFAULT_COLOUR = Color.GREEN;
 	
-	public Robot(int id, int robotNumber, int x, int y, int angle) {
+	public Robot(byte id, byte robotNumber, int x, int y, int angle) {
 		this(id, robotNumber, null, new RobotPose(x, y, angle));
 	}
 	
-	public Robot(int id, int robotNumber, Position defaultPosition, int angle) {
+	public Robot(byte id, byte robotNumber, Position defaultPosition, int angle) {
 		this(id, robotNumber, null, new RobotPose(defaultPosition, angle));
 	}
 	
-	public Robot(int id, int robotNumber, RobotPose defaultPose) {
+	public Robot(byte id, byte robotNumber, RobotPose defaultPose) {
 		this(id, robotNumber, null, defaultPose);
 	}
 	
-	public Robot(int id, int robotNumber, String name, RobotPose defaultPose) {
+	public Robot(byte id, byte robotNumber, String name, RobotPose defaultPose) {
 		m_id = id;
 		m_robotNumber = robotNumber;
 		m_name = (name == null) ? "" : name.trim();
@@ -44,11 +42,11 @@ public class Robot {
 		m_state = RobotState.Idle;
 	}
 	
-	public int getID() {
+	public byte getID() {
 		return m_id;
 	}
 	
-	public int getRobotNumber() {
+	public byte getRobotNumber() {
 		return m_robotNumber;
 	}
 	
@@ -72,15 +70,15 @@ public class Robot {
 		return m_initialPose;
 	}
 
-	public int getState() {
+	public byte getState() {
 		return m_state;
 	}
 	
-	public void setID(int id) {
+	public void setID(byte id) {
 		m_id = id;
 	}
 	
-	public void setRobotNumber(int robotNumber) {
+	public void setRobotNumber(byte robotNumber) {
 		m_robotNumber = robotNumber;
 	}
 
@@ -108,7 +106,7 @@ public class Robot {
 		return true;
 	}
 
-	public boolean setState(int state) {
+	public boolean setState(byte state) {
 		if(!RobotState.isValid(state)) { return false; }
 		m_state = state;
 		return true;

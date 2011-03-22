@@ -3,7 +3,7 @@ package block;
 import java.util.Vector;
 import java.awt.Graphics2D;
 
-import planner.Position;
+import shared.Position;
 
 public class BlockSystem {
 	
@@ -35,22 +35,22 @@ public class BlockSystem {
 	
 	public BlockSystem() {
 		m_blocks = new Vector<Block>(defaultBlockPositions.length);
-		for(int i=0;i<defaultBlockPositions.length;i++) {
+		for(byte i=0;i<defaultBlockPositions.length;i++) {
 			m_blocks.add(new Block(i, defaultBlockPositions[i]));
 		}
 	}
 	
-	public Block getBlock(int id) {
+	public Block getBlock(byte id) {
 		if(id < 0 || id >= m_blocks.size()) { return null; }
 		return m_blocks.elementAt(id);
 	}
 	
-	public boolean setBlockState(int id, int state) {
+	public boolean setBlockState(byte id, byte state) {
 		if(id < 0 || id >= m_blocks.size() || !BlockState.isValid(state)) { return false; }
 		return m_blocks.elementAt(id).setState(state);
 	}
 	
-	public boolean updateActualPosition(int id, Position actualPosition) {
+	public boolean updateActualPosition(byte id, Position actualPosition) {
 		if(id < 0 || id >= m_blocks.size() || !Position.isValid(actualPosition)) { return false; }
 		return m_blocks.elementAt(id).setActualPosition(actualPosition);
 	}

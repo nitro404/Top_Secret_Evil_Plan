@@ -3,24 +3,24 @@ package pot;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-import planner.Position;
+import shared.Position;
 
 public class Pot {
 	
-	private int m_id;
+	private byte m_id;
 	private Position m_position;
-	private int m_state;
+	private byte m_state;
 	
 	final public static int SIZE = (int) (21.6 * 3); // size in cm * pixel scaling
 	final public static Color DEFAULT_COLOUR = Color.BLUE;
 	
-	public Pot(int id, Position position) {
+	public Pot(byte id, Position position) {
 		m_id = id;
 		m_position = position;
 		m_state = PotState.Origin;
 	}
 	
-	public int getID() {
+	public byte getID() {
 		return m_id;
 	}
 
@@ -28,11 +28,11 @@ public class Pot {
 		return m_position;
 	}
 
-	public int getState() {
+	public byte getState() {
 		return m_state;
 	}
 	
-	public void setID(int id) {
+	public void setID(byte id) {
 		m_id = id;
 	}
 
@@ -42,7 +42,7 @@ public class Pot {
 		return true;
 	}
 
-	public boolean setState(int state) {
+	public boolean setState(byte state) {
 		if(!PotState.isValid(state)) { return false; }
 		m_state = state;
 		return true;

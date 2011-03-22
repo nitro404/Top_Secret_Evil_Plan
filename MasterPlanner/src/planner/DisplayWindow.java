@@ -2,6 +2,8 @@ package planner;
 
 import javax.swing.*;
 
+import shared.Constants;
+
 public class DisplayWindow extends JFrame {
 	
 	private static final long serialVersionUID = 1L;

@@ -1,9 +1,6 @@
-package robot;
+package shared;
 
 import java.awt.Point;
-
-import path.*;
-import planner.*;
 
 public class RobotPose {
 	
@@ -12,10 +9,6 @@ public class RobotPose {
 	
 	public RobotPose(int x, int y, int angle) {
 		this(new Position(x, y), angle);
-	}
-	
-	public RobotPose(Vertex v, int angle) {
-		this((v == null) ? new Position(-1, -1) : new Position(v.x, v.y), angle);
 	}
 	
 	public RobotPose(Position position, int angle) {
@@ -33,10 +26,6 @@ public class RobotPose {
 	
 	public Point getPoint() {
 		return (Point) m_position;
-	}
-	
-	public Vertex getVertex() {
-		return new Vertex(m_position.x, m_position.y);
 	}
 	
 	public int getAngleDegrees() {
@@ -57,10 +46,6 @@ public class RobotPose {
 	
 	public void setPosition(Point p) {
 		m_position = new Position(p.x, p.y);
-	}
-	
-	public void setPosition(Vertex v) {
-		m_position = new Position(v.x, v.y);
 	}
 	
 	public void setAngleDegrees(int angle) {

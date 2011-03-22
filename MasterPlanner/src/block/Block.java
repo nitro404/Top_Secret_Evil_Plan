@@ -3,27 +3,27 @@ package block;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-import planner.Position;
+import shared.Position;
 
 public class Block {
 	
-	private int m_id;
+	private byte m_id;
 	private Position m_actualPosition;
 	private Position m_defaultPosition;
-	private int m_state;
+	private byte m_state;
 	
 	final public static int SIZE = (int) (2.8 * 3); // size in cm * pixel scaling
 	final public static Color DEFAULT_COLOUR = Color.ORANGE;
 	final public static Color MISSING_COLOUR = Color.GRAY;
 	
-	public Block(int id, Position defaultPosition) {
+	public Block(byte id, Position defaultPosition) {
 		m_id = id;
 		m_actualPosition = new Position(-1, -1);
 		m_defaultPosition = defaultPosition;
 		m_state = BlockState.Unknown;
 	}
 	
-	public int getID() {
+	public byte getID() {
 		return m_id;
 	}
 
@@ -35,11 +35,11 @@ public class Block {
 		return m_defaultPosition;
 	}
 	
-	public void setID(int id) {
+	public void setID(byte id) {
 		m_id = id;
 	}
 
-	public int getState() {
+	public byte getState() {
 		return m_state;
 	}
 	
@@ -55,7 +55,7 @@ public class Block {
 		return true;
 	}
 
-	public boolean setState(int state) {
+	public boolean setState(byte state) {
 		if(!BlockState.isValid(state)) { return false; }
 		m_state = state;
 		return true;
