@@ -11,14 +11,14 @@ public class RobotSystem {
 		new RobotPose(0, 0, 270),
 	};
 	
-	final public static int[] robotIDs = { 0, 5, 7 };
+	final public static int[] robotNumbers = { 0, 5, 7 };
 	
 	final public static String[] robotNames = { "Pac-man", "Star Warrior", "Walter Chan" };
 	
 	public RobotSystem() {
 		m_robots = new Vector<Robot>(defaultRobotPoses.length);
 		for(int i=0;i<defaultRobotPoses.length;i++) {
-			m_robots.add(new Robot(i, robotIDs[i], robotNames[i], defaultRobotPoses[i]));
+			m_robots.add(new Robot(i, robotNumbers[i], robotNames[i], defaultRobotPoses[i]));
 		}
 	}
 	
