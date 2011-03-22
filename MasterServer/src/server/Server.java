@@ -64,6 +64,10 @@ public class Server extends Thread {
 		}
 	}
 	
+	public SystemConsole getConsole() {
+		return m_console;
+	}
+	
 	public int numberOfClients() { return m_clients.size(); }
 	
 	public Client getClient(int index) {

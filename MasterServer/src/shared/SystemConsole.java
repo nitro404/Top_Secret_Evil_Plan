@@ -5,9 +5,14 @@ import java.util.Vector;
 public class SystemConsole {
 
     private Vector<SystemConsoleEntry> m_consoleEntries;
+    private Updatable m_target;
 
     public SystemConsole() {
     	m_consoleEntries = new Vector<SystemConsoleEntry>();
+    }
+    
+    public void setTarget(Updatable target) {
+    	m_target = target;
     }
     
     public int size() {
@@ -23,10 +28,23 @@ public class SystemConsole {
     
     public void writeLine(String text) {
 		m_consoleEntries.add(new SystemConsoleEntry(text));
+		m_target.update();
     }
     
     public void clear() {
     	m_consoleEntries.clear();
+    	m_target.update();
+    }
+    
+    public String toString() {
+    	String data = "";
+		for(int i=0;i<m_consoleEntries.size();i++) {
+			data += m_consoleEntries.elementAt(i).getText();
+			if(i < m_consoleEntries.size() - 1) {
+				data += "\n";
+			}
+		}
+		return data;
     }
     
 }
