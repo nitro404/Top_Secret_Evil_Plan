@@ -1,3 +1,5 @@
+package planner;
+
 public class TestPlanner {
 	
 	public static void main(String[] args) {

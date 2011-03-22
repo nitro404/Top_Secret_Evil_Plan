@@ -1,5 +1,11 @@
+package robot;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
+
+import planner.Position;
+
+import block.BlockState;
 
 public class Robot {
 	

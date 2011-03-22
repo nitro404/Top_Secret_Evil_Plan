@@ -1,5 +1,9 @@
+package block;
+
 import java.util.Vector;
 import java.awt.Graphics2D;
+
+import planner.Position;
 
 public class BlockSystem {
 	

@@ -1,3 +1,5 @@
+package settings;
+
 public class SettingsManager {
 	
 	private VariableSystem m_settings;

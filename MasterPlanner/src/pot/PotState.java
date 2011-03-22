@@ -1,3 +1,5 @@
+package pot;
+
 public class PotState {
 	
 	final public static int Origin = 0;

@@ -1,3 +1,5 @@
+package block;
+
 public class BlockState {
 	
 	final public static int Unknown = 0;

@@ -1,3 +1,5 @@
+package planner;
+
 import java.awt.Point;
 
 public class Position extends Point {

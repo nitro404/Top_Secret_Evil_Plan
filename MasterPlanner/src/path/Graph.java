@@ -1,3 +1,5 @@
+package path;
+
 import java.util.Vector;
 import java.io.*;
 import java.awt.Color;

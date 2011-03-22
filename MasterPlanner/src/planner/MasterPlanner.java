@@ -1,3 +1,5 @@
+package planner;
+
 import com.rbcapp.planner.*;
 
 public class MasterPlanner extends Planner {

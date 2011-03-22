@@ -1,3 +1,5 @@
+package robot;
+
 public class RobotState {
 	
 	final public static int Idle = 0;

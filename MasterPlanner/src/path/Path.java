@@ -1,3 +1,5 @@
+package path;
+
 import java.io.*;
 
 public class Path extends Graph {

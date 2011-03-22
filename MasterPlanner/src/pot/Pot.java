@@ -1,5 +1,9 @@
+package pot;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
+
+import planner.Position;
 
 public class Pot {
 	

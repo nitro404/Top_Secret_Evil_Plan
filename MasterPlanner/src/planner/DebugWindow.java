@@ -1,3 +1,5 @@
+package planner;
+
 import javax.swing.*;
 
 public class DebugWindow extends JFrame {

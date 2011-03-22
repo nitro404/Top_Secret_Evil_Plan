@@ -1,4 +1,9 @@
+package robot;
+
 import java.awt.Point;
+
+import path.*;
+import planner.*;
 
 public class RobotPose {
 	

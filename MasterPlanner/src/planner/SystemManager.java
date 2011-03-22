@@ -1,3 +1,8 @@
+package planner;
+
+import path.*;
+import settings.*;
+
 public class SystemManager {
 	
 	public static SettingsManager settings;

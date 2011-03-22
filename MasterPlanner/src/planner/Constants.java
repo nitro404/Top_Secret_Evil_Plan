@@ -1,3 +1,5 @@
+package planner;
+
 public class Constants {
 	
 	final public static int MAX_X = 640;
