@@ -16,20 +16,28 @@ public class Pot {
 		m_state = PotState.Origin;
 	}
 	
+	public int getID() {
+		return m_id;
+	}
+
 	public Position getPosition() {
 		return m_position;
 	}
-	
+
 	public int getState() {
 		return m_state;
 	}
 	
+	public void setID(int id) {
+		m_id = id;
+	}
+
 	public boolean setPosition(Position position) {
 		if(!Position.isValid(position)) { return false; }
 		m_position = position;
 		return true;
 	}
-	
+
 	public boolean setState(int state) {
 		if(!PotState.isValid(state)) { return false; }
 		m_state = state;

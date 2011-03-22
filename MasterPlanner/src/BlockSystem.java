@@ -5,7 +5,7 @@ public class BlockSystem {
 	
 	private Vector<Block> m_blocks;
 	
-	final public static Position[] estimatedBlockPositions = {
+	final public static Position[] defaultBlockPositions = {
 		// zone 1 (top)
 		new Position(0, 0),
 		new Position(0, 0),
@@ -30,9 +30,9 @@ public class BlockSystem {
 	};
 	
 	public BlockSystem() {
-		m_blocks = new Vector<Block>(estimatedBlockPositions.length);
-		for(int i=0;i<estimatedBlockPositions.length;i++) {
-			m_blocks.add(new Block(i, estimatedBlockPositions[i]));
+		m_blocks = new Vector<Block>(defaultBlockPositions.length);
+		for(int i=0;i<defaultBlockPositions.length;i++) {
+			m_blocks.add(new Block(i, defaultBlockPositions[i]));
 		}
 	}
 	

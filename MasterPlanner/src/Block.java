@@ -5,28 +5,36 @@ public class Block {
 	
 	private int m_id;
 	private Position m_actualPosition;
-	private Position m_estimatedPosition;
+	private Position m_defaultPosition;
 	private int m_state;
 	
 	final public static int SIZE = (int) (2.8 * 3); // size in cm * pixel scaling
 	final public static Color DEFAULT_COLOUR = Color.ORANGE;
 	final public static Color MISSING_COLOUR = Color.GRAY;
 	
-	public Block(int id, Position estimatedPosition) {
+	public Block(int id, Position defaultPosition) {
 		m_id = id;
 		m_actualPosition = new Position(-1, -1);
-		m_estimatedPosition = estimatedPosition;
+		m_defaultPosition = defaultPosition;
 		m_state = BlockState.Unknown;
 	}
 	
+	public int getID() {
+		return m_id;
+	}
+
 	public Position getActualPosition() {
 		return m_actualPosition;
 	}
 	
-	public Position getEstimatedPosition() {
-		return m_estimatedPosition;
+	public Position getDefaultPosition() {
+		return m_defaultPosition;
 	}
 	
+	public void setID(int id) {
+		m_id = id;
+	}
+
 	public int getState() {
 		return m_state;
 	}
@@ -37,12 +45,12 @@ public class Block {
 		return true;
 	}
 	
-	public boolean setEstimatedPosition(Position estimatedPosition) {
-		if(!Position.isValid(estimatedPosition)) { return false; }
-		m_estimatedPosition = estimatedPosition;
+	public boolean setDefaultPosition(Position defaultPosition) {
+		if(!Position.isValid(defaultPosition)) { return false; }
+		m_defaultPosition = defaultPosition;
 		return true;
 	}
-	
+
 	public boolean setState(int state) {
 		if(!BlockState.isValid(state)) { return false; }
 		m_state = state;
@@ -55,7 +63,7 @@ public class Block {
 		g.setColor(m_state == BlockState.Missing ? MISSING_COLOUR : DEFAULT_COLOUR);
 		
 		if(m_state == BlockState.Unknown || m_state == BlockState.Missing) {
-			g.drawOval(m_estimatedPosition.x - (SIZE/2), m_estimatedPosition.y - (SIZE/2), SIZE, SIZE);
+			g.drawOval(m_defaultPosition.x - (SIZE/2), m_defaultPosition.y - (SIZE/2), SIZE, SIZE);
 		}
 		else {
 			g.fillOval(m_actualPosition.x - (SIZE/2), m_actualPosition.y - (SIZE/2), SIZE, SIZE);
@@ -69,7 +77,7 @@ public class Block {
 	}
 	
 	public String toString() {
-		return "Block #" + m_id + " " + (m_state == BlockState.Unknown ? m_estimatedPosition : m_actualPosition) + ": " + BlockState.toString(m_state);
+		return "Block #" + m_id + " " + (m_state == BlockState.Unknown ? m_defaultPosition : m_actualPosition) + ": " + BlockState.toString(m_state);
 	}
 	
 }
