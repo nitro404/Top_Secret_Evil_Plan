@@ -2,19 +2,19 @@ package shared;
 
 import java.util.Vector; 
 
-public class Console {
+public class SystemConsole {
 
-    private Vector<ConsoleEntry> m_consoleEntries;
+    private Vector<SystemConsoleEntry> m_consoleEntries;
 
-    public Console() {
-    	m_consoleEntries = new Vector<ConsoleEntry>();
+    public SystemConsole() {
+    	m_consoleEntries = new Vector<SystemConsoleEntry>();
     }
     
     public int size() {
     	return m_consoleEntries.size();
     }
     
-    public ConsoleEntry getConsoleEntry(int index) {
+    public SystemConsoleEntry getConsoleEntry(int index) {
 		if(index < 0 || index >= m_consoleEntries.size()) {
 		    return null;
 		}
@@ -22,7 +22,7 @@ public class Console {
     }
     
     public void writeLine(String text) {
-		m_consoleEntries.add(new ConsoleEntry(text));
+		m_consoleEntries.add(new SystemConsoleEntry(text));
     }
     
     public void clear() {

@@ -3,14 +3,14 @@ package shared;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-public class ConsoleEntry {
+public class SystemConsoleEntry {
 	
     private Calendar m_time;
     private String m_text;
 
     final private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-M-d hh:mm:ss a");
 
-    public ConsoleEntry(String text) {
+    public SystemConsoleEntry(String text) {
 		m_time = Calendar.getInstance();
 		m_text = text;
     }
