@@ -9,7 +9,8 @@ public class ServerWindow extends JFrame implements Updatable {
 	private Server m_server;
 	private SystemConsole m_console;
 	
-	private JTextField m_consoleText;
+	private JTextArea m_consoleText;
+	private JScrollPane m_consoleScrollPane;
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -36,12 +37,16 @@ public class ServerWindow extends JFrame implements Updatable {
         setMinimumSize(new Dimension(640, 480));
         setName("ServerWindow");
         
-        m_consoleText = new JTextField();
-        add(m_consoleText);
+        m_consoleText = new JTextArea();
+        m_consoleText.setEditable(false);
+        m_consoleScrollPane = new JScrollPane(m_consoleText);
+        add(m_consoleScrollPane);
     }
 	
 	public void update() {
 		m_consoleText.setText(m_console.toString());
+		m_consoleText.setCaretPosition(m_consoleText.getText().length());
+		m_consoleText.scrollRectToVisible(new Rectangle(0, m_consoleText.getHeight() - 2, 1, 1));
 	}
 	
 }
