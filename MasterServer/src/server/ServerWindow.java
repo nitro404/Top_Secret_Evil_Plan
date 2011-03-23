@@ -2,6 +2,7 @@ package server;
 
 import javax.swing.*;
 import java.awt.*;
+import settings.*;
 import shared.*;
 
 public class ServerWindow extends JFrame implements Updatable {
@@ -11,6 +12,8 @@ public class ServerWindow extends JFrame implements Updatable {
 	
 	private JTextArea m_consoleText;
 	private JScrollPane m_consoleScrollPane;
+	
+	private SettingsManager m_settings;
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -22,12 +25,30 @@ public class ServerWindow extends JFrame implements Updatable {
 	}
 	
 	public void initialize() {
-		initialize(MasterServer.DEFAULT_PORT);
+		m_settings = new SettingsManager();
+		m_settings.load();
+		
+		m_server.initialize(m_settings.getPort());
+		setVisible(true);
+		
+		m_settings.save();
 	}
 	
 	public void initialize(int port) {
+		initialize(null, port);
+	}
+	
+	public void initialize(SettingsManager settings, int port) {
+		m_settings = settings;
+		if(m_settings == null) {
+			m_settings = new SettingsManager();
+			m_settings.load();
+		}
+		
 		m_server.initialize(port);
 		setVisible(true);
+		
+		m_settings.save();
 	}
 	
 	private void initComponents() {
