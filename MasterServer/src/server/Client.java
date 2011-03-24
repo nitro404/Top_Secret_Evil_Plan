@@ -67,7 +67,7 @@ public class Client {
 	}
 	
 	public boolean ping() {
-		if(!m_awaitingResponse && m_timeElapsed >= MasterServer.PING_INTERVAL) {
+		if(!m_awaitingResponse && m_timeElapsed >= Server.PING_INTERVAL) {
 			m_timeElapsed = 0;
 			m_awaitingResponse = true;
 			m_outSignalQueue.addSignal(new Signal(SignalType.Ping));
@@ -91,7 +91,7 @@ public class Client {
 	}
 	
 	public boolean timeout() {
-		return m_awaitingResponse && m_timeElapsed >= MasterServer.CONNECTION_TIMEOUT;
+		return m_awaitingResponse && m_timeElapsed >= Server.CONNECTION_TIMEOUT;
 	}
 	
 	public void disconnect() {

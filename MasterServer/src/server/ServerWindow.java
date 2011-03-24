@@ -11,6 +11,7 @@ public class ServerWindow extends JFrame implements Updatable {
 	private SystemConsole m_console;
 	
 	private JTextArea m_consoleText;
+	private Font m_consoleFont;
 	private JScrollPane m_consoleScrollPane;
 	
 	private SettingsManager m_settings;
@@ -30,8 +31,6 @@ public class ServerWindow extends JFrame implements Updatable {
 		
 		m_server.initialize(m_settings.getPort());
 		setVisible(true);
-		
-		m_settings.save();
 	}
 	
 	public void initialize(int port) {
@@ -47,8 +46,6 @@ public class ServerWindow extends JFrame implements Updatable {
 		
 		m_server.initialize(port);
 		setVisible(true);
-		
-		m_settings.save();
 	}
 	
 	private void initComponents() {
@@ -59,6 +56,8 @@ public class ServerWindow extends JFrame implements Updatable {
         setName("ServerWindow");
         
         m_consoleText = new JTextArea();
+        m_consoleFont = new Font("Verdana", Font.PLAIN, 14);
+        m_consoleText.setFont(m_consoleFont);
         m_consoleText.setEditable(false);
         m_consoleScrollPane = new JScrollPane(m_consoleText);
         add(m_consoleScrollPane);

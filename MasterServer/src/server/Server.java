@@ -16,6 +16,13 @@ public class Server extends Thread {
 	
 	private SystemConsole m_console;
 	
+	final public static int DEFAULT_PORT = 25500;
+	final public static long QUEUE_INTERVAL = 50;
+	final public static long CONNECTION_LISTEN_INTERVAL = 75;
+	final public static long TIMEOUT_INTERVAL = 100;
+	final public static long PING_INTERVAL = 5000;
+	final public static long CONNECTION_TIMEOUT = 10000;
+	
 	public Server() {
 		m_clients = new Vector<Client>();
 		m_console = new SystemConsole();
@@ -23,7 +30,7 @@ public class Server extends Thread {
 	}
 	
 	public void initialize(int port) {
-		if(port < 0 || port > 65355) { port = MasterServer.DEFAULT_PORT; }
+		if(port < 0 || port > 65355) { port = DEFAULT_PORT; }
 		
 		try {
 			m_connection = new ServerSocket(port);
@@ -59,7 +66,7 @@ public class Server extends Thread {
 				m_console.writeLine("Established connection to client #" + newClient.getClientNumber() + " at " + newClient.getIPAddressString());
 			}
 			
-			try { sleep(MasterServer.CONNECTION_LISTEN_INTERVAL); }
+			try { sleep(CONNECTION_LISTEN_INTERVAL); }
 			catch (InterruptedException e) { }
 		}
 	}

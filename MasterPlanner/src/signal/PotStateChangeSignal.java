@@ -4,10 +4,12 @@ import shared.*;
 
 public class PotStateChangeSignal extends Signal {
 	
+	private byte m_potID;
 	private byte m_robotID;
 	private byte m_potState;
 	
 	final public static int LENGTH = (Byte.SIZE +
+									  Byte.SIZE +
 									  Byte.SIZE +
 									  Long.SIZE) / 8;
 	
@@ -15,10 +17,15 @@ public class PotStateChangeSignal extends Signal {
 		super(SignalType.BlockStateChange);
 	}
 	
-	public PotStateChangeSignal(byte robotID, byte potState) {
+	public PotStateChangeSignal(byte potID, byte robotID, byte potState) {
 		super(SignalType.BlockStateChange);
+		m_potID = potID;
 		m_robotID = robotID;
 		m_potState = potState;
+	}
+	
+	public byte getPotID() {
+		return m_potID;
 	}
 
 	public byte getRobotID() {
@@ -31,6 +38,7 @@ public class PotStateChangeSignal extends Signal {
 	
 	public long checksum() {
 		long checksum = 0;
+		checksum += ByteStream.getChecksum(m_potID);
 		checksum += ByteStream.getChecksum(m_robotID);
 		checksum += ByteStream.getChecksum(m_potState);
 		return checksum;
@@ -41,6 +49,7 @@ public class PotStateChangeSignal extends Signal {
 		
 		PotStateChangeSignal s2 = new PotStateChangeSignal();
 		
+		s2.m_potID = byteStream.nextByte();
 		s2.m_robotID = byteStream.nextByte();
 		s2.m_potState = byteStream.nextByte();
 		long checksum = byteStream.nextLong();
@@ -53,6 +62,7 @@ public class PotStateChangeSignal extends Signal {
 		if(byteStream == null) { return; }
 		
 		super.writeTo(byteStream);
+		byteStream.addByte(m_potID);
 		byteStream.addByte(m_robotID);
 		byteStream.addByte(m_potState);
 		byteStream.addLong(checksum());

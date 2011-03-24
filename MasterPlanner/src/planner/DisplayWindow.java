@@ -1,8 +1,7 @@
 package planner;
 
 import javax.swing.*;
-
-import shared.Constants;
+import shared.*;
 
 public class DisplayWindow extends JFrame {
 	
@@ -10,7 +9,7 @@ public class DisplayWindow extends JFrame {
 	
 	public DisplayWindow() {
 		setTitle("Display Window");
-		setSize(Constants.MAX_X, Constants.MAX_Y);
+		setSize(Position.MAX_X, Position.MAX_Y);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 	

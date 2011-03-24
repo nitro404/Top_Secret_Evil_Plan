@@ -4,6 +4,9 @@ import java.awt.Point;
 
 public class Position extends Point {
 	
+	final public static int MAX_X = 640;
+	final public static int MAX_Y = 480 * 3;
+	
 	private static final long serialVersionUID = 1L;
 	
 	public Position() {
@@ -19,7 +22,7 @@ public class Position extends Point {
 	}
 	
 	public boolean isValid() {
-		return x >= 0 && y >= 0 && x < Constants.MAX_X && y < Constants.MAX_Y; 
+		return x >= 0 && y >= 0 && x < MAX_X && y < MAX_Y; 
 	}
 	
 	public static boolean isValid(Position p) {
@@ -27,7 +30,7 @@ public class Position extends Point {
 	}
 	
 	public static boolean isValid(Point p) {
-		return p != null && p.x >= 0 && p.y >= 0 && p.x < Constants.MAX_X && p.y < Constants.MAX_Y;
+		return p != null && p.x >= 0 && p.y >= 0 && p.x < MAX_X && p.y < MAX_Y;
 	}
 	
 }

@@ -30,7 +30,7 @@ public class ClientDisconnectHandler extends Thread {
 			for(int i=0;i<m_clients.size();i++) {
 				c = m_clients.elementAt(i);
 				
-				c.addTime(MasterServer.TIMEOUT_INTERVAL);
+				c.addTime(Server.TIMEOUT_INTERVAL);
 				
 				c.ping();
 				
@@ -46,7 +46,7 @@ public class ClientDisconnectHandler extends Thread {
 				}
 			}
 			
-			try { sleep(MasterServer.TIMEOUT_INTERVAL); }
+			try { sleep(Server.TIMEOUT_INTERVAL); }
 			catch (InterruptedException e) { }
 		}
 	}

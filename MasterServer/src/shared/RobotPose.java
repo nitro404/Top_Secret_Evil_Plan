@@ -61,10 +61,7 @@ public class RobotPose {
 	}
 	
 	public boolean isValid() {
-		return m_position.x >= 0 &&
-			   m_position.y >= 0 &&
-			   m_position.x <= Constants.MAX_X &&
-			   m_position.y <= Constants.MAX_Y &&
+		return Position.isValid(m_position) &&
 			   m_angle >= 0;
 	}
 	

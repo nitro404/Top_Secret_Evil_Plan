@@ -31,29 +31,29 @@ public class RobotSystem {
 		return m_robots.elementAt(id);
 	}
 	
-	public boolean setRobotState(byte id, byte state) {
-		if(id < 0 || id >= m_robots.size() || !RobotState.isValid(state)) { return false; }
-		return m_robots.elementAt(id).setState(state);
+	public boolean setRobotState(byte robotID, byte robotState) {
+		if(robotID < 0 || robotID >= m_robots.size() || !RobotState.isValid(robotState)) { return false; }
+		return m_robots.elementAt(robotID).setState(robotState);
 	}
 	
-	public boolean updateActualPose(byte id, RobotPose actualPose) {
-		if(id < 0 || id >= m_robots.size() || !RobotPose.isValid(actualPose)) { return false; }
-		return m_robots.elementAt(id).setActualPose(actualPose);
+	public boolean setActualPose(byte robotID, RobotPose actualRobotPose) {
+		if(robotID < 0 || robotID >= m_robots.size() || !RobotPose.isValid(actualRobotPose)) { return false; }
+		return m_robots.elementAt(robotID).setActualPose(actualRobotPose);
 	}
 	
-	public boolean updateEstimatedPose(byte id, RobotPose estimatedPose) {
-		if(id < 0 || id >= m_robots.size() || !RobotPose.isValid(estimatedPose)) { return false; }
-		return m_robots.elementAt(id).setEstimatedPose(estimatedPose);
+	public boolean setEstimatedPose(byte robotID, RobotPose estimatedRobtPose) {
+		if(robotID < 0 || robotID >= m_robots.size() || !RobotPose.isValid(estimatedRobtPose)) { return false; }
+		return m_robots.elementAt(robotID).setEstimatedPose(estimatedRobtPose);
 	}
 	
-	public boolean updateDefaultPose(byte id, RobotPose defaultPose) {
-		if(id < 0 || id >= m_robots.size() || !RobotPose.isValid(defaultPose)) { return false; }
-		return m_robots.elementAt(id).setDefaultPose(defaultPose);
+	public boolean setDefaultPose(byte robotID, RobotPose defaultRobotPose) {
+		if(robotID < 0 || robotID >= m_robots.size() || !RobotPose.isValid(defaultRobotPose)) { return false; }
+		return m_robots.elementAt(robotID).setDefaultPose(defaultRobotPose);
 	}
 	
-	public boolean updateInitialPose(byte id, RobotPose initialPose) {
-		if(id < 0 || id >= m_robots.size() || !RobotPose.isValid(initialPose)) { return false; }
-		return m_robots.elementAt(id).setInitialPose(initialPose);
+	public boolean setInitialPose(byte robotID, RobotPose initialRobotPose) {
+		if(robotID < 0 || robotID >= m_robots.size() || !RobotPose.isValid(initialRobotPose)) { return false; }
+		return m_robots.elementAt(robotID).setInitialPose(initialRobotPose);
 	}
 	
 	public void draw(Graphics2D g) {

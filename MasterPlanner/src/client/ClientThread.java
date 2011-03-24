@@ -1,4 +1,4 @@
-package server;
+package client;
 
 public class ClientThread extends Thread {
 	
@@ -22,7 +22,7 @@ public class ClientThread extends Thread {
 		while(m_client.isConnected()) {
 			m_client.readSignal();
 			
-			try { sleep(Server.QUEUE_INTERVAL); }
+			try { sleep(Client.QUEUE_INTERVAL); }
 			catch (InterruptedException e) { }
 		}
 	}

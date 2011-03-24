@@ -22,19 +22,19 @@ public class PotSystem {
 		}
 	}
 	
-	public Pot getBlock(byte id) {
-		if(id < 0 || id >= m_pots.size()) { return null; }
-		return m_pots.elementAt(id);
+	public Pot getPot(byte potID) {
+		if(potID < 0 || potID >= m_pots.size()) { return null; }
+		return m_pots.elementAt(potID);
 	}
 	
-	public boolean setBlockState(byte id, byte state) {
-		if(id < 0 || id >= m_pots.size() || !PotState.isValid(state)) { return false; }
-		return m_pots.elementAt(id).setState(state);
+	public boolean setPotState(byte potID, byte robotID, byte potState) {
+		if(potID < 0 || potID >= m_pots.size() || !PotState.isValid(potState)) { return false; }
+		return m_pots.elementAt(potID).setState(potState);
 	}
 	
-	public boolean updatePosition(byte id, Position position) {
-		if(id < 0 || id >= m_pots.size() || !Position.isValid(position)) { return false; }
-		return m_pots.elementAt(id).setPosition(position);
+	public boolean setActualPotPosition(byte potID, Position potPosition) {
+		if(potID < 0 || potID >= m_pots.size() || !Position.isValid(potPosition)) { return false; }
+		return m_pots.elementAt(potID).setPosition(potPosition);
 	}
 	
 	public void draw(Graphics2D g) {

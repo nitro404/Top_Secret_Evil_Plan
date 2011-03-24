@@ -2,7 +2,7 @@ package settings;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import server.MasterServer;
+import server.*;
 
 public class SettingsManager {
 	
@@ -13,7 +13,7 @@ public class SettingsManager {
 	
 	final public static String defaultSettingsFileName = "server.ini";
 	public static InetAddress[] defaultTrackerIPAddress;
-	final public static int defaultPort = MasterServer.DEFAULT_PORT;
+	final public static int defaultPort = Server.DEFAULT_PORT;
 	
 	public SettingsManager() {
 		m_settings = new VariableSystem();

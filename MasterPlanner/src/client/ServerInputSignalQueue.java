@@ -1,29 +1,27 @@
-package server;
+package client;
 
 import java.io.*;
 import java.util.*;
-import signal.*;
-import shared.*;
 
-public class ClientInputSignalQueue extends Thread {
+import planner.SystemManager;
+import shared.*;
+import signal.*;
+
+public class ServerInputSignalQueue extends Thread {
 	
 	private ArrayDeque<Signal> m_inSignalQueue;
 	private DataInputStream m_in;
-	private ClientOutputSignalQueue m_outSignalQueue;
-	private Server m_server;
+	private ServerOutputSignalQueue m_outSignalQueue;
 	private Client m_client;
-	private SystemConsole m_console;
-
-	public ClientInputSignalQueue() {
+	
+	public ServerInputSignalQueue(){
 		m_inSignalQueue = new ArrayDeque<Signal>();
 	}
-
-	public void initialize(Server server, Client client, DataInputStream in, ClientOutputSignalQueue out, SystemConsole console) {
-		m_server = server;
+	
+	public void initialize(Client client, DataInputStream in, ServerOutputSignalQueue out) {
 		m_client = client;
 		m_in = in;
 		m_outSignalQueue = out;
-		m_console = console;
 		if(getState() == Thread.State.NEW) { start(); }
 	}
 	
@@ -32,8 +30,8 @@ public class ClientInputSignalQueue extends Thread {
 	}
 	
 	public void addSignal(Signal s) {
-		if(s == null) { return; }
-
+		if (s == null){ return; }
+		
 		m_inSignalQueue.add(s);
 	}
 	
@@ -50,7 +48,6 @@ public class ClientInputSignalQueue extends Thread {
 		Signal s2 = null;
 		
 		if(s == null) { return; }
-		
 		
 		if(s.getSignalType() == SignalType.Ping) {
 			s2 = s;
@@ -89,7 +86,7 @@ public class ClientInputSignalQueue extends Thread {
 			s2 = UpdateEstimatedRobotPoseSignal.readFrom(ByteStream.readFrom(m_in, UpdateEstimatedRobotPoseSignal.LENGTH)); 
 		}
 		else {
-			m_console.writeLine("Unexpected input signal of type: " + s.getSignalType());
+			return;
 		}
 		
 		addSignal(s2);
@@ -97,8 +94,10 @@ public class ClientInputSignalQueue extends Thread {
 	
 	public void run() {
 		while(m_client.isConnected()) {
-			if(!m_inSignalQueue.isEmpty()) {
+			if(!m_inSignalQueue.isEmpty()){
 				Signal s = m_inSignalQueue.remove();
+				
+				if(s == null) { continue; }
 				
 				if(s.getSignalType() == SignalType.Ping) {
 					sendSignal(new Signal(SignalType.Pong));
@@ -106,18 +105,49 @@ public class ClientInputSignalQueue extends Thread {
 				else if(s.getSignalType() == SignalType.Pong) {
 					m_client.pong();
 				}
-				else if(SignalType.isValid(s.getSignalType())) {
-					m_server.forwardSignal(m_client, s);
+				else if(s.getSignalType() == SignalType.StartSimulation) {
+					//TODO: Begin the simulation
+// inconsistencies between functions for like.. update / set, updatePosition vs. UpdatePotPosition, etc.
 				}
-				else {
-					m_console.writeLine("Unexpected input signal of type: " + s.getSignalType());
+				else if(s.getSignalType() == SignalType.BlockStateChange) {
+					BlockStateChangeSignal s2 = (BlockStateChangeSignal) s;
+					SystemManager.blockSystem.setBlockState(s2.getBlockID(), s2.getRobotID(), s2.getBlockState());
+				}
+				else if(s.getSignalType() == SignalType.RobotStateChange) {
+					RobotStateChangeSignal s2 = (RobotStateChangeSignal) s;
+					SystemManager.robotSystem.setRobotState(s2.getRobotID(), s2.getRobotState());
+				}
+				else if(s.getSignalType() == SignalType.PotStateChange) {
+					PotStateChangeSignal s2 = (PotStateChangeSignal) s;
+					SystemManager.potSystem.setPotState(s2.getPotID(), s2.getRobotID(), s2.getPotState());
+				}
+				else if(s.getSignalType() == SignalType.TaskStarted) {
+//					TaskStartedSignal s2 = (TaskStartedSignal) s;
+				}
+				else if(s.getSignalType() == SignalType.TaskCompleted) {
+//					TaskCompletedSignal s2 = (TaskCompletedSignal) s;
+				}
+				else if(s.getSignalType() == SignalType.UpdateBlockPosition) {
+					UpdateBlockPositionSignal s2 = (UpdateBlockPositionSignal) s;
+					SystemManager.blockSystem.setActualBlockPosition(s2.getBlockID(), s2.getPosition());
+				}
+				else if(s.getSignalType() == SignalType.UpdatePotPosition) {
+					UpdatePotPositionSignal s2 = (UpdatePotPositionSignal) s;
+					SystemManager.potSystem.setActualPotPosition(s2.getPotID(), s2.getPosition());
+				}
+				else if(s.getSignalType() == SignalType.UpdateActualRobotPose) {
+					UpdateActualRobotPoseSignal s2 = (UpdateActualRobotPoseSignal) s;
+					SystemManager.robotSystem.setActualPose(s2.getRobotID(), s2.getPose());
+				}
+				else if(s.getSignalType() == SignalType.UpdateEstimatedRobotPose) {
+					UpdateEstimatedRobotPoseSignal s2 = (UpdateEstimatedRobotPoseSignal) s;
+					SystemManager.robotSystem.setEstimatedPose(s2.getRobotID(), s2.getPose());
 				}
 			}
 			
-			try { sleep(Server.QUEUE_INTERVAL); }
+			try { sleep(Client.QUEUE_INTERVAL); }
 			catch (InterruptedException e) { }
 		}
 	}
 	
 }
-

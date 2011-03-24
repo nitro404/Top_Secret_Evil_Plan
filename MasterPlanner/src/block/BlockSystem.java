@@ -2,8 +2,7 @@ package block;
 
 import java.util.Vector;
 import java.awt.Graphics2D;
-
-import shared.Position;
+import shared.*;
 
 public class BlockSystem {
 	
@@ -40,19 +39,19 @@ public class BlockSystem {
 		}
 	}
 	
-	public Block getBlock(byte id) {
-		if(id < 0 || id >= m_blocks.size()) { return null; }
-		return m_blocks.elementAt(id);
+	public Block getBlock(byte blockID) {
+		if(blockID < 0 || blockID >= m_blocks.size()) { return null; }
+		return m_blocks.elementAt(blockID);
 	}
 	
-	public boolean setBlockState(byte id, byte state) {
-		if(id < 0 || id >= m_blocks.size() || !BlockState.isValid(state)) { return false; }
-		return m_blocks.elementAt(id).setState(state);
+	public boolean setBlockState(byte blockID, byte robotID, byte blockState) {
+		if(blockID < 0 || blockID >= m_blocks.size() || !BlockState.isValid(blockState)) { return false; }
+		return m_blocks.elementAt(blockID).setState(blockState);
 	}
 	
-	public boolean updateActualPosition(byte id, Position actualPosition) {
-		if(id < 0 || id >= m_blocks.size() || !Position.isValid(actualPosition)) { return false; }
-		return m_blocks.elementAt(id).setActualPosition(actualPosition);
+	public boolean setActualBlockPosition(byte blockID, Position actualBlockPosition) {
+		if(blockID < 0 || blockID >= m_blocks.size() || !Position.isValid(actualBlockPosition)) { return false; }
+		return m_blocks.elementAt(blockID).setActualPosition(actualBlockPosition);
 	}
 	
 	public void draw(Graphics2D g) {
