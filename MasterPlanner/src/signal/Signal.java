@@ -50,4 +50,8 @@ public class Signal {
 		bs.writeTo(out);
 	}
 	
+	public String toString() {
+		return SignalType.toString(m_signalType);
+	}
+	
 }

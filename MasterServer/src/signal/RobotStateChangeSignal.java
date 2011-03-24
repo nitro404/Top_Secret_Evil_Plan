@@ -1,5 +1,6 @@
 package signal;
 
+import robot.*;
 import shared.*;
 
 public class RobotStateChangeSignal extends Signal {
@@ -12,11 +13,11 @@ public class RobotStateChangeSignal extends Signal {
 									  Long.SIZE) / 8;
 	
 	private RobotStateChangeSignal() {
-		super(SignalType.BlockStateChange);
+		super(SignalType.RobotStateChange);
 	}
 	
 	public RobotStateChangeSignal(byte robotID, byte robotState) {
-		super(SignalType.BlockStateChange);
+		super(SignalType.RobotStateChange);
 		m_robotID = robotID;
 		m_robotState = robotState;
 	}
@@ -56,6 +57,10 @@ public class RobotStateChangeSignal extends Signal {
 		byteStream.addByte(m_robotID);
 		byteStream.addByte(m_robotState);
 		byteStream.addLong(checksum());
+	}
+	
+	public String toString() {
+		return super.toString() + " Robot ID: " + m_robotID + " Robot State " + RobotState.toString(m_robotState);
 	}
 	
 }

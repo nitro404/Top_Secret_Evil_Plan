@@ -51,7 +51,6 @@ public class ClientInputSignalQueue extends Thread {
 		
 		if(s == null) { return; }
 		
-		
 		if(s.getSignalType() == SignalType.Ping) {
 			s2 = s;
 		}
@@ -100,6 +99,8 @@ public class ClientInputSignalQueue extends Thread {
 			if(!m_inSignalQueue.isEmpty()) {
 				Signal s = m_inSignalQueue.remove();
 				
+				m_console.writeLine("Received from Client #" + m_client.getClientNumber() + ": " + s.toString());
+				
 				if(s.getSignalType() == SignalType.Ping) {
 					sendSignal(new Signal(SignalType.Pong));
 				}
@@ -107,7 +108,7 @@ public class ClientInputSignalQueue extends Thread {
 					m_client.pong();
 				}
 				else if(SignalType.isValid(s.getSignalType())) {
-					m_server.forwardSignal(m_client, s);
+					m_server.forwardSignal(m_client.getClientNumber(), s);
 				}
 				else {
 					m_console.writeLine("Unexpected input signal of type: " + s.getSignalType());

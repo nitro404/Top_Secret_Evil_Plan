@@ -137,6 +137,11 @@ public class Client {
 		return m_awaitingResponse && m_timeElapsed >= Client.CONNECTION_TIMEOUT;
 	}
 	
+	public void sendSignal(Signal s) {
+		if(s == null) { return; }
+		m_outSignalQueue.addSignal(s);
+	}
+	
 	public void readSignal() {
 		m_inSignalQueue.readSignal();
 	}

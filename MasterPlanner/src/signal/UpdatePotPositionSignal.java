@@ -14,11 +14,11 @@ public class UpdatePotPositionSignal extends Signal {
 									  Long.SIZE) / 8;
 	
 	private UpdatePotPositionSignal() {
-		super(SignalType.BlockStateChange);
+		super(SignalType.UpdatePotPosition);
 	}
 	
 	public UpdatePotPositionSignal(byte potID, int x, int y) {
-		super(SignalType.BlockStateChange);
+		super(SignalType.UpdatePotPosition);
 		m_potID = potID;
 		m_x = x;
 		m_y = y;
@@ -70,6 +70,10 @@ public class UpdatePotPositionSignal extends Signal {
 		byteStream.addInteger(m_x);
 		byteStream.addInteger(m_y);
 		byteStream.addLong(checksum());
+	}
+	
+	public String toString() {
+		return super.toString() + " Pot ID: " + m_potID + " Position: (" + m_x + ", " + m_y + ")";
 	}
 	
 }

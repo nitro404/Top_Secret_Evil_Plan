@@ -82,11 +82,11 @@ public class Server extends Thread {
 		return m_clients.elementAt(index);
 	}
 	
-	public void forwardSignal(Client sourceClient, Signal signal) {
-		if(sourceClient == null || signal == null) { return; }
+	public void forwardSignal(int clientNumber, Signal signal) {
+		if(signal == null) { return; }
 		
 		for(int i=0;i<m_clients.size();i++) {
-			if(!sourceClient.equals(m_clients.elementAt(i))) {
+			if(clientNumber != m_clients.elementAt(i).getClientNumber()) {
 				m_clients.elementAt(i).sendSignal(signal);
 			}
 		}

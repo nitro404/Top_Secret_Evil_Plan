@@ -56,7 +56,7 @@ public class ServerInputSignalQueue extends Thread {
 			s2 = s;
 		}
 		else if(s.getSignalType() == SignalType.StartSimulation) {
-			s2 = s;
+			SystemManager.start();
 		}
 		else if(s.getSignalType() == SignalType.BlockStateChange) {
 			s2 = BlockStateChangeSignal.readFrom(ByteStream.readFrom(m_in, BlockStateChangeSignal.LENGTH)); 
@@ -99,6 +99,8 @@ public class ServerInputSignalQueue extends Thread {
 				
 				if(s == null) { continue; }
 				
+				SystemManager.console.writeLine("Received: " + s.toString());
+				
 				if(s.getSignalType() == SignalType.Ping) {
 					sendSignal(new Signal(SignalType.Pong));
 				}
@@ -106,8 +108,7 @@ public class ServerInputSignalQueue extends Thread {
 					m_client.pong();
 				}
 				else if(s.getSignalType() == SignalType.StartSimulation) {
-					//TODO: Begin the simulation
-// inconsistencies between functions for like.. update / set, updatePosition vs. UpdatePotPosition, etc.
+					SystemManager.start();
 				}
 				else if(s.getSignalType() == SignalType.BlockStateChange) {
 					BlockStateChangeSignal s2 = (BlockStateChangeSignal) s;
@@ -122,10 +123,12 @@ public class ServerInputSignalQueue extends Thread {
 					SystemManager.potSystem.setPotState(s2.getPotID(), s2.getRobotID(), s2.getPotState());
 				}
 				else if(s.getSignalType() == SignalType.TaskStarted) {
-//					TaskStartedSignal s2 = (TaskStartedSignal) s;
+					TaskStartedSignal s2 = (TaskStartedSignal) s;
+					//SystemManager.taskSystem.taskStarted(s2.getRobotID(), s2.getTaskID());
 				}
 				else if(s.getSignalType() == SignalType.TaskCompleted) {
-//					TaskCompletedSignal s2 = (TaskCompletedSignal) s;
+					TaskCompletedSignal s2 = (TaskCompletedSignal) s;
+					//SystemManager.taskSystem.taskCompleted(s2.getRobotID(), s2.getTaskID());
 				}
 				else if(s.getSignalType() == SignalType.UpdateBlockPosition) {
 					UpdateBlockPositionSignal s2 = (UpdateBlockPositionSignal) s;

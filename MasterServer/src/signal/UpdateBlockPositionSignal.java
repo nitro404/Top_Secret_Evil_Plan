@@ -14,11 +14,11 @@ public class UpdateBlockPositionSignal extends Signal {
 									  Long.SIZE) / 8;
 	
 	private UpdateBlockPositionSignal() {
-		super(SignalType.BlockStateChange);
+		super(SignalType.UpdateBlockPosition);
 	}
 	
 	public UpdateBlockPositionSignal(byte blockID, int x, int y) {
-		super(SignalType.BlockStateChange);
+		super(SignalType.UpdateBlockPosition);
 		m_blockID = blockID;
 		m_x = x;
 		m_y = y;
@@ -70,6 +70,10 @@ public class UpdateBlockPositionSignal extends Signal {
 		byteStream.addInteger(m_x);
 		byteStream.addInteger(m_y);
 		byteStream.addLong(checksum());
+	}
+
+	public String toString() {
+		return super.toString() + " Block ID: " + m_blockID + " Position: (" + m_x + ", " + m_y + ")";
 	}
 	
 }

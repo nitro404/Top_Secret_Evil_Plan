@@ -16,7 +16,7 @@ public class UpdateActualRobotPoseSignal extends Signal {
 									  Long.SIZE) / 8;
 	
 	private UpdateActualRobotPoseSignal() {
-		super(SignalType.BlockStateChange);
+		super(SignalType.UpdateActualRobotPose);
 	}
 	
 	public UpdateActualRobotPoseSignal(byte robotID, RobotPose robotPose) {
@@ -24,7 +24,7 @@ public class UpdateActualRobotPoseSignal extends Signal {
 	}
 	
 	public UpdateActualRobotPoseSignal(byte robotID, int x, int y, int angle) {
-		super(SignalType.BlockStateChange);
+		super(SignalType.UpdateActualRobotPose);
 		m_robotID = robotID;
 		m_x = x;
 		m_y = y;
@@ -88,6 +88,10 @@ public class UpdateActualRobotPoseSignal extends Signal {
 		byteStream.addInteger(m_y);
 		byteStream.addInteger(m_angle);
 		byteStream.addLong(checksum());
+	}
+	
+	public String toString() {
+		return super.toString() + " Robot ID: " + m_robotID + " Position: (" + m_x + ", " + m_y + ") Angle: " + m_angle;
 	}
 	
 }

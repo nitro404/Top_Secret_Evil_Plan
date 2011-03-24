@@ -1,5 +1,6 @@
 package signal;
 
+import pot.*;
 import shared.*;
 
 public class PotStateChangeSignal extends Signal {
@@ -14,11 +15,11 @@ public class PotStateChangeSignal extends Signal {
 									  Long.SIZE) / 8;
 	
 	private PotStateChangeSignal() {
-		super(SignalType.BlockStateChange);
+		super(SignalType.PotStateChange);
 	}
 	
 	public PotStateChangeSignal(byte potID, byte robotID, byte potState) {
-		super(SignalType.BlockStateChange);
+		super(SignalType.PotStateChange);
 		m_potID = potID;
 		m_robotID = robotID;
 		m_potState = potState;
@@ -66,6 +67,10 @@ public class PotStateChangeSignal extends Signal {
 		byteStream.addByte(m_robotID);
 		byteStream.addByte(m_potState);
 		byteStream.addLong(checksum());
+	}
+
+	public String toString() {
+		return super.toString() + " Pot ID: " + m_potID + " Robot ID: " + m_robotID + " Pot State " + PotState.toString(m_potState);
 	}
 	
 }

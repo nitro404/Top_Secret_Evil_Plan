@@ -7,6 +7,7 @@ import block.*;
 import pot.*;
 import client.*;
 import shared.*;
+import signal.*;
 
 public class SystemManager {
 	
@@ -21,6 +22,8 @@ public class SystemManager {
 	
 	public static DisplayWindow displayWindow;
 	public static DebugWindow debugWindow;
+	
+	private static boolean m_started = false;
 	
 	public static void initialize(MasterPlanner masterPlanner) {
 		planner = masterPlanner;
@@ -50,6 +53,26 @@ public class SystemManager {
 		
 		client.initialize(Client.DEFAULT_HOST, Client.DEFAULT_PORT);
 		client.connect();
+	}
+	
+	public boolean isStarted() { return m_started; }
+	
+	public static void start() {
+		if(m_started) { return; }
+		client.sendSignal(new Signal(SignalType.StartSimulation));
+		m_started = true;
+		
+		/*
+		client.sendSignal(new BlockStateChangeSignal((byte) 1, (byte) 1, BlockState.Delivered));
+		client.sendSignal(new PotStateChangeSignal((byte) 0, (byte) 2, PotState.Delivered));
+		client.sendSignal(new RobotStateChangeSignal((byte) 2, RobotState.FindingBlock));
+		client.sendSignal(new TaskCompletedSignal((byte) 4, (byte) 2));
+		client.sendSignal(new TaskStartedSignal((byte) 5, (byte) 2));
+		client.sendSignal(new UpdateActualRobotPoseSignal((byte) 2, 320, 240, 90));
+		client.sendSignal(new UpdateEstimatedRobotPoseSignal((byte) 1, 259, 136, 42));
+		client.sendSignal(new UpdateBlockPositionSignal((byte) 8, 124, 248));
+		client.sendSignal(new UpdatePotPositionSignal((byte) 2, 90, 138));
+		*/
 	}
 	
 	public static void handlePose(Position position, int angle) {

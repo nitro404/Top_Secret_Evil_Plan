@@ -1,5 +1,6 @@
 package signal;
 
+import block.*;
 import shared.*;
 
 public class BlockStateChangeSignal extends Signal {
@@ -66,6 +67,10 @@ public class BlockStateChangeSignal extends Signal {
 		byteStream.addByte(m_robotID);
 		byteStream.addByte(m_blockState);
 		byteStream.addLong(checksum());
+	}
+	
+	public String toString() {
+		return super.toString() + " Block ID: " + m_blockID + " Robot ID: " + m_robotID + " Block State " + BlockState.toString(m_blockState);
 	}
 	
 }
