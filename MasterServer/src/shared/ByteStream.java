@@ -1,6 +1,8 @@
 package shared;
 
 import java.io.*;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
 
 public class ByteStream {
 	
@@ -12,6 +14,7 @@ public class ByteStream {
 	private int m_initialCapacity;
 	final public static int DEFAULT_CAPACITY = 64;
 	final public static int CAPACITY_INCREMENT = 32;
+	final public static String DEFAULT_IMAGE_FORMAT = "jpg";
 	
 	public ByteStream() {
 		m_data = new byte[DEFAULT_CAPACITY];
@@ -113,6 +116,20 @@ public class ByteStream {
 		}
 	}
 	
+	public void addBufferedImage(BufferedImage image) {
+		if(image == null) { return; }
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try { ImageIO.write(image, DEFAULT_IMAGE_FORMAT, baos); }
+		catch(IOException e) { return; }
+		try { baos.flush(); } catch(Exception e) { }
+		byte[] data = baos.toByteArray();
+		try { baos.close(); } catch(Exception e) { }
+		addInteger(data.length);
+		for(int i=0;i<data.length;i++) {
+			addByte(data[i]);
+		}
+	}
+	
 	public boolean getBoolean(int offset) {
 		return (getByte(offset) != 0) ? true : false;
 	}
@@ -171,6 +188,37 @@ public class ByteStream {
 		return s;
 	}
 	
+	public BufferedImage getBufferedImage(int offset) {
+		if(offset < 0 || offset + 4 >= m_data.length) { return null; }
+		int length = getInteger(offset);
+		offset += 4;
+		byte[] data = new byte[length];
+		if(offset + length >= m_data.length) { return null; }
+		for(int i=0;i<length;i++) {
+			data[i] = getByte(offset);
+			offset++;
+		}
+		InputStream in = new ByteArrayInputStream(data);
+		BufferedImage image;
+		try { image = ImageIO.read(in); }
+		catch(Exception e) { return null; }
+		return image;
+	}
+	
+	public BufferedImage getBufferedImage(int offset, int length) {
+		if(offset + length >= m_data.length) { return null; }
+		byte[] data = new byte[length];
+		for(int i=0;i<length;i++) {
+			data[i] = getByte(offset);
+			offset++;
+		}
+		InputStream in = new ByteArrayInputStream(data);
+		BufferedImage image;
+		try { image = ImageIO.read(in); }
+		catch(Exception e) { return null; }
+		return image;
+	}
+	
 	public boolean nextBoolean() {
 		boolean b = getBoolean(m_position);
 		m_position++;
@@ -223,6 +271,38 @@ public class ByteStream {
 		String s = getString(m_position, length);
 		if(length > 0) { m_position += 2 * length; }
 		return s;
+	}
+	
+	public BufferedImage nextBufferedImage() {
+		if(m_position + 4 >= m_data.length) { return null; }
+		int length = getInteger(m_position);
+		m_position += 4;
+		byte[] data = new byte[length];
+		if(m_position + length >= m_data.length) { return null; }
+		for(int i=0;i<length;i++) {
+			data[i] = getByte(m_position);
+			m_position++;
+		}
+		InputStream in = new ByteArrayInputStream(data);
+		BufferedImage image;
+		try { image = ImageIO.read(in); }
+		catch(Exception e) { return null; }
+		return image;
+	}
+	
+	public BufferedImage nextBufferedImage(int length) {
+		if(length <= 0) { return null; }
+		byte[] data = new byte[length];
+		for(int i=0;i<length;i++) {
+			if(m_position >= m_data.length) { return null; }
+			data[i] = getByte(m_position);
+			m_position++;
+		}
+		ByteArrayInputStream in = new ByteArrayInputStream(data);
+		BufferedImage image = null;
+		try { image = ImageIO.read(in); }
+		catch(Exception e) { return null; }
+		return image;
 	}
 	
 	public static long getChecksum(boolean b) {
@@ -300,6 +380,22 @@ public class ByteStream {
 		int tempLength = (s.length() > length) ? length : s.length(); 
 		for(int i=0;i<tempLength;i++) {
 			checksum += getChecksum(s.charAt(i));
+		}
+		return checksum;
+	}
+	
+	public static long getChecksum(BufferedImage img) {
+		if(img == null) { return 0; }
+		long checksum = 0;
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try { ImageIO.write(img, DEFAULT_IMAGE_FORMAT, baos); }
+		catch(IOException e) { return 0; }
+		try { baos.flush(); } catch(Exception e) { }
+		byte[] data = baos.toByteArray();
+		try { baos.close(); } catch(Exception e) { }
+		checksum += getChecksum(data.length);
+		for(int i=0;i<data.length;i++) {
+			checksum += getChecksum(data[i]);
 		}
 		return checksum;
 	}

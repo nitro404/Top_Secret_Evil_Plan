@@ -56,7 +56,7 @@ public class ServerInputSignalQueue extends Thread {
 			s2 = s;
 		}
 		else if(s.getSignalType() == SignalType.StartSimulation) {
-			SystemManager.start();
+			s2 = s;
 		}
 		else if(s.getSignalType() == SignalType.BlockStateChange) {
 			s2 = BlockStateChangeSignal.readFrom(ByteStream.readFrom(m_in, BlockStateChangeSignal.LENGTH)); 
@@ -84,6 +84,18 @@ public class ServerInputSignalQueue extends Thread {
 		}
 		else if(s.getSignalType() == SignalType.UpdateEstimatedRobotPose) {
 			s2 = UpdateEstimatedRobotPoseSignal.readFrom(ByteStream.readFrom(m_in, UpdateEstimatedRobotPoseSignal.LENGTH)); 
+		}
+		else if(s.getSignalType() == SignalType.RequestTrackerImage) {
+			s2 = RequestTrackerImageSignal.readFrom(ByteStream.readFrom(m_in, RequestTrackerImageSignal.LENGTH)); 
+		}
+		else if(s.getSignalType() == SignalType.ReplyTrackerImage) {
+			s2 = ReplyTrackerImageSignal.readFrom(ByteStream.readFrom(m_in, ReplyTrackerImageSignal.LENGTH), m_in); 
+		}
+		else if(s.getSignalType() == SignalType.BroadcastTrackerImage) {
+			s2 = BroadcastTrackerImageSignal.readFrom(ByteStream.readFrom(m_in, BroadcastTrackerImageSignal.LENGTH), m_in); 
+		}
+		else if(s.getSignalType() == SignalType.ReceiveTrackerNumber) {
+			s2 = ReceiveTrackerNumberSignal.readFrom(ByteStream.readFrom(m_in, ReceiveTrackerNumberSignal.LENGTH)); 
 		}
 		else {
 			return;
@@ -145,6 +157,26 @@ public class ServerInputSignalQueue extends Thread {
 				else if(s.getSignalType() == SignalType.UpdateEstimatedRobotPose) {
 					UpdateEstimatedRobotPoseSignal s2 = (UpdateEstimatedRobotPoseSignal) s;
 					SystemManager.robotSystem.setEstimatedPose(s2.getRobotID(), s2.getPose());
+				}
+				else if(s.getSignalType() == SignalType.RequestTrackerImage) {
+					RequestTrackerImageSignal s2 = (RequestTrackerImageSignal) s;
+					sendSignal(new ReplyTrackerImageSignal(SystemManager.trackerNumber, s2.getSourceTrackerID(), SystemManager.localTrackerImage));
+				}
+				else if(s.getSignalType() == SignalType.ReplyTrackerImage) {
+					ReplyTrackerImageSignal s2 = (ReplyTrackerImageSignal) s;
+					if(s2.getDestinationTrackerID() == SystemManager.trackerNumber) {
+						SystemManager.setTrackerImage(s2.getSourceTrackerID(), s2.getSourceTrackerImage());
+					}
+				}
+				else if(s.getSignalType() == SignalType.BroadcastTrackerImage) {
+					BroadcastTrackerImageSignal s2 = (BroadcastTrackerImageSignal) s;
+					SystemManager.setTrackerImage(s2.getSourceTrackerID(), s2.getSourceTrackerImage());
+				}
+				else if(s.getSignalType() == SignalType.ReceiveTrackerNumber) {
+					ReceiveTrackerNumberSignal s2 = (ReceiveTrackerNumberSignal) s;
+					SystemManager.trackerNumber = s2.getTrackerID();
+					SystemManager.setTrackerImage(SystemManager.trackerNumber, SystemManager.localTrackerImage);
+					sendSignal(new BroadcastTrackerImageSignal(SystemManager.trackerNumber, SystemManager.localTrackerImage));
 				}
 			}
 			

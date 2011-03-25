@@ -25,9 +25,9 @@ public class DisplayPanel extends JPanel implements Scrollable {
 		m_trackerImage = new BufferedImage[3];
 	}
 	
-	public void setTrackerImage(int index, BufferedImage image) {
-		if(image == null || index < 0 || index >= m_trackerImage.length) { return; }
-		m_trackerImage[index] = image;
+	public void setTrackerImage(byte trackerNumber, BufferedImage trackerImage) {
+		if(trackerImage == null || trackerNumber <= 0 || trackerNumber > m_trackerImage.length) { return; }
+		m_trackerImage[trackerNumber - 1] = trackerImage;
 	}
 	
 	public Dimension getPreferredScrollableViewportSize() {
@@ -70,18 +70,23 @@ public class DisplayPanel extends JPanel implements Scrollable {
 	public boolean getScrollableTracksViewportWidth() { return false; }
 	
 	public void paintComponent(Graphics g) {
-		super.paintComponent(g);
+		if(g == null) { return; }
 		
-		for(int i=0;i<m_trackerImage.length;i++) {
-			if(m_trackerImage[i] != null) {
-				g.drawImage(m_trackerImage[i], 0, i * 480, null);
+		try {
+			super.paintComponent(g);
+			
+			for(int i=0;i<m_trackerImage.length;i++) {
+				if(m_trackerImage[i] != null) {
+					g.drawImage(m_trackerImage[i], 0, i * 480, null);
+				}
 			}
+			
+			Graphics2D g2 = (Graphics2D) g;
+			if(SystemManager.potSystem != null) { SystemManager.potSystem.draw(g2); }
+			if(SystemManager.blockSystem != null) { SystemManager.blockSystem.draw(g2); }
+			if(SystemManager.robotSystem != null) { SystemManager.robotSystem.draw(g2); }
 		}
-		
-		Graphics2D g2 = (Graphics2D) g;
-		if(SystemManager.potSystem != null) { SystemManager.potSystem.draw(g2); }
-		if(SystemManager.blockSystem != null) { SystemManager.blockSystem.draw(g2); }
-		if(SystemManager.robotSystem != null) { SystemManager.robotSystem.draw(g2); }
+		catch(Exception e) { }
 	}
 	
 }

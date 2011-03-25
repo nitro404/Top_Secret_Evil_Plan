@@ -1,5 +1,7 @@
 package planner;
 
+import java.awt.image.BufferedImage;
+
 import settings.*;
 import client.*;
 import path.*;
@@ -13,6 +15,7 @@ import signal.*;
 
 public class SystemManager {
 	
+	public static byte trackerNumber;
 	public static SettingsManager settings;
 	public static SystemConsole console;
 	public static Client client;
@@ -22,6 +25,7 @@ public class SystemManager {
 	public static BlockSystem blockSystem;
 	public static PotSystem potSystem;
 	public static Webcam webcam;
+	public static BufferedImage localTrackerImage;
 	
 	public static DisplayWindow displayWindow;
 	public static DebugWindow debugWindow;
@@ -29,6 +33,8 @@ public class SystemManager {
 	private static boolean m_started = false;
 	
 	public static void initialize(MasterPlanner masterPlanner) {
+		trackerNumber = -1;
+		
 		planner = masterPlanner;
 		
 		settings = new SettingsManager();
@@ -60,17 +66,20 @@ public class SystemManager {
 		}
 		else {
 			console.writeLine("Webcam initialized successfully.");
-			while(!displayWindow.updateTrackerImage());
+			while(!updateLocalTrackerImage());
 		}
 		
 		client.initialize();
 		client.connect();
 	}
 	
-	public boolean isStarted() { return m_started; }
+	public static boolean isIdentified() { return trackerNumber > 0; }
+	
+	public static boolean isStarted() { return m_started; }
 	
 	public static void start() {
-		if(m_started) { return; }
+		if(isStarted() || !isIdentified()) { return; }
+		
 		client.sendSignal(new Signal(SignalType.StartSimulation));
 		m_started = true;
 		
@@ -85,6 +94,22 @@ public class SystemManager {
 		client.sendSignal(new UpdateBlockPositionSignal((byte) 8, 124, 248));
 		client.sendSignal(new UpdatePotPositionSignal((byte) 2, 90, 138));
 		*/
+	}
+	
+	public static void setTrackerImage(byte trackerNumber, BufferedImage trackerImage) {
+		displayWindow.setTrackerImage(trackerNumber, trackerImage);
+	}
+	
+	public static boolean updateLocalTrackerImage() {
+		if(webcam.active()) {
+			BufferedImage snapshot = webcam.capture();
+			if(snapshot != null) {
+				localTrackerImage = snapshot;
+				webcam.deallocate();
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public static void handlePose(Position position, int angle) {

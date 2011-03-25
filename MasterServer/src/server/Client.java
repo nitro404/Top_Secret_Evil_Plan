@@ -10,7 +10,7 @@ public class Client {
 	private int m_clientNumber;
 	private InetAddress m_ipAddress;
 	
-	private int m_trackerNumber = -1;
+	private byte m_trackerNumber = -1;
 	
 	private Socket m_connection;
 	private boolean m_connected = false;
@@ -60,9 +60,13 @@ public class Client {
 	
 	public boolean isIdentified() { return m_trackerNumber >= 1; }
 	
-	public int getTrackerNumber() { return m_trackerNumber; }
+	public byte getTrackerNumber() { return m_trackerNumber; }
 	
-	public void setTrackerNumber(int trackerNumber) { m_trackerNumber = trackerNumber; }
+	public void setTrackerNumber(byte trackerNumber) {
+		m_trackerNumber = trackerNumber;
+		sendSignal(new ReceiveTrackerNumberSignal(m_trackerNumber));
+		m_server.requestTrackerImages(m_trackerNumber);
+	}
 	
 	public Socket getConnection() { return m_connection; }
 	
@@ -114,15 +118,16 @@ public class Client {
 		m_connection = null;
 	}
 	
-	public void sendSignal(Signal s) {
-		m_outSignalQueue.addSignal(s);
-	}
-	
 	public DataInputStream getInputStream() { return m_in; }
 	
 	public DataOutputStream getOutputStream() { return m_out; }
 	
 	public int getClientNumber() { return m_clientNumber; }
+	
+	public void sendSignal(Signal s) {
+		if(s == null) { return; }
+		m_outSignalQueue.addSignal(s);
+	}
 	
 	public void readSignal() {
 		if(m_inSignalQueue == null) { return; }

@@ -2,10 +2,11 @@ package server;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 import settings.*;
 import shared.*;
 
-public class ServerWindow extends JFrame implements Updatable {
+public class ServerWindow extends JFrame implements WindowListener, Updatable {
 	
 	private Server m_server;
 	private SystemConsole m_console;
@@ -62,6 +63,18 @@ public class ServerWindow extends JFrame implements Updatable {
         m_consoleScrollPane = new JScrollPane(m_consoleText);
         add(m_consoleScrollPane);
     }
+
+	public void windowActivated(WindowEvent e) { }
+	public void windowClosed(WindowEvent e) { }
+	public void windowDeactivated(WindowEvent e) { }
+	public void windowDeiconified(WindowEvent e) { }
+	public void windowIconified(WindowEvent e) { }
+	public void windowOpened(WindowEvent e) { }
+	
+	public void windowClosing(WindowEvent e){
+		m_settings.save();
+		dispose();
+	}
 	
 	public void update() {
 		try {

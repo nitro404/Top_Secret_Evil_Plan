@@ -117,4 +117,24 @@ public class Server extends Thread {
 		}
 	}
 	
+	public void forwardToTracker(byte sourceTrackerID, byte destinationTrackerID, Signal signal) {
+		if(signal == null || sourceTrackerID <= 0 || destinationTrackerID <= 0) { return; }
+		for(int i=0;i<m_clients.size();i++) {
+			if(sourceTrackerID != m_clients.elementAt(i).getTrackerNumber() && m_clients.elementAt(i).getTrackerNumber() == destinationTrackerID) {
+				m_clients.elementAt(i).sendSignal(signal);
+			}
+		}
+	}
+	
+	public void requestTrackerImages(byte sourceTrackerID) {
+		if(sourceTrackerID <= 0) { return; }
+		
+		RequestTrackerImageSignal s = new RequestTrackerImageSignal(sourceTrackerID);
+		for(int i=0;i<m_clients.size();i++) {
+			if(sourceTrackerID != m_clients.elementAt(i).getTrackerNumber()) {
+				m_clients.elementAt(i).sendSignal(s);
+			}
+		}
+	}
+	
 }

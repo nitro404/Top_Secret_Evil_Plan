@@ -1,8 +1,8 @@
 package gui;
 
 import java.awt.*;
-import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.awt.event.*;
 import javax.swing.*;
 import planner.*;
 import shared.*;
@@ -32,6 +32,12 @@ public class DisplayWindow extends JFrame implements WindowListener, Updatable {
 		initComponents();
 	}
 	
+	public void initComponents() {
+		m_displayPanel = new DisplayPanel();
+		m_displayScrollPane = new JScrollPane(m_displayPanel);
+		add(m_displayScrollPane);
+	}
+
 	public void setVisible(boolean visiblity){
 		super.setVisible(visiblity);
 		
@@ -39,25 +45,8 @@ public class DisplayWindow extends JFrame implements WindowListener, Updatable {
 		SystemManager.debugWindow.setLocation(SystemManager.debugWindow.getX() + getInsets().left + getInsets().right, SystemManager.debugWindow.getY());
 	}
 	
-	public void initComponents() {
-		m_displayPanel = new DisplayPanel();
-		m_displayScrollPane = new JScrollPane(m_displayPanel);
-		add(m_displayScrollPane);
-	}
-	
-	public boolean updateTrackerImage() {
-		if(SystemManager.webcam.active()) {
-			BufferedImage snapshot = SystemManager.webcam.capture();
-			if(snapshot != null) {
-				m_displayPanel.setTrackerImage(0, snapshot);
-				m_displayPanel.setTrackerImage(1, snapshot);
-				m_displayPanel.setTrackerImage(2, snapshot);
-				SystemManager.webcam.stop();
-				SystemManager.webcam.deallocate();
-				return true;
-			}
-		}
-		return false;
+	public void setTrackerImage(byte trackerNumber, BufferedImage trackerImage) {
+		m_displayPanel.setTrackerImage(trackerNumber, trackerImage);
 	}
 	
 	public void windowActivated(WindowEvent e) { }
@@ -73,7 +62,8 @@ public class DisplayWindow extends JFrame implements WindowListener, Updatable {
 	}
 	
 	public void update() {
-		repaint();
+		try { repaint(); }
+		catch(Exception e) { }
 	}
 	
 }

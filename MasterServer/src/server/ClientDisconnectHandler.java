@@ -41,7 +41,7 @@ public class ClientDisconnectHandler extends Thread {
 					i--;
 					
 					if(c.timeout()) {
-						m_console.writeLine("Client #" + c.getClientNumber() + " timed out");
+						m_console.writeLine((c.isIdentified() ? "Tracker #" + c.getTrackerNumber() : "Client #" + c.getClientNumber()) + " timed out");
 					}
 				}
 			}

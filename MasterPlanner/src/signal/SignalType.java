@@ -15,6 +15,10 @@ public class SignalType {
 	final public static int UpdatePotPosition = 9;
 	final public static int UpdateActualRobotPose = 10;
 	final public static int UpdateEstimatedRobotPose = 11;
+	final public static int RequestTrackerImage = 12;
+	final public static int ReplyTrackerImage = 13;
+	final public static int BroadcastTrackerImage = 14;
+	final public static int ReceiveTrackerNumber = 15;
 	
 	final public static String[] signalNames = {
 		"Ping",
@@ -29,6 +33,10 @@ public class SignalType {
 		"UpdatePotPosition",
 		"UpdateActualRobotPose",
 		"UpdateEstimatedRobotPose",
+		"RequestTrackerImage",
+		"ReplyTrackerImage",
+		"BroadcastTrackerImage",
+		"ReceiveTrackerNumber"
 	};
 	
 	public static boolean isValid(int signalType) {

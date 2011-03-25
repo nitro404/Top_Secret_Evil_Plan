@@ -87,6 +87,18 @@ public class ClientInputSignalQueue extends Thread {
 		else if(s.getSignalType() == SignalType.UpdateEstimatedRobotPose) {
 			s2 = UpdateEstimatedRobotPoseSignal.readFrom(ByteStream.readFrom(m_in, UpdateEstimatedRobotPoseSignal.LENGTH)); 
 		}
+		else if(s.getSignalType() == SignalType.RequestTrackerImage) {
+			s2 = RequestTrackerImageSignal.readFrom(ByteStream.readFrom(m_in, RequestTrackerImageSignal.LENGTH)); 
+		}
+		else if(s.getSignalType() == SignalType.ReplyTrackerImage) {
+			s2 = ReplyTrackerImageSignal.readFrom(ByteStream.readFrom(m_in, ReplyTrackerImageSignal.LENGTH), m_in); 
+		}
+		else if(s.getSignalType() == SignalType.BroadcastTrackerImage) {
+			s2 = BroadcastTrackerImageSignal.readFrom(ByteStream.readFrom(m_in, BroadcastTrackerImageSignal.LENGTH), m_in); 
+		}
+		else if(s.getSignalType() == SignalType.ReceiveTrackerNumber) {
+			s2 = ReceiveTrackerNumberSignal.readFrom(ByteStream.readFrom(m_in, ReceiveTrackerNumberSignal.LENGTH)); 
+		}
 		else {
 			m_console.writeLine("Unexpected input signal of type: " + s.getSignalType());
 		}
@@ -99,13 +111,20 @@ public class ClientInputSignalQueue extends Thread {
 			if(!m_inSignalQueue.isEmpty()) {
 				Signal s = m_inSignalQueue.remove();
 				
-				m_console.writeLine("Received from Client #" + m_client.getClientNumber() + ": " + s.toString());
+				m_console.writeLine("Received from " + (m_client.isIdentified() ? "Tracker #" + m_client.getTrackerNumber() : "Client #" + m_client.getClientNumber()) + ": " + s.toString());
 				
 				if(s.getSignalType() == SignalType.Ping) {
 					sendSignal(new Signal(SignalType.Pong));
 				}
 				else if(s.getSignalType() == SignalType.Pong) {
 					m_client.pong();
+				}
+				else if(s.getSignalType() == SignalType.ReplyTrackerImage) {
+					ReplyTrackerImageSignal s2 = (ReplyTrackerImageSignal) s;
+					
+					if(m_client.isIdentified()) {
+						m_server.forwardToTracker(m_client.getTrackerNumber(), s2.getDestinationTrackerID(), s);
+					}
 				}
 				else if(SignalType.isValid(s.getSignalType())) {
 					if(m_client.isIdentified()) {

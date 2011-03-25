@@ -95,11 +95,11 @@ public class TrackerIdentifier extends Thread {
 					continue;
 				}
 				
-				int trackerNumber = -1;
+				byte trackerNumber = -1;
 				for(int j=0;j<SettingsManager.defaultTrackerIPAddress.length;j++) {
 					InetAddress trackerIP = m_settings.getTrackerIPAddress(j + 1);
 					if(trackerIP.equals(c.getIPAddress())) {
-						trackerNumber = j + 1;
+						trackerNumber = (byte) (j + 1);
 						break;
 					}
 				}
@@ -123,7 +123,7 @@ public class TrackerIdentifier extends Thread {
 					} while(!validInput);
 					
 					try {
-						trackerNumber = Integer.parseInt(input.toString());
+						trackerNumber = Byte.parseByte(input.toString());
 						trackerIdentified = true;
 					}
 					catch(NumberFormatException e) { }
