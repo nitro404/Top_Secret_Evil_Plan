@@ -29,7 +29,7 @@ public class ServerWindow extends JFrame implements Updatable {
 		m_settings = new SettingsManager();
 		m_settings.load();
 		
-		m_server.initialize(m_settings.getPort());
+		m_server.initialize();
 		setVisible(true);
 	}
 	
@@ -64,9 +64,12 @@ public class ServerWindow extends JFrame implements Updatable {
     }
 	
 	public void update() {
-		m_consoleText.setText(m_console.toString());
-		m_consoleText.setCaretPosition(m_consoleText.getText().length());
-		m_consoleText.scrollRectToVisible(new Rectangle(0, m_consoleText.getHeight() - 2, 1, 1));
+		try {
+			m_consoleText.setText(m_console.toString());
+			m_consoleText.setCaretPosition(m_consoleText.getText().length());
+			m_consoleText.scrollRectToVisible(new Rectangle(0, m_consoleText.getHeight() - 2, 1, 1));
+		}
+		catch(Exception e) { }
 	}
 	
 }

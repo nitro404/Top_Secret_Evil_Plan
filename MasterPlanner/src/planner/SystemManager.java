@@ -51,7 +51,7 @@ public class SystemManager {
 		blockSystem = new BlockSystem();
 		potSystem = new PotSystem();
 		
-		client.initialize(Client.DEFAULT_HOST, Client.DEFAULT_PORT);
+		client.initialize();
 		client.connect();
 	}
 	

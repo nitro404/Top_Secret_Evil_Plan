@@ -108,7 +108,9 @@ public class ClientInputSignalQueue extends Thread {
 					m_client.pong();
 				}
 				else if(SignalType.isValid(s.getSignalType())) {
-					m_server.forwardSignal(m_client.getClientNumber(), s);
+					if(m_client.isIdentified()) {
+						m_server.forwardSignal(m_client.getClientNumber(), s);
+					}
 				}
 				else {
 					m_console.writeLine("Unexpected input signal of type: " + s.getSignalType());

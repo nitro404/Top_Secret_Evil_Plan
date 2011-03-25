@@ -8,7 +8,9 @@ import signal.*;
 public class Client {
 	
 	private int m_clientNumber;
-	protected InetAddress m_ipAddress;
+	private InetAddress m_ipAddress;
+	
+	private int m_trackerNumber = -1;
 	
 	private Socket m_connection;
 	private boolean m_connected = false;
@@ -55,6 +57,12 @@ public class Client {
 			m_console.writeLine("Unable to initalize connection to client #" + m_clientNumber);
 		}
 	}
+	
+	public boolean isIdentified() { return m_trackerNumber >= 1; }
+	
+	public int getTrackerNumber() { return m_trackerNumber; }
+	
+	public void setTrackerNumber(int trackerNumber) { m_trackerNumber = trackerNumber; }
 	
 	public Socket getConnection() { return m_connection; }
 	

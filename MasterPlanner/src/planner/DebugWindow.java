@@ -78,9 +78,12 @@ public class DebugWindow extends JFrame implements ActionListener, Updatable {
 	}
 	
 	public void update() {
-		m_consoleText.setText(SystemManager.console.toString());
-		m_consoleText.setCaretPosition(m_consoleText.getText().length());
-		m_consoleText.scrollRectToVisible(new Rectangle(0, m_consoleText.getHeight() - 2, 1, 1));
+		try {
+			m_consoleText.setText(SystemManager.console.toString());
+			m_consoleText.setCaretPosition(m_consoleText.getText().length());
+			m_consoleText.scrollRectToVisible(new Rectangle(0, m_consoleText.getHeight() - 2, 1, 1));
+		}
+		catch(Exception e) { }
 	}
 	
 	public void actionPerformed(ActionEvent e) {
