@@ -138,11 +138,12 @@ public class Client {
 	}
 	
 	public void sendSignal(Signal s) {
-		if(s == null) { return; }
+		if(s == null || m_outSignalQueue == null) { return; }
 		m_outSignalQueue.addSignal(s);
 	}
 	
 	public void readSignal() {
+		if(m_inSignalQueue == null) { return; }
 		m_inSignalQueue.readSignal();
 	}
 	

@@ -1,11 +1,13 @@
 package planner;
 
-import path.*;
 import settings.*;
+import client.*;
+import path.*;
 import robot.*;
 import block.*;
 import pot.*;
-import client.*;
+import gui.*;
+import imaging.*;
 import shared.*;
 import signal.*;
 
@@ -15,10 +17,11 @@ public class SystemManager {
 	public static SystemConsole console;
 	public static Client client;
 	public static MasterPlanner planner;
-	public static PathSystem paths;
+	public static PathSystem pathSystem;
 	public static RobotSystem robotSystem;
 	public static BlockSystem blockSystem;
 	public static PotSystem potSystem;
+	public static Webcam webcam;
 	
 	public static DisplayWindow displayWindow;
 	public static DebugWindow debugWindow;
@@ -45,11 +48,19 @@ public class SystemManager {
 		
 		if(planner != null) { planner.setTrackerFrameRate(settings.getFrameRate()); }
 		
-		paths = PathSystem.readFrom(settings.getPathDataFile());
+		pathSystem = PathSystem.readFrom(settings.getPathDataFile());
 		
 		robotSystem = new RobotSystem();
 		blockSystem = new BlockSystem();
 		potSystem = new PotSystem();
+		
+		webcam = new Webcam(640, 480);
+		if(!webcam.initialize()) {
+			console.writeLine("Unable to initialize webcam.");
+		}
+		else {
+			console.writeLine("Webcam initialized successfully.");
+		}
 		
 		client.initialize();
 		client.connect();
@@ -73,6 +84,10 @@ public class SystemManager {
 		client.sendSignal(new UpdateBlockPositionSignal((byte) 8, 124, 248));
 		client.sendSignal(new UpdatePotPositionSignal((byte) 2, 90, 138));
 		*/
+	}
+	
+	public static boolean updateTrackerImage() {
+		return displayWindow.updateTrackerImage();
 	}
 	
 	public static void handlePose(Position position, int angle) {

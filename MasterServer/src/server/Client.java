@@ -125,6 +125,7 @@ public class Client {
 	public int getClientNumber() { return m_clientNumber; }
 	
 	public void readSignal() {
+		if(m_inSignalQueue == null) { return; }
 		m_inSignalQueue.readSignal();
 	}
 	

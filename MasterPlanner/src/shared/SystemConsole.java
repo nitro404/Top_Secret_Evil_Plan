@@ -28,12 +28,12 @@ public class SystemConsole {
     
     public void writeLine(String text) {
 		m_consoleEntries.add(new SystemConsoleEntry(text));
-		m_target.update();
+		if(m_target != null) { m_target.update(); }
     }
     
     public void clear() {
     	m_consoleEntries.clear();
-    	m_target.update();
+    	if(m_target != null) { m_target.update(); }
     }
     
     public String toString() {

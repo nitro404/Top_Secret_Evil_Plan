@@ -1,12 +1,13 @@
-package planner;
+package gui;
 
+import planner.*;
 import java.awt.*;
-import javax.swing.*;
 import java.awt.event.*;
+import javax.swing.*;
 
 import shared.*;
 
-public class DebugWindow extends JFrame implements ActionListener, Updatable {
+public class DebugWindow extends JFrame implements ActionListener, WindowListener, Updatable {
 	
 	private JTextArea m_consoleText;
 	private Font m_consoleFont;
@@ -15,7 +16,10 @@ public class DebugWindow extends JFrame implements ActionListener, Updatable {
 	private JMenuBar menuBar;
 	
 	private JMenu fileMenu;
+	private JMenuItem fileConnectMenuItem;
+	private JMenuItem fileDisconnectMenuItem;
 	private JMenuItem fileStartSimulationMenuItem;
+	private JMenuItem fileUpdateTrackerImagesItem;
 	private JMenuItem fileExitMenuItem;
     
 	private JMenu settingsMenu;
@@ -31,6 +35,7 @@ public class DebugWindow extends JFrame implements ActionListener, Updatable {
 		setSize(640, 800);
 		setMinimumSize(new Dimension(320, 240));
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		addWindowListener(this);
 		
 		initMenu();
 		initComponents();
@@ -40,7 +45,10 @@ public class DebugWindow extends JFrame implements ActionListener, Updatable {
 	    menuBar = new JMenuBar();
         
         fileMenu = new JMenu("File");
+        fileConnectMenuItem = new JMenuItem("Connect");
+    	fileDisconnectMenuItem = new JMenuItem("Disconnect");
         fileStartSimulationMenuItem = new JMenuItem("Start Simulation");
+        fileUpdateTrackerImagesItem = new JMenuItem("Update Tracker Images");
         fileExitMenuItem = new JMenuItem("Exit");
         
         settingsMenu = new JMenu("Settings");
@@ -49,12 +57,18 @@ public class DebugWindow extends JFrame implements ActionListener, Updatable {
         helpMenu = new JMenu("Help");
         helpAboutMenuItem = new JMenuItem("About");
         
+        fileConnectMenuItem.addActionListener(this);
+        fileDisconnectMenuItem.addActionListener(this);
         fileStartSimulationMenuItem.addActionListener(this);
+        fileUpdateTrackerImagesItem.addActionListener(this);
         fileExitMenuItem.addActionListener(this);
         settingsSaveMenuItem.addActionListener(this);
         helpAboutMenuItem.addActionListener(this);
         
+        fileMenu.add(fileConnectMenuItem);
+        fileMenu.add(fileDisconnectMenuItem);
         fileMenu.add(fileStartSimulationMenuItem);
+        fileMenu.add(fileUpdateTrackerImagesItem);
         fileMenu.add(fileExitMenuItem);
         
         settingsMenu.add(settingsSaveMenuItem);
@@ -86,11 +100,32 @@ public class DebugWindow extends JFrame implements ActionListener, Updatable {
 		catch(Exception e) { }
 	}
 	
+	public void windowActivated(WindowEvent e) { }
+	public void windowClosed(WindowEvent e) { }
+	public void windowDeactivated(WindowEvent e) { }
+	public void windowDeiconified(WindowEvent e) { }
+	public void windowIconified(WindowEvent e) { }
+	public void windowOpened(WindowEvent e) { }
+	
+	public void windowClosing(WindowEvent e){
+		SystemManager.settings.save();
+		dispose();
+	}
+	
 	public void actionPerformed(ActionEvent e) {
-		if(e.getSource() == fileStartSimulationMenuItem) {
-			SystemManager.start();
+		if(e.getSource() == fileConnectMenuItem) {
+			SystemManager.client.connect();
+		}
+		if(e.getSource() == fileDisconnectMenuItem) {
+			SystemManager.client.disconnect();
 		}
 		else if(e.getSource() == fileStartSimulationMenuItem) {
+			SystemManager.start();
+		}
+		else if(e.getSource() == fileUpdateTrackerImagesItem) {
+			SystemManager.updateTrackerImage();
+		}
+		else if(e.getSource() == fileExitMenuItem) {
 			System.exit(0);
 		}
 		else if(e.getSource() == settingsSaveMenuItem) {
