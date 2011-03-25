@@ -23,6 +23,7 @@ public class Webcam implements ControllerListener {
 	private MediaLocator m_mediaLocator;
 	private Player m_webcam;
 	private boolean m_active;
+	private boolean m_deallocated;
 	private FrameGrabbingControl m_frameGrabber;
 	private Object m_waitSync;
 	private boolean m_transition;
@@ -45,13 +46,14 @@ public class Webcam implements ControllerListener {
 		}
 		
 		m_active = false;
+		m_deallocated = false;
 		m_mediaLocator = new MediaLocator("vfw://0");
 		m_waitSync = new Object();
 		m_transition = true;
 	}
 	
 	public boolean initialize() {
-		if(m_active) { return false; }
+		if(m_active && !m_deallocated) { return false; }
 		
 		try { m_webcam = Manager.createRealizedPlayer(m_mediaLocator); }
 		catch(Exception e) { return false; }
@@ -87,6 +89,16 @@ public class Webcam implements ControllerListener {
 	synchronized public void stop() {
 		m_active = false;
 		m_webcam.stop();
+	}
+	
+	synchronized public void deallocate() {
+		stop();
+		m_deallocated = true;
+		m_frameGrabber = null;
+		m_webcam.removeControllerListener(this);
+		m_webcam.close();
+		m_webcam.deallocate();
+		m_webcam = null;
 	}
 	
 	public boolean setWidth(int width) {

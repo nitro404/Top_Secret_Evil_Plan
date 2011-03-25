@@ -53,6 +53,7 @@ public class DisplayWindow extends JFrame implements WindowListener, Updatable {
 				m_displayPanel.setTrackerImage(1, snapshot);
 				m_displayPanel.setTrackerImage(2, snapshot);
 				SystemManager.webcam.stop();
+				SystemManager.webcam.deallocate();
 				return true;
 			}
 		}

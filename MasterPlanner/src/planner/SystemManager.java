@@ -60,6 +60,7 @@ public class SystemManager {
 		}
 		else {
 			console.writeLine("Webcam initialized successfully.");
+			while(!displayWindow.updateTrackerImage());
 		}
 		
 		client.initialize();
@@ -84,10 +85,6 @@ public class SystemManager {
 		client.sendSignal(new UpdateBlockPositionSignal((byte) 8, 124, 248));
 		client.sendSignal(new UpdatePotPositionSignal((byte) 2, 90, 138));
 		*/
-	}
-	
-	public static boolean updateTrackerImage() {
-		return displayWindow.updateTrackerImage();
 	}
 	
 	public static void handlePose(Position position, int angle) {

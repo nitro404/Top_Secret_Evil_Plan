@@ -19,7 +19,6 @@ public class DebugWindow extends JFrame implements ActionListener, WindowListene
 	private JMenuItem fileConnectMenuItem;
 	private JMenuItem fileDisconnectMenuItem;
 	private JMenuItem fileStartSimulationMenuItem;
-	private JMenuItem fileUpdateTrackerImagesItem;
 	private JMenuItem fileExitMenuItem;
     
 	private JMenu settingsMenu;
@@ -48,7 +47,6 @@ public class DebugWindow extends JFrame implements ActionListener, WindowListene
         fileConnectMenuItem = new JMenuItem("Connect");
     	fileDisconnectMenuItem = new JMenuItem("Disconnect");
         fileStartSimulationMenuItem = new JMenuItem("Start Simulation");
-        fileUpdateTrackerImagesItem = new JMenuItem("Update Tracker Images");
         fileExitMenuItem = new JMenuItem("Exit");
         
         settingsMenu = new JMenu("Settings");
@@ -60,7 +58,6 @@ public class DebugWindow extends JFrame implements ActionListener, WindowListene
         fileConnectMenuItem.addActionListener(this);
         fileDisconnectMenuItem.addActionListener(this);
         fileStartSimulationMenuItem.addActionListener(this);
-        fileUpdateTrackerImagesItem.addActionListener(this);
         fileExitMenuItem.addActionListener(this);
         settingsSaveMenuItem.addActionListener(this);
         helpAboutMenuItem.addActionListener(this);
@@ -68,7 +65,6 @@ public class DebugWindow extends JFrame implements ActionListener, WindowListene
         fileMenu.add(fileConnectMenuItem);
         fileMenu.add(fileDisconnectMenuItem);
         fileMenu.add(fileStartSimulationMenuItem);
-        fileMenu.add(fileUpdateTrackerImagesItem);
         fileMenu.add(fileExitMenuItem);
         
         settingsMenu.add(settingsSaveMenuItem);
@@ -121,9 +117,6 @@ public class DebugWindow extends JFrame implements ActionListener, WindowListene
 		}
 		else if(e.getSource() == fileStartSimulationMenuItem) {
 			SystemManager.start();
-		}
-		else if(e.getSource() == fileUpdateTrackerImagesItem) {
-			SystemManager.updateTrackerImage();
 		}
 		else if(e.getSource() == fileExitMenuItem) {
 			System.exit(0);
