@@ -124,7 +124,7 @@ public class ClientInputSignalQueue extends Thread {
 					ReplyTrackerImageSignal s2 = (ReplyTrackerImageSignal) s;
 					
 					if(m_client.isIdentified()) {
-						m_server.forwardToTracker(m_client.getTrackerNumber(), s2.getDestinationTrackerID(), s);
+						m_server.forwardToTracker(m_client.getTrackerNumber(), s2.getDestinationTrackerNumber(), s);
 					}
 				}
 				else if(SignalType.isValid(s.getSignalType())) {

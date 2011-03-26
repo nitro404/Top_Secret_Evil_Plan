@@ -31,24 +31,24 @@ public class SettingsManager {
 		m_signalDebugLevel = defaultSignalDebugLevel;
 	}
 
-	public InetAddress getTrackerIPAddress(int trackerID) {
-		if(trackerID < 1 || trackerID > m_trackerIPAddress.length) { return null; }
-		return m_trackerIPAddress[trackerID - 1];
+	public InetAddress getTrackerIPAddress(int trackerNumber) {
+		if(trackerNumber < 1 || trackerNumber > m_trackerIPAddress.length) { return null; }
+		return m_trackerIPAddress[trackerNumber - 1];
 	}
 	
-	public InetAddress getDefaultTrackerIPAddress(int trackerID) {
-		if(trackerID < 1 || trackerID > defaultTrackerIPAddress.length) { return null; }
-		return defaultTrackerIPAddress[trackerID - 1];
+	public InetAddress getDefaultTrackerIPAddress(int trackerNumber) {
+		if(trackerNumber < 1 || trackerNumber > defaultTrackerIPAddress.length) { return null; }
+		return defaultTrackerIPAddress[trackerNumber - 1];
 	}
 	
 	public int getPort() { return m_port; }
 	
 	public byte getSignalDebugLevel() { return m_signalDebugLevel; }
 	
-	public boolean setTrackerIPAddress(int trackerID, String hostAddress) {
-		if(hostAddress == null || trackerID < 1 || trackerID > m_trackerIPAddress.length) { return false; }
+	public boolean setTrackerIPAddress(int trackerNumber, String hostAddress) {
+		if(hostAddress == null || trackerNumber < 1 || trackerNumber > m_trackerIPAddress.length) { return false; }
 		try {
-			m_trackerIPAddress[trackerID - 1] = InetAddress.getByName(hostAddress);
+			m_trackerIPAddress[trackerNumber - 1] = InetAddress.getByName(hostAddress);
 		}
 		catch(UnknownHostException e) {
 			return false;

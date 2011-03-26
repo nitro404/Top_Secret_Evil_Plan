@@ -4,7 +4,7 @@ import shared.*;
 
 public class ReceiveTrackerNumberSignal extends Signal {
 	
-	private byte m_trackerID;
+	private byte m_trackerNumber;
 	
 	final public static int LENGTH = (Byte.SIZE +
 									  Long.SIZE) / 8;
@@ -13,18 +13,18 @@ public class ReceiveTrackerNumberSignal extends Signal {
 		super(SignalType.ReceiveTrackerNumber);
 	}
 	
-	public ReceiveTrackerNumberSignal(byte trackerID) {
+	public ReceiveTrackerNumberSignal(byte trackerNumber) {
 		super(SignalType.ReceiveTrackerNumber);
-		m_trackerID = trackerID;
+		m_trackerNumber = trackerNumber;
 	}
 	
-	public byte getTrackerID() {
-		return m_trackerID;
+	public byte getTrackerNumber() {
+		return m_trackerNumber;
 	}
 	
 	public long checksum() {
 		long checksum = 0;
-		checksum += ByteStream.getChecksum(m_trackerID);
+		checksum += ByteStream.getChecksum(m_trackerNumber);
 		return checksum;
 	}
 	
@@ -33,7 +33,7 @@ public class ReceiveTrackerNumberSignal extends Signal {
 		
 		ReceiveTrackerNumberSignal s2 = new ReceiveTrackerNumberSignal();
 		
-		s2.m_trackerID = byteStream.nextByte();
+		s2.m_trackerNumber = byteStream.nextByte();
 		long checksum = byteStream.nextLong();
 		if(checksum != s2.checksum()) { return null; }
 		
@@ -44,12 +44,12 @@ public class ReceiveTrackerNumberSignal extends Signal {
 		if(byteStream == null) { return; }
 		
 		super.writeTo(byteStream);
-		byteStream.addByte(m_trackerID);
+		byteStream.addByte(m_trackerNumber);
 		byteStream.addLong(checksum());
 	}
 	
 	public String toString() {
-		return super.toString() + " Tracker ID: " + m_trackerID;
+		return super.toString() + " Tracker ID: " + m_trackerNumber;
 	}
 	
 }

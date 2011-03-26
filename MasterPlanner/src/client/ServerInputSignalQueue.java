@@ -163,21 +163,21 @@ public class ServerInputSignalQueue extends Thread {
 				}
 				else if(s.getSignalType() == SignalType.RequestTrackerImage) {
 					RequestTrackerImageSignal s2 = (RequestTrackerImageSignal) s;
-					sendSignal(new ReplyTrackerImageSignal(SystemManager.trackerNumber, s2.getSourceTrackerID(), SystemManager.localTrackerImage));
+					sendSignal(new ReplyTrackerImageSignal(SystemManager.trackerNumber, s2.getSourceTrackerNumber(), SystemManager.localTrackerImage));
 				}
 				else if(s.getSignalType() == SignalType.ReplyTrackerImage) {
 					ReplyTrackerImageSignal s2 = (ReplyTrackerImageSignal) s;
-					if(s2.getDestinationTrackerID() == SystemManager.trackerNumber) {
-						SystemManager.setTrackerImage(s2.getSourceTrackerID(), s2.getSourceTrackerImage());
+					if(s2.getDestinationTrackerNumber() == SystemManager.trackerNumber) {
+						SystemManager.setTrackerImage(s2.getSourceTrackerNumber(), s2.getSourceTrackerImage());
 					}
 				}
 				else if(s.getSignalType() == SignalType.BroadcastTrackerImage) {
 					BroadcastTrackerImageSignal s2 = (BroadcastTrackerImageSignal) s;
-					SystemManager.setTrackerImage(s2.getSourceTrackerID(), s2.getSourceTrackerImage());
+					SystemManager.setTrackerImage(s2.getSourceTrackerNumber(), s2.getSourceTrackerImage());
 				}
 				else if(s.getSignalType() == SignalType.ReceiveTrackerNumber) {
 					ReceiveTrackerNumberSignal s2 = (ReceiveTrackerNumberSignal) s;
-					SystemManager.trackerNumber = s2.getTrackerID();
+					SystemManager.trackerNumber = s2.getTrackerNumber();
 					SystemManager.setTrackerImage(SystemManager.trackerNumber, SystemManager.localTrackerImage);
 					sendSignal(new BroadcastTrackerImageSignal(SystemManager.trackerNumber, SystemManager.localTrackerImage));
 				}

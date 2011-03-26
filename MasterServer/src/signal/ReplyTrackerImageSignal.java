@@ -6,8 +6,8 @@ import shared.*;
 
 public class ReplyTrackerImageSignal extends Signal {
 	
-	private byte m_sourceTrackerID;
-	private byte m_destinationTrackerID;
+	private byte m_sourceTrackerNumber;
+	private byte m_destinationTrackerNumber;
 	private BufferedImage m_sourceTrackerImage;
 	
 	final public static int LENGTH = (Byte.SIZE +
@@ -19,19 +19,19 @@ public class ReplyTrackerImageSignal extends Signal {
 		super(SignalType.ReplyTrackerImage);
 	}
 	
-	public ReplyTrackerImageSignal(byte sourceTrackerID, byte destinationTrackerID, BufferedImage sourceTrackerImage) {
+	public ReplyTrackerImageSignal(byte sourceTrackerNumber, byte destinationTrackerNumber, BufferedImage sourceTrackerImage) {
 		super(SignalType.ReplyTrackerImage);
-		m_sourceTrackerID = sourceTrackerID;
-		m_destinationTrackerID = destinationTrackerID;
+		m_sourceTrackerNumber = sourceTrackerNumber;
+		m_destinationTrackerNumber = destinationTrackerNumber;
 		m_sourceTrackerImage = sourceTrackerImage;
 	}
 	
-	public byte getSourceTrackerID() {
-		return m_sourceTrackerID;
+	public byte getSourceTrackerNumber() {
+		return m_sourceTrackerNumber;
 	}
 	
-	public byte getDestinationTrackerID() {
-		return m_destinationTrackerID;
+	public byte getDestinationTrackerNumber() {
+		return m_destinationTrackerNumber;
 	}
 	
 	public BufferedImage getSourceTrackerImage() {
@@ -40,8 +40,8 @@ public class ReplyTrackerImageSignal extends Signal {
 	
 	public long checksum() {
 		long checksum = 0;
-		checksum += ByteStream.getChecksum(m_sourceTrackerID);
-		checksum += ByteStream.getChecksum(m_destinationTrackerID);
+		checksum += ByteStream.getChecksum(m_sourceTrackerNumber);
+		checksum += ByteStream.getChecksum(m_destinationTrackerNumber);
 		checksum += ByteStream.getChecksum(m_sourceTrackerImage);
 		return checksum;
 	}
@@ -51,8 +51,8 @@ public class ReplyTrackerImageSignal extends Signal {
 		
 		ReplyTrackerImageSignal s2 = new ReplyTrackerImageSignal();
 		
-		s2.m_sourceTrackerID = byteStream.nextByte();
-		s2.m_destinationTrackerID = byteStream.nextByte();
+		s2.m_sourceTrackerNumber = byteStream.nextByte();
+		s2.m_destinationTrackerNumber = byteStream.nextByte();
 		byteStream.nextLong(); // ignore checksum
 		int dataLength = byteStream.nextInteger();
 		ByteStream imageStream = ByteStream.readFrom(in, dataLength);
@@ -67,14 +67,14 @@ public class ReplyTrackerImageSignal extends Signal {
 		if(byteStream == null) { return; }
 		
 		super.writeTo(byteStream);
-		byteStream.addByte(m_sourceTrackerID);
-		byteStream.addByte(m_destinationTrackerID);
+		byteStream.addByte(m_sourceTrackerNumber);
+		byteStream.addByte(m_destinationTrackerNumber);
 		byteStream.addLong(checksum());
 		byteStream.addBufferedImage(m_sourceTrackerImage);
 	}
 	
 	public String toString() {
-		return super.toString() + " Source Tracker ID: " + m_sourceTrackerID + " Destination Tracker ID: " + m_destinationTrackerID;
+		return super.toString() + " Source Tracker ID: " + m_sourceTrackerNumber + " Destination Tracker ID: " + m_destinationTrackerNumber;
 	}
 	
 }

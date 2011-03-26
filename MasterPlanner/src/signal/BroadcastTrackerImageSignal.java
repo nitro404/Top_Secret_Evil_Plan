@@ -6,7 +6,7 @@ import shared.*;
 
 public class BroadcastTrackerImageSignal extends Signal {
 	
-	private byte m_sourceTrackerID;
+	private byte m_sourceTrackerNumber;
 	private BufferedImage m_sourceTrackerImage;
 	
 	final public static int LENGTH = (Byte.SIZE +
@@ -17,14 +17,14 @@ public class BroadcastTrackerImageSignal extends Signal {
 		super(SignalType.BroadcastTrackerImage);
 	}
 	
-	public BroadcastTrackerImageSignal(byte sourceTrackerID, BufferedImage sourceTrackerImage) {
+	public BroadcastTrackerImageSignal(byte sourceTrackerNumber, BufferedImage sourceTrackerImage) {
 		super(SignalType.BroadcastTrackerImage);
-		m_sourceTrackerID = sourceTrackerID;
+		m_sourceTrackerNumber = sourceTrackerNumber;
 		m_sourceTrackerImage = sourceTrackerImage;
 	}
 	
-	public byte getSourceTrackerID() {
-		return m_sourceTrackerID;
+	public byte getSourceTrackerNumber() {
+		return m_sourceTrackerNumber;
 	}
 	
 	public BufferedImage getSourceTrackerImage() {
@@ -33,7 +33,7 @@ public class BroadcastTrackerImageSignal extends Signal {
 	
 	public long checksum() {
 		long checksum = 0;
-		checksum += ByteStream.getChecksum(m_sourceTrackerID);
+		checksum += ByteStream.getChecksum(m_sourceTrackerNumber);
 		checksum += ByteStream.getChecksum(m_sourceTrackerImage);
 		return checksum;
 	}
@@ -43,7 +43,7 @@ public class BroadcastTrackerImageSignal extends Signal {
 		
 		BroadcastTrackerImageSignal s2 = new BroadcastTrackerImageSignal();
 		
-		s2.m_sourceTrackerID = byteStream.nextByte();
+		s2.m_sourceTrackerNumber = byteStream.nextByte();
 		byteStream.nextLong(); // ignore checksum
 		int dataLength = byteStream.nextInteger();
 		ByteStream imageStream = ByteStream.readFrom(in, dataLength);
@@ -58,13 +58,13 @@ public class BroadcastTrackerImageSignal extends Signal {
 		if(byteStream == null) { return; }
 		
 		super.writeTo(byteStream);
-		byteStream.addByte(m_sourceTrackerID);
+		byteStream.addByte(m_sourceTrackerNumber);
 		byteStream.addLong(checksum());
 		byteStream.addBufferedImage(m_sourceTrackerImage);
 	}
 	
 	public String toString() {
-		return super.toString() + " Source Tracker ID: " + m_sourceTrackerID;
+		return super.toString() + " Source Tracker ID: " + m_sourceTrackerNumber;
 	}
 	
 }
