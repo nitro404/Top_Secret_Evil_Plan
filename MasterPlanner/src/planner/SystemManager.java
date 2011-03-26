@@ -1,6 +1,9 @@
 package planner;
 
+import java.io.*;
 import java.awt.image.BufferedImage;
+
+import javax.imageio.ImageIO;
 
 import settings.*;
 import client.*;
@@ -52,9 +55,11 @@ public class SystemManager {
 		
 		console.setTarget(debugWindow);
 		
+		loadLocalTrackerImage();
+		
 		if(planner != null) { planner.setTrackerFrameRate(settings.getFrameRate()); }
 		
-		pathSystem = PathSystem.readFrom(settings.getPathDataFile());
+		pathSystem = PathSystem.readFrom(settings.getPathDataFileName());
 		
 		robotSystem = new RobotSystem();
 		blockSystem = new BlockSystem();
@@ -100,11 +105,29 @@ public class SystemManager {
 		displayWindow.setTrackerImage(trackerNumber, trackerImage);
 	}
 	
+	public static boolean loadLocalTrackerImage() {
+		File trackerImageFile = new File(settings.getTrackerImageFileName());
+		if(!trackerImageFile.exists() || !trackerImageFile.isFile()) { return false; }
+		BufferedImage trackerImage = null;
+		try { trackerImage = ImageIO.read(trackerImageFile); }
+		catch(Exception e) { return false; }
+		localTrackerImage = trackerImage;
+		return true;
+	}
+	
+	public static boolean saveLocalTrackerImage() {
+		File trackerImageFile = new File(settings.getTrackerImageFileName());
+		try { ImageIO.write(localTrackerImage, "jpg", trackerImageFile); }
+		catch(Exception e) { return false; }
+		return true;
+	}
+	
 	public static boolean updateLocalTrackerImage() {
 		if(webcam.active()) {
 			BufferedImage snapshot = webcam.capture();
 			if(snapshot != null) {
 				localTrackerImage = snapshot;
+				saveLocalTrackerImage();
 				webcam.deallocate();
 				return true;
 			}

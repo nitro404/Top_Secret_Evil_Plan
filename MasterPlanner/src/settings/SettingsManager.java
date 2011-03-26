@@ -8,12 +8,14 @@ public class SettingsManager {
 	private VariableSystem m_settings;
 	
 	private String m_pathDataFileName;
+	private String m_trackerImageFileName;
 	private int m_frameRate;
 	private InetAddress m_serverIPAddress;
 	private int m_serverPort;
 	
 	final public static String defaultSettingsFileName = "planner.ini";
 	final public static String defaultPathDataFileName = "paths.ini";
+	final public static String defaultTrackerImageFileName = "TrackerImage.jpg";
 	final public static int defaultFrameRate = 2;
 	public static InetAddress defaultServerIPAddress;
 	final public static int defaultServerPort = Client.DEFAULT_PORT;
@@ -21,6 +23,7 @@ public class SettingsManager {
 	public SettingsManager() {
 		m_settings = new VariableSystem();
 		m_pathDataFileName = defaultPathDataFileName;
+		m_trackerImageFileName = defaultTrackerImageFileName;
 		m_frameRate = defaultFrameRate;
 		try { defaultServerIPAddress = InetAddress.getByName(Client.DEFAULT_HOST); }
 		catch(UnknownHostException e) {
@@ -31,7 +34,9 @@ public class SettingsManager {
 		m_serverPort = defaultServerPort;
 	}
 	
-	public String getPathDataFile() { return m_pathDataFileName; }
+	public String getPathDataFileName() { return m_pathDataFileName; }
+	
+	public String getTrackerImageFileName() { return m_trackerImageFileName; };
 	
 	public int getFrameRate() { return m_frameRate; }
 	
@@ -48,9 +53,15 @@ public class SettingsManager {
 		return m_serverPort;
 	}
 	
-	public boolean setPathDataFile(String fileName) {
+	public boolean setPathDataFileName(String fileName) {
 		if(fileName == null) { return false; }
 		m_pathDataFileName = fileName;
+		return true;
+	}
+	
+	public boolean setTrackerImageFileName(String fileName) {
+		if(fileName == null) { return false; }
+		m_trackerImageFileName = fileName;
 		return true;
 	}
 	
@@ -92,7 +103,8 @@ public class SettingsManager {
 		m_settings = variables;
 		
 		// create local variables instantiated with data parsed from the variable system
-		setPathDataFile(m_settings.getValue("Path File", "Data Files"));
+		setPathDataFileName(m_settings.getValue("Path File", "Data Files"));
+		setTrackerImageFileName(m_settings.getValue("Tracker Image", "Data Files"));
 		try { setFrameRate(Integer.parseInt(m_settings.getValue("Framerate", "Settings"))); } catch(NumberFormatException e) { }
 		setServerIPAddress(m_settings.getValue("Server IP Address", "Settings"));
 		try { setServerPort(Integer.parseInt(m_settings.getValue("Server Port", "Settings"))); } catch(NumberFormatException e) { }
@@ -103,6 +115,7 @@ public class SettingsManager {
 	public boolean saveTo(String fileName) {
 		// update the variable system with the new settings values
 		m_settings.setValue("Path File", m_pathDataFileName, "Data Files");
+		m_settings.setValue("Tracker Image", m_trackerImageFileName, "Data Files");
 		m_settings.setValue("Framerate", m_frameRate, "Settings");
 		m_settings.setValue("Server IP Address", m_serverIPAddress.getHostName(), "Settings");
 		m_settings.setValue("Server Port", m_serverPort, "Settings");
