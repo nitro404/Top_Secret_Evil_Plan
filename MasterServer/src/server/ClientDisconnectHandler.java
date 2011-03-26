@@ -1,21 +1,15 @@
 package server;
 
 import java.util.Vector;
-import shared.*;
 
 public class ClientDisconnectHandler extends Thread {
 	
 	private Vector<Client> m_clients;
 	
-	private SystemConsole m_console;
+	public ClientDisconnectHandler() { }
 	
-	public ClientDisconnectHandler() {
-		
-	}
-	
-	public void initialize(Vector<Client> clients, SystemConsole console) {
+	public void initialize(Vector<Client> clients) {
 		m_clients = clients;
-		m_console = console;
 		if(m_clients == null) { return; }
 		if(getState() == Thread.State.NEW) { start(); }
 	}
@@ -41,7 +35,7 @@ public class ClientDisconnectHandler extends Thread {
 					i--;
 					
 					if(c.timeout()) {
-						m_console.writeLine((c.isIdentified() ? "Tracker #" + c.getTrackerNumber() : "Client #" + c.getClientNumber()) + " timed out");
+						SystemManager.console.writeLine((c.isIdentified() ? "Tracker #" + c.getTrackerNumber() : "Client #" + c.getClientNumber()) + " timed out");
 					}
 				}
 			}

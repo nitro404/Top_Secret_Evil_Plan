@@ -2,9 +2,7 @@ package planner;
 
 import java.io.*;
 import java.awt.image.BufferedImage;
-
 import javax.imageio.ImageIO;
-
 import settings.*;
 import client.*;
 import path.*;

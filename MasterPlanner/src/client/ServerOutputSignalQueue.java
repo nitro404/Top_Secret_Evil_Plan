@@ -2,6 +2,9 @@ package client;
 
 import java.io.*;
 import java.util.*;
+
+import planner.SystemManager;
+import shared.SignalDebugLevel;
 import signal.*;
 
 public class ServerOutputSignalQueue extends Thread {
@@ -34,6 +37,11 @@ public class ServerOutputSignalQueue extends Thread {
 		while(m_client.isConnected()) {
 			if(!m_outSignalQueue.isEmpty()) {
 				Signal s = m_outSignalQueue.remove();
+				
+				if(SystemManager.settings.getSignalDebugLevel() == SignalDebugLevel.Outgoing ||
+				   SystemManager.settings.getSignalDebugLevel() == SignalDebugLevel.Both) {
+					SystemManager.console.writeLine("Sending: " + s.toString());
+				}
 				
 				if(s.getSignalType() == SignalType.Ping) {
 					s.writeTo(m_out);

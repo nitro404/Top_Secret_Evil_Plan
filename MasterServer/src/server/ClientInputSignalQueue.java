@@ -2,8 +2,8 @@ package server;
 
 import java.io.*;
 import java.util.*;
-import signal.*;
 import shared.*;
+import signal.*;
 
 public class ClientInputSignalQueue extends Thread {
 	
@@ -12,18 +12,16 @@ public class ClientInputSignalQueue extends Thread {
 	private ClientOutputSignalQueue m_outSignalQueue;
 	private Server m_server;
 	private Client m_client;
-	private SystemConsole m_console;
 
 	public ClientInputSignalQueue() {
 		m_inSignalQueue = new ArrayDeque<Signal>();
 	}
 
-	public void initialize(Server server, Client client, DataInputStream in, ClientOutputSignalQueue out, SystemConsole console) {
+	public void initialize(Server server, Client client, DataInputStream in, ClientOutputSignalQueue out) {
 		m_server = server;
 		m_client = client;
 		m_in = in;
 		m_outSignalQueue = out;
-		m_console = console;
 		if(getState() == Thread.State.NEW) { start(); }
 	}
 	
@@ -100,7 +98,7 @@ public class ClientInputSignalQueue extends Thread {
 			s2 = ReceiveTrackerNumberSignal.readFrom(ByteStream.readFrom(m_in, ReceiveTrackerNumberSignal.LENGTH)); 
 		}
 		else {
-			m_console.writeLine("Unexpected input signal of type: " + s.getSignalType());
+			SystemManager.console.writeLine("Unexpected input signal of type: " + s.getSignalType());
 		}
 		
 		addSignal(s2);
@@ -111,7 +109,10 @@ public class ClientInputSignalQueue extends Thread {
 			if(!m_inSignalQueue.isEmpty()) {
 				Signal s = m_inSignalQueue.remove();
 				
-				m_console.writeLine("Received from " + (m_client.isIdentified() ? "Tracker #" + m_client.getTrackerNumber() : "Client #" + m_client.getClientNumber()) + ": " + s.toString());
+				if(SystemManager.settings.getSignalDebugLevel() == SignalDebugLevel.Incoming ||
+				   SystemManager.settings.getSignalDebugLevel() == SignalDebugLevel.Both) {
+					SystemManager.console.writeLine("Received from " + m_client.getName() + ": " + s.toString());
+				}
 				
 				if(s.getSignalType() == SignalType.Ping) {
 					sendSignal(new Signal(SignalType.Pong));
@@ -132,7 +133,7 @@ public class ClientInputSignalQueue extends Thread {
 					}
 				}
 				else {
-					m_console.writeLine("Unexpected input signal of type: " + s.getSignalType());
+					SystemManager.console.writeLine("Unexpected input signal of type: " + s.getSignalType());
 				}
 			}
 			

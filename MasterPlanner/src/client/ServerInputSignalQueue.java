@@ -111,7 +111,10 @@ public class ServerInputSignalQueue extends Thread {
 				
 				if(s == null) { continue; }
 				
-				SystemManager.console.writeLine("Received: " + s.toString());
+				if(SystemManager.settings.getSignalDebugLevel() == SignalDebugLevel.Incoming ||
+				   SystemManager.settings.getSignalDebugLevel() == SignalDebugLevel.Both) {
+					SystemManager.console.writeLine("Received: " + s.toString());
+				}
 				
 				if(s.getSignalType() == SignalType.Ping) {
 					sendSignal(new Signal(SignalType.Pong));

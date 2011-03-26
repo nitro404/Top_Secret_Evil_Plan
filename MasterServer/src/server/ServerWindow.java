@@ -1,52 +1,99 @@
 package server;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import settings.*;
+import javax.swing.*;
 import shared.*;
 
-public class ServerWindow extends JFrame implements WindowListener, Updatable {
-	
-	private Server m_server;
-	private SystemConsole m_console;
+public class ServerWindow extends JFrame implements ActionListener, WindowListener, Updatable {
 	
 	private JTextArea m_consoleText;
 	private Font m_consoleFont;
 	private JScrollPane m_consoleScrollPane;
 	
-	private SettingsManager m_settings;
+	private boolean m_updating;
+	
+	private JMenuBar menuBar;
+	
+	private JMenu fileMenu;
+	private JMenuItem fileExitMenuItem;
+    
+	private JMenu settingsMenu;
+	private JMenu settingsSignalsMenu;
+	private JRadioButtonMenuItem[] settingsSignalsMenuItem;
+	private ButtonGroup settingsSignalsButtonGroup;
+	private JMenuItem settingsSaveMenuItem;
+	
+	private JMenu helpMenu;
+	private JMenuItem helpAboutMenuItem;
 	
 	private static final long serialVersionUID = 1L;
 	
 	public ServerWindow() {
-		m_server = new Server();
-		m_console = m_server.getConsole();
-		m_console.setTarget(this);
+		setTitle("Server Window");
+		setMinimumSize(new Dimension(320, 240));
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		addWindowListener(this);
+		SystemManager.console.setTarget(this);
+		
+		m_updating = false;
+		
+		initMenu();
 		initComponents();
 	}
 	
 	public void initialize() {
-		m_settings = new SettingsManager();
-		m_settings.load();
-		
-		m_server.initialize();
+		update();
 		setVisible(true);
 	}
 	
-	public void initialize(int port) {
-		initialize(null, port);
-	}
-	
-	public void initialize(SettingsManager settings, int port) {
-		m_settings = settings;
-		if(m_settings == null) {
-			m_settings = new SettingsManager();
-			m_settings.load();
-		}
-		
-		m_server.initialize(port);
-		setVisible(true);
+	private void initMenu() {
+		menuBar = new JMenuBar();
+        
+        fileMenu = new JMenu("File");
+        fileExitMenuItem = new JMenuItem("Exit");
+        
+        settingsMenu = new JMenu("Settings");
+        settingsSignalsMenu = new JMenu("Signal Debugging");
+        settingsSignalsMenuItem = new JRadioButtonMenuItem[SignalDebugLevel.signalDebugLevels.length];
+        for(byte i=0;i<SignalDebugLevel.signalDebugLevels.length;i++) {
+        	settingsSignalsMenuItem[i] = new JRadioButtonMenuItem(SignalDebugLevel.signalDebugLevels[i]); 
+        }
+        settingsSaveMenuItem = new JMenuItem("Save Settings");
+        
+        helpMenu = new JMenu("Help");
+        helpAboutMenuItem = new JMenuItem("About");
+        
+        settingsSignalsMenuItem[0].setSelected(true);
+        
+        settingsSignalsButtonGroup = new ButtonGroup();
+        
+        fileExitMenuItem.addActionListener(this);
+        for(byte i=0;i<SignalDebugLevel.signalDebugLevels.length;i++) {
+        	settingsSignalsMenuItem[i].addActionListener(this);
+        }
+        settingsSaveMenuItem.addActionListener(this);
+        helpAboutMenuItem.addActionListener(this);
+        
+        for(byte i=0;i<SignalDebugLevel.signalDebugLevels.length;i++) {
+        	settingsSignalsButtonGroup.add(settingsSignalsMenuItem[i]);
+        }
+        
+        fileMenu.add(fileExitMenuItem);
+        
+        for(byte i=0;i<SignalDebugLevel.signalDebugLevels.length;i++) {
+        	settingsSignalsMenu.add(settingsSignalsMenuItem[i]);
+        }
+        settingsMenu.add(settingsSignalsMenu);
+        settingsMenu.add(settingsSaveMenuItem);
+        
+        helpMenu.add(helpAboutMenuItem);
+
+        menuBar.add(fileMenu);
+        menuBar.add(settingsMenu);
+        menuBar.add(helpMenu);
+
+        setJMenuBar(menuBar);
 	}
 	
 	private void initComponents() {
@@ -71,18 +118,46 @@ public class ServerWindow extends JFrame implements WindowListener, Updatable {
 	public void windowIconified(WindowEvent e) { }
 	public void windowOpened(WindowEvent e) { }
 	
-	public void windowClosing(WindowEvent e){
-		m_settings.save();
+	public void windowClosing(WindowEvent e) {
+		SystemManager.settings.save();
 		dispose();
 	}
 	
+
+	public void actionPerformed(ActionEvent e) {
+		if(m_updating) { return; }
+		
+		if(e.getSource() == fileExitMenuItem) {
+			System.exit(0);
+		}
+		else if(e.getSource() == settingsSaveMenuItem) {
+			SystemManager.settings.save();
+		}
+		else if(e.getSource() == helpAboutMenuItem) {
+			JOptionPane.showMessageDialog(this, "MasterServer Created by Kevin Scroggins (nitro404@hotmail.com).\nCreated for the COMP 4807 Final Project - April 4, 2011.", "About MasterServer", JOptionPane.INFORMATION_MESSAGE);
+		}
+		else {
+			for(byte i=0;i<SignalDebugLevel.signalDebugLevels.length;i++) {
+	        	if(e.getSource() == settingsSignalsMenuItem[i]) {
+	        		SystemManager.settings.setSignalDebugLevel(i);
+	        	}
+	        }
+		}
+	}
+	
 	public void update() {
+		m_updating = true;
+		
+		settingsSignalsMenuItem[SystemManager.settings.getSignalDebugLevel()].setSelected(true);
+		
 		try {
-			m_consoleText.setText(m_console.toString());
+			m_consoleText.setText(SystemManager.console.toString());
 			m_consoleText.setCaretPosition(m_consoleText.getText().length());
 			m_consoleText.scrollRectToVisible(new Rectangle(0, m_consoleText.getHeight() - 2, 1, 1));
 		}
 		catch(Exception e) { }
+		
+		m_updating = false;
 	}
 	
 }

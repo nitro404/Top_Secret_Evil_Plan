@@ -2,7 +2,6 @@ package server;
 
 import java.io.*;
 import java.net.*;
-import shared.*;
 import signal.*;
 
 public class Client {
@@ -24,7 +23,6 @@ public class Client {
 	private boolean m_awaitingResponse = false;
 	
 	private Server m_server;
-	private SystemConsole m_console;
 	
 	public static int currentPort = 25502;
 	
@@ -36,16 +34,15 @@ public class Client {
 		m_ipAddress = connection.getInetAddress();
 	}
 	
-	public void initialize(Server server, SystemConsole console) {
+	public void initialize(Server server) {
 		m_connected = true;
 		
 		try {
 			m_server = server;
-			m_console = console;
 			m_out = new DataOutputStream(m_connection.getOutputStream());
 			m_in = new DataInputStream(m_connection.getInputStream());
-			m_inSignalQueue.initialize(m_server, this, m_in, m_outSignalQueue, m_console);
-			m_outSignalQueue.initialize(this, m_out, m_console);
+			m_inSignalQueue.initialize(m_server, this, m_in, m_outSignalQueue);
+			m_outSignalQueue.initialize(this, m_out);
 			
 			if(m_clientThread == null || m_clientThread.isTerminated()) {
 				m_clientThread = new ClientThread();
@@ -54,7 +51,7 @@ public class Client {
 		}
 		catch(IOException e) {
 			m_connected = false;
-			m_console.writeLine("Unable to initalize connection to client #" + m_clientNumber);
+			SystemManager.console.writeLine("Unable to initalize connection to client #" + m_clientNumber);
 		}
 	}
 	
@@ -123,6 +120,8 @@ public class Client {
 	public DataOutputStream getOutputStream() { return m_out; }
 	
 	public int getClientNumber() { return m_clientNumber; }
+	
+	public String getName() { return isIdentified() ? "Tracker #" + m_trackerNumber : "Client #" + m_clientNumber; }
 	
 	public void sendSignal(Signal s) {
 		if(s == null) { return; }

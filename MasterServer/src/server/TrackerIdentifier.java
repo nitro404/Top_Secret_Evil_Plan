@@ -4,25 +4,20 @@ import java.net.InetAddress;
 import java.util.Vector;
 import javax.swing.JOptionPane;
 import settings.*;
-import shared.*;
 
 public class TrackerIdentifier extends Thread {
 	
 	private Vector<Client> m_trackers;
 	
 	private Server m_server;
-	private SettingsManager m_settings;
-	private SystemConsole m_console;
 	
 	public TrackerIdentifier() {
 		m_trackers = new Vector<Client>();
 	}
 	
-	public void initialize(Server server, SettingsManager settings, SystemConsole console) {
+	public void initialize(Server server) {
 		m_server = server;
-		m_settings = settings;
-		m_console = console;
-		if(m_server == null || m_trackers == null || m_settings == null) { return; }
+		if(m_server == null) { return; }
 		if(getState() == Thread.State.NEW) { start(); }
 	}
 
@@ -97,7 +92,7 @@ public class TrackerIdentifier extends Thread {
 				
 				byte trackerNumber = -1;
 				for(int j=0;j<SettingsManager.defaultTrackerIPAddress.length;j++) {
-					InetAddress trackerIP = m_settings.getTrackerIPAddress(j + 1);
+					InetAddress trackerIP = SystemManager.settings.getTrackerIPAddress(j + 1);
 					if(trackerIP.equals(c.getIPAddress())) {
 						trackerNumber = (byte) (j + 1);
 						break;
@@ -145,7 +140,7 @@ public class TrackerIdentifier extends Thread {
 					}
 					if(!trackerAlreadyIdentified) {
 						c.setTrackerNumber(trackerNumber);
-						m_console.writeLine("Client #" + c.getClientNumber() + " identified as Tracker #" + c.getTrackerNumber() + ".");
+						SystemManager.console.writeLine("Client #" + c.getClientNumber() + " identified as Tracker #" + c.getTrackerNumber() + ".");
 					}
 				}
 				else {

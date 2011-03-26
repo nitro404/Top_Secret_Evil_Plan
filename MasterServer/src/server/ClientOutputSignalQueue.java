@@ -2,24 +2,22 @@ package server;
 
 import java.io.*;
 import java.util.*;
-import signal.*;
 import shared.*;
+import signal.*;
 
 public class ClientOutputSignalQueue extends Thread {
 	
 	private ArrayDeque<Signal> m_outSignalQueue;
 	private DataOutputStream m_out;
 	private Client m_client;
-	private SystemConsole m_console;
 
 	public ClientOutputSignalQueue() {
 		m_outSignalQueue = new ArrayDeque<Signal>();
 	}
 
-	public void initialize(Client client, DataOutputStream out, SystemConsole console) {
+	public void initialize(Client client, DataOutputStream out) {
 		m_client = client;
 		m_out = out;
-		m_console = console;
 		if(getState() == Thread.State.NEW) { start(); }
 	}
 	
@@ -38,11 +36,16 @@ public class ClientOutputSignalQueue extends Thread {
 			if(!m_outSignalQueue.isEmpty()) {
 				Signal s = m_outSignalQueue.remove();
 				
+				if(SystemManager.settings.getSignalDebugLevel() == SignalDebugLevel.Outgoing ||
+				   SystemManager.settings.getSignalDebugLevel() == SignalDebugLevel.Both) {
+					SystemManager.console.writeLine("Sending to " + m_client.getName() + ": " + s.toString());
+				}
+				
 				if(SignalType.isValid(s.getSignalType())) {
 					s.writeTo(m_out);
 				}
 				else {
-					m_console.writeLine("Unexpected output signal of type: " + s.getSignalType());
+					SystemManager.console.writeLine("Unexpected output signal of type: " + s.getSignalType());
 				}
 			}
 			

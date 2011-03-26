@@ -2,6 +2,7 @@ package settings;
 
 import java.net.*;
 import client.*;
+import shared.*;
 
 public class SettingsManager {
 	
@@ -12,6 +13,7 @@ public class SettingsManager {
 	private int m_frameRate;
 	private InetAddress m_serverIPAddress;
 	private int m_serverPort;
+	private byte m_signalDebugLevel;
 	
 	final public static String defaultSettingsFileName = "planner.ini";
 	final public static String defaultPathDataFileName = "paths.ini";
@@ -19,6 +21,7 @@ public class SettingsManager {
 	final public static int defaultFrameRate = 2;
 	public static InetAddress defaultServerIPAddress;
 	final public static int defaultServerPort = Client.DEFAULT_PORT;
+	private byte defaultSignalDebugLevel = SignalDebugLevel.Off;
 	
 	public SettingsManager() {
 		m_settings = new VariableSystem();
@@ -32,6 +35,7 @@ public class SettingsManager {
 		}
 		m_serverIPAddress = defaultServerIPAddress;
 		m_serverPort = defaultServerPort;
+		m_signalDebugLevel = defaultSignalDebugLevel;
 	}
 	
 	public String getPathDataFileName() { return m_pathDataFileName; }
@@ -52,6 +56,8 @@ public class SettingsManager {
 	public int getServerPort() {
 		return m_serverPort;
 	}
+	
+	public byte getSignalDebugLevel() { return m_signalDebugLevel; }
 	
 	public boolean setPathDataFileName(String fileName) {
 		if(fileName == null) { return false; }
@@ -89,6 +95,8 @@ public class SettingsManager {
 	
 	public void setServerPort(int port) { if(port >= 0 && port <= 65355) { m_serverPort = port; } }
 	
+	public void setSignalDebugLevel(byte signalDebugLevel) { if(SignalDebugLevel.isValid(signalDebugLevel)) { m_signalDebugLevel = signalDebugLevel; } }
+	
 	public boolean load() { return loadFrom(defaultSettingsFileName); }
 	
 	public boolean save() { return saveTo(defaultSettingsFileName); }
@@ -108,6 +116,7 @@ public class SettingsManager {
 		try { setFrameRate(Integer.parseInt(m_settings.getValue("Framerate", "Settings"))); } catch(NumberFormatException e) { }
 		setServerIPAddress(m_settings.getValue("Server IP Address", "Settings"));
 		try { setServerPort(Integer.parseInt(m_settings.getValue("Server Port", "Settings"))); } catch(NumberFormatException e) { }
+		setSignalDebugLevel(SignalDebugLevel.parseFrom(m_settings.getValue("Signal Debug Level", "Settings")));
 		
 		return true;
 	}
@@ -119,6 +128,7 @@ public class SettingsManager {
 		m_settings.setValue("Framerate", m_frameRate, "Settings");
 		m_settings.setValue("Server IP Address", m_serverIPAddress.getHostName(), "Settings");
 		m_settings.setValue("Server Port", m_serverPort, "Settings");
+		m_settings.setValue("Signal Debug Level", SignalDebugLevel.toString(m_signalDebugLevel), "Settings");
 		
 		// group the settings by categories
 		m_settings.sort();
