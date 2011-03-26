@@ -53,6 +53,9 @@ public class SystemManager {
 		displayWindow.setVisible(true);
 		debugWindow.setVisible(true);
 		
+		displayWindow.update();
+		debugWindow.update();
+		
 		console.setTarget(debugWindow);
 		
 		loadLocalTrackerImage();

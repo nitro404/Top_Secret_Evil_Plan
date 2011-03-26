@@ -14,6 +14,7 @@ public class SettingsManager {
 	private InetAddress m_serverIPAddress;
 	private int m_serverPort;
 	private byte m_signalDebugLevel;
+	private boolean m_autoScrollConsoleWindow;
 	
 	final public static String defaultSettingsFileName = "planner.ini";
 	final public static String defaultPathDataFileName = "paths.ini";
@@ -22,6 +23,7 @@ public class SettingsManager {
 	public static InetAddress defaultServerIPAddress;
 	final public static int defaultServerPort = Client.DEFAULT_PORT;
 	private byte defaultSignalDebugLevel = SignalDebugLevel.Off;
+	private boolean defaultAutoScrollConsoleWindow = true;
 	
 	public SettingsManager() {
 		m_settings = new VariableSystem();
@@ -36,6 +38,7 @@ public class SettingsManager {
 		m_serverIPAddress = defaultServerIPAddress;
 		m_serverPort = defaultServerPort;
 		m_signalDebugLevel = defaultSignalDebugLevel;
+		m_autoScrollConsoleWindow = defaultAutoScrollConsoleWindow;
 	}
 	
 	public String getPathDataFileName() { return m_pathDataFileName; }
@@ -58,6 +61,8 @@ public class SettingsManager {
 	}
 	
 	public byte getSignalDebugLevel() { return m_signalDebugLevel; }
+	
+	public boolean getAutoScrollConsoleWindow() { return m_autoScrollConsoleWindow; }
 	
 	public boolean setPathDataFileName(String fileName) {
 		if(fileName == null) { return false; }
@@ -97,6 +102,22 @@ public class SettingsManager {
 	
 	public void setSignalDebugLevel(byte signalDebugLevel) { if(SignalDebugLevel.isValid(signalDebugLevel)) { m_signalDebugLevel = signalDebugLevel; } }
 	
+	public void setAutoScrollConsoleWindow(boolean autoScroll) { m_autoScrollConsoleWindow = autoScroll; }
+	
+	public boolean setAutoScrollConsoleWindow(String data) {
+		if(data == null) { return false; }
+		String value = data.trim();
+		if(value.equalsIgnoreCase("true")) {
+			m_autoScrollConsoleWindow = true;
+			return true;
+		}
+		else if(value.equalsIgnoreCase("false")) {
+			m_autoScrollConsoleWindow = false;
+			return true;
+		}
+		return false;
+	}
+	
 	public boolean load() { return loadFrom(defaultSettingsFileName); }
 	
 	public boolean save() { return saveTo(defaultSettingsFileName); }
@@ -117,6 +138,7 @@ public class SettingsManager {
 		setServerIPAddress(m_settings.getValue("Server IP Address", "Settings"));
 		try { setServerPort(Integer.parseInt(m_settings.getValue("Server Port", "Settings"))); } catch(NumberFormatException e) { }
 		setSignalDebugLevel(SignalDebugLevel.parseFrom(m_settings.getValue("Signal Debug Level", "Settings")));
+		setAutoScrollConsoleWindow(m_settings.getValue("Auto-scroll Console Window", "Settings"));
 		
 		return true;
 	}
@@ -129,6 +151,7 @@ public class SettingsManager {
 		m_settings.setValue("Server IP Address", m_serverIPAddress.getHostName(), "Settings");
 		m_settings.setValue("Server Port", m_serverPort, "Settings");
 		m_settings.setValue("Signal Debug Level", SignalDebugLevel.toString(m_signalDebugLevel), "Settings");
+		m_settings.setValue("Auto-scroll Console Window", m_autoScrollConsoleWindow, "Settings");
 		
 		// group the settings by categories
 		m_settings.sort();

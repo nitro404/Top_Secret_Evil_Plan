@@ -12,11 +12,13 @@ public class SettingsManager {
 	private InetAddress m_trackerIPAddress[];
 	private int m_port;
 	private byte m_signalDebugLevel;
+	private boolean m_autoScrollConsoleWindow;
 	
 	final public static String defaultSettingsFileName = "server.ini";
 	public static InetAddress[] defaultTrackerIPAddress;
 	final public static int defaultPort = Server.DEFAULT_PORT;
 	private byte defaultSignalDebugLevel = SignalDebugLevel.Off;
+	private boolean defaultAutoScrollConsoleWindow = true;
 	
 	public SettingsManager() {
 		m_settings = new VariableSystem();
@@ -29,6 +31,7 @@ public class SettingsManager {
 		m_port = defaultPort;
 		m_trackerIPAddress = defaultTrackerIPAddress;
 		m_signalDebugLevel = defaultSignalDebugLevel;
+		m_autoScrollConsoleWindow = defaultAutoScrollConsoleWindow;
 	}
 
 	public InetAddress getTrackerIPAddress(int trackerNumber) {
@@ -45,6 +48,8 @@ public class SettingsManager {
 	
 	public byte getSignalDebugLevel() { return m_signalDebugLevel; }
 	
+	public boolean getAutoScrollConsoleWindow() { return m_autoScrollConsoleWindow; }
+	
 	public boolean setTrackerIPAddress(int trackerNumber, String hostAddress) {
 		if(hostAddress == null || trackerNumber < 1 || trackerNumber > m_trackerIPAddress.length) { return false; }
 		try {
@@ -59,6 +64,22 @@ public class SettingsManager {
 	public void setPort(int port) { if(port >= 0 && port <= 65355) { m_port = port; } }
 	
 	public void setSignalDebugLevel(byte signalDebugLevel) { if(SignalDebugLevel.isValid(signalDebugLevel)) { m_signalDebugLevel = signalDebugLevel; } }
+
+	public void setAutoScrollConsoleWindow(boolean autoScroll) { m_autoScrollConsoleWindow = autoScroll; }
+	
+	public boolean setAutoScrollConsoleWindow(String data) {
+		if(data == null) { return false; }
+		String value = data.trim();
+		if(value.equalsIgnoreCase("true")) {
+			m_autoScrollConsoleWindow = true;
+			return true;
+		}
+		else if(value.equalsIgnoreCase("false")) {
+			m_autoScrollConsoleWindow = false;
+			return true;
+		}
+		return false;
+	}
 	
 	public boolean load() { return loadFrom(defaultSettingsFileName); }
 	
@@ -79,6 +100,7 @@ public class SettingsManager {
 		}
 		try { setPort(Integer.parseInt(m_settings.getValue("Port", "Settings"))); } catch(NumberFormatException e) { }
 		setSignalDebugLevel(SignalDebugLevel.parseFrom(m_settings.getValue("Signal Debug Level", "Settings")));
+		setAutoScrollConsoleWindow(m_settings.getValue("Auto-scroll Console Window", "Settings"));
 		
 		return true;
 	}
@@ -90,6 +112,7 @@ public class SettingsManager {
 		}
 		m_settings.setValue("Port", m_port, "Settings");
 		m_settings.setValue("Signal Debug Level", SignalDebugLevel.toString(m_signalDebugLevel), "Settings");
+		m_settings.setValue("Auto-scroll Console Window", m_autoScrollConsoleWindow, "Settings");
 		
 		// group the settings by categories
 		m_settings.sort();

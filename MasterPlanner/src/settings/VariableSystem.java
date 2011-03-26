@@ -560,7 +560,7 @@ public class VariableSystem {
 	 * @param category the name of the category associated with the Variable.
 	 */
 	public void setValue(String id, boolean value, String category) {
-		setValue(id, value ? "true" : "false");
+		setValue(id, value ? "true" : "false", category);
 	}
 	
 	/**
