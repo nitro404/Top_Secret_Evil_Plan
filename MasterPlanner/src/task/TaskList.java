@@ -35,6 +35,16 @@ public class TaskList {
 		return false;
 	}
 	
+	public boolean setTaskStarted(byte taskID) {
+		if(taskID < 0 || taskID >= m_tasks.size()) { return false; }
+		return m_tasks.elementAt(taskID).setTaskState(TaskState.Started);
+	}
+	
+	public boolean setTaskCompleted(byte taskID) {
+		if(taskID < 0 || taskID >= m_tasks.size()) { return false; }
+		return m_tasks.elementAt(taskID).setTaskState(TaskState.Completed);
+	}
+	
 	public boolean currentTaskNew() {
 		return m_tasks.elementAt(m_currentTask).isNew();
 	}

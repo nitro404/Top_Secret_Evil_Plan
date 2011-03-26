@@ -139,11 +139,11 @@ public class ServerInputSignalQueue extends Thread {
 				}
 				else if(s.getSignalType() == SignalType.TaskStarted) {
 					TaskStartedSignal s2 = (TaskStartedSignal) s;
-					//SystemManager.taskSystem.taskStarted(s2.getRobotID(), s2.getTaskID());
+					SystemManager.taskManager.setTaskStarted(s2.getRobotID(), s2.getTaskID());
 				}
 				else if(s.getSignalType() == SignalType.TaskCompleted) {
 					TaskCompletedSignal s2 = (TaskCompletedSignal) s;
-					//SystemManager.taskSystem.taskCompleted(s2.getRobotID(), s2.getTaskID());
+					SystemManager.taskManager.setTaskCompleted(s2.getRobotID(), s2.getTaskID());
 				}
 				else if(s.getSignalType() == SignalType.UpdateBlockPosition) {
 					UpdateBlockPositionSignal s2 = (UpdateBlockPositionSignal) s;
