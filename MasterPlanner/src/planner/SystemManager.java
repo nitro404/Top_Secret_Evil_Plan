@@ -9,6 +9,7 @@ import path.*;
 import robot.*;
 import block.*;
 import pot.*;
+import task.*;
 import gui.*;
 import imaging.*;
 import shared.*;
@@ -25,6 +26,7 @@ public class SystemManager {
 	public static RobotSystem robotSystem;
 	public static BlockSystem blockSystem;
 	public static PotSystem potSystem;
+	public static TaskManager taskManager;
 	public static Webcam webcam;
 	public static BufferedImage localTrackerImage;
 	
@@ -79,6 +81,8 @@ public class SystemManager {
 		
 		client.initialize();
 		client.connect();
+		
+		taskManager = new TaskManager();
 	}
 	
 	public static boolean isIdentified() { return trackerNumber > 0; }
@@ -90,6 +94,8 @@ public class SystemManager {
 		
 		client.sendSignal(new Signal(SignalType.StartSimulation));
 		m_started = true;
+		
+		//taskManager.start();
 		
 		/*
 		client.sendSignal(new BlockStateChangeSignal((byte) 1, (byte) 1, BlockState.Delivered));
