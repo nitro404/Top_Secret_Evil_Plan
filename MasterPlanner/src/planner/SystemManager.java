@@ -33,6 +33,8 @@ public class SystemManager {
 	
 	private static boolean m_started = false;
 	
+	final public static int MAX_NUMBER_OF_TRACKERS = 3;
+	
 	public static void initialize(MasterPlanner masterPlanner) {
 		trackerNumber = -1;
 		
@@ -63,7 +65,7 @@ public class SystemManager {
 		blockSystem = new BlockSystem();
 		potSystem = new PotSystem();
 		
-		webcam = new Webcam(640, 480);
+		webcam = new Webcam(Webcam.DEFAULT_RESOLUTION);
 		if(!webcam.initialize()) {
 			console.writeLine("Unable to initialize webcam.");
 		}

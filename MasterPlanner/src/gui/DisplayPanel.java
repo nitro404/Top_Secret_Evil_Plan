@@ -3,9 +3,8 @@ package gui;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import javax.swing.*;
-
-import planner.SystemManager;
-import shared.*;
+import imaging.*;
+import planner.*;
 
 public class DisplayPanel extends JPanel implements Scrollable {
 	
@@ -16,13 +15,13 @@ public class DisplayPanel extends JPanel implements Scrollable {
 	private static final long serialVersionUID = 1L;
 	
 	public DisplayPanel() {
-		setPreferredSize(new Dimension(Position.MAX_X, Position.MAX_Y));
+		setPreferredSize(new Dimension(Webcam.DEFAULT_WIDTH, Webcam.DEFAULT_HEIGHT * SystemManager.MAX_NUMBER_OF_TRACKERS));
 		m_layout = new FlowLayout();
 		m_layout.setHgap(0);
 		m_layout.setVgap(0);
 		setLayout(m_layout);
 		
-		m_trackerImage = new BufferedImage[3];
+		m_trackerImage = new BufferedImage[SystemManager.MAX_NUMBER_OF_TRACKERS];
 	}
 	
 	public void setTrackerImage(byte trackerNumber, BufferedImage trackerImage) {
