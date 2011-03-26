@@ -10,6 +10,7 @@ import robot.*;
 import block.*;
 import pot.*;
 import task.*;
+import timer.*;
 import gui.*;
 import imaging.*;
 import shared.*;
@@ -27,6 +28,7 @@ public class SystemManager {
 	public static BlockSystem blockSystem;
 	public static PotSystem potSystem;
 	public static TaskManager taskManager;
+	public static SystemTimer timer;
 	public static Webcam webcam;
 	public static BufferedImage localTrackerImage;
 	
@@ -36,6 +38,7 @@ public class SystemManager {
 	private static boolean m_started = false;
 	
 	final public static int MAX_NUMBER_OF_TRACKERS = 3;
+	final public static int TIME_LIMIT = 15;
 	
 	public static void initialize(MasterPlanner masterPlanner) {
 		trackerNumber = -1;
@@ -46,6 +49,8 @@ public class SystemManager {
 		settings.load();
 		
 		client = new Client();
+		
+		timer = new SystemTimer(TIME_LIMIT * 60);
 		
 		console = new SystemConsole();
 		
@@ -96,6 +101,7 @@ public class SystemManager {
 		m_started = true;
 		
 		//taskManager.start();
+		timer.start();
 		
 		/*
 		client.sendSignal(new BlockStateChangeSignal((byte) 1, (byte) 1, BlockState.Delivered));
