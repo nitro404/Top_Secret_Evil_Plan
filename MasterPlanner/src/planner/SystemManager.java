@@ -37,9 +37,6 @@ public class SystemManager {
 	
 	private static boolean m_started = false;
 	
-	final public static int MAX_NUMBER_OF_TRACKERS = 3;
-	final public static int TIME_LIMIT = 15;
-	
 	public static void initialize(MasterPlanner masterPlanner) {
 		trackerNumber = -1;
 		
@@ -50,7 +47,7 @@ public class SystemManager {
 		
 		client = new Client();
 		
-		timer = new SystemTimer(TIME_LIMIT * 60);
+		timer = new SystemTimer(settings.getTimeLimit() * 60);
 		
 		console = new SystemConsole();
 		
@@ -75,17 +72,14 @@ public class SystemManager {
 		
 		if(planner != null) { planner.setTrackerFrameRate(settings.getFrameRate()); }
 		
-		webcam = new Webcam(Webcam.DEFAULT_RESOLUTION);
-		if(!webcam.initialize()) {
-			console.writeLine("Unable to initialize webcam.");
-		}
-		else {
-			console.writeLine("Webcam initialized successfully.");
-			while(!updateLocalTrackerImage());
+		if(settings.getTakeWebcamSnapshotOnStartup()) {
+			updateLocalTrackerImage();
 		}
 		
 		client.initialize();
-		client.connect();
+		if(settings.getAutoConnectOnStartup()) {
+			client.connect();
+		}
 		
 		taskManager = new TaskManager();
 	}
@@ -125,17 +119,51 @@ public class SystemManager {
 		return true;
 	}
 	
-	public static boolean updateLocalTrackerImage() {
-		if(webcam.active()) {
-			BufferedImage snapshot = webcam.capture();
-			if(snapshot != null) {
-				localTrackerImage = snapshot;
-				saveLocalTrackerImage();
-				webcam.deallocate();
-				return true;
-			}
+	public static boolean initializeWebcam() {
+		webcam = new Webcam(settings.getWebcamResolution());
+		if(!webcam.initialize()) {
+			console.writeLine("Unable to initialize webcam.");
+			return false;
 		}
-		return false;
+		else {
+			console.writeLine("Webcam initialized successfully.");
+			return true;
+		}
+	}
+	
+	public static boolean updateLocalTrackerImage() {
+		if(webcam == null) { initializeWebcam(); }
+		
+		long startTime = System.currentTimeMillis();
+		int maxSeconds = 10;
+		boolean snapshotTaken = false;
+		do {
+			if(webcam.active()) {
+				BufferedImage snapshot = webcam.capture();
+				if(snapshot != null) {
+					localTrackerImage = snapshot;
+					saveLocalTrackerImage();
+					webcam.deallocate();
+					webcam = null;
+					snapshotTaken = true;
+				}
+			}
+			else {
+				snapshotTaken = false;
+			}
+		} while(!snapshotTaken && startTime + (maxSeconds * 1000L) > System.currentTimeMillis());
+		
+		if(snapshotTaken) {
+			console.writeLine("Successfully updated tracker image from webcam!");
+			if(trackerNumber > 0) {
+				displayWindow.setTrackerImage(trackerNumber, localTrackerImage);
+			}
+			return true;
+		}
+		else {
+			console.writeLine("Failed to take snapshot from webcam.");
+			return false;
+		}
 	}
 	
 	public static void handlePose(Position position, int angle) {

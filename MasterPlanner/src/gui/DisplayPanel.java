@@ -4,8 +4,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import javax.swing.*;
-import imaging.*;
 import planner.*;
+import shared.*;
 
 public class DisplayPanel extends JPanel implements MouseListener, MouseMotionListener, ActionListener, Scrollable {
 	
@@ -31,7 +31,7 @@ public class DisplayPanel extends JPanel implements MouseListener, MouseMotionLi
 	private static final long serialVersionUID = 1L;
 	
 	public DisplayPanel() {
-		setPreferredSize(new Dimension(Webcam.DEFAULT_WIDTH, Webcam.DEFAULT_HEIGHT * SystemManager.MAX_NUMBER_OF_TRACKERS));
+		setPreferredSize(new Dimension(Position.getMaxX(), Position.getMaxY()));
 		m_layout = new FlowLayout();
 		m_layout.setHgap(0);
 		m_layout.setVgap(0);
@@ -43,7 +43,7 @@ public class DisplayPanel extends JPanel implements MouseListener, MouseMotionLi
 		
 		m_editMode = EditMode.ViewOnly;
 		
-		m_trackerImage = new BufferedImage[SystemManager.MAX_NUMBER_OF_TRACKERS];
+		m_trackerImage = new BufferedImage[SystemManager.settings.getNumberOfTrackers()];
 		
 		initPopupMenu();
 	}

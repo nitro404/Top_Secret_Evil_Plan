@@ -24,7 +24,7 @@ public class DisplayWindow extends JFrame implements WindowListener, Updatable {
 		int scrollBarWidth = 17;
 		try { scrollBarWidth = Integer.parseInt(UIManager.getDefaults().get("ScrollBar.width").toString()); }
 		catch(NumberFormatException e) { }
-		setSize(Position.MAX_X + scrollBarWidth, screenHeight < Position.MAX_Y ? screenHeight : Position.MAX_Y);
+		setSize(Position.getMaxX() + scrollBarWidth, screenHeight < Position.getMaxY() ? screenHeight : Position.getMaxY());
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		addWindowListener(this);
 		

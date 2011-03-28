@@ -38,11 +38,8 @@ public class Webcam implements ControllerListener {
 	
 	public Webcam(Dimension resolution) {
 		m_resolution = (resolution == null) ? DEFAULT_RESOLUTION : resolution;
-		if(m_resolution.width < 16 || m_resolution.width > 4096) {
-			m_resolution.width = DEFAULT_WIDTH;
-		}
-		if(m_resolution.height < 16 || m_resolution.height > 4096) {
-			m_resolution.height = DEFAULT_HEIGHT;
+		if(m_resolution.width < 16 || m_resolution.height < 16 || m_resolution.width > 4096 || m_resolution.height > 4096) {
+			m_resolution = DEFAULT_RESOLUTION;
 		}
 		
 		m_active = false;

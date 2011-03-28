@@ -1,7 +1,9 @@
 package settings;
 
-import java.awt.Dimension;
+import java.util.StringTokenizer;
 import java.net.*;
+import java.awt.Dimension;
+import imaging.*;
 import client.*;
 import shared.*;
 
@@ -32,7 +34,7 @@ public class SettingsManager {
 	final public static boolean defaultAutoScrollConsoleWindow = true;
 	final public static boolean defaultAutoConnectOnStartup = true;
 	final public static boolean defaultTakeWebcamSnapshotOnStartup = true;
-	final public static Dimension defaultWebcamResolution = new Dimension(640, 480);
+	final public static Dimension defaultWebcamResolution = Webcam.DEFAULT_RESOLUTION;
 	final public static int defaultTimeLimit = 15;
 	final public static int defaultNumberOfTrackers = 3;
 	
@@ -182,7 +184,7 @@ public class SettingsManager {
 	
 	public boolean setWebcamResolution(Dimension resolution) {
 		if(resolution == null) { return false; }
-		if(resolution.width < 16 || resolution.height < 16) { return false; }
+		if(resolution.width < 16 || resolution.height < 16 || resolution.height > 4096 || resolution.width > 4096) { return false; }
 		m_webcamResolution = resolution;
 		return true;
 	}
@@ -192,19 +194,19 @@ public class SettingsManager {
 		String value = data.trim();
 		if(value == null) { return false; }
 		
-		String[] values = value.trim().split("x, ");
-		if(values.length != 2) { return false; }
+		StringTokenizer st = new StringTokenizer(value, ",x ", false);
+		if(st.countTokens() != 2) { return false; }
 		
 		int x, y;
 		try {
-			x = Integer.parseInt(values[0]);
-			y = Integer.parseInt(values[1]);
+			x = Integer.parseInt(st.nextToken());
+			y = Integer.parseInt(st.nextToken());
 		}
 		catch(NumberFormatException e) {
 			return false;
 		}
 		
-		if(x < 16 || y < 16) { return false; }
+		if(x < 16 || y < 16 || x > 4096 || y > 4096) { return false; }
 		
 		m_webcamResolution = new Dimension(x, y);
 		return true;
