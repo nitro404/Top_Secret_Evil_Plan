@@ -102,6 +102,8 @@ public class DisplayPanel extends JPanel implements MouseListener, MouseMotionLi
 	public boolean setEditMode(byte editMode) {
 		if(!EditMode.isValid(editMode)) { return false; }
 		m_editMode = editMode;
+		SystemManager.pathSystem.clearSelection();
+//TODO: Clear all system selections
 		return true;
 	}
 	
@@ -154,7 +156,7 @@ public class DisplayPanel extends JPanel implements MouseListener, MouseMotionLi
 	public void mouseExited(MouseEvent e) { }
 	
 	public void mousePressed(MouseEvent e) {
-		if(m_editMode == EditMode.ViewOnly) { return; }
+		if(m_editMode == EditMode.ViewOnly || SystemManager.client.isConnected()) { return; }
 		else if(m_editMode == EditMode.Path) {
 			SystemManager.pathSystem.mousePressed(e);
 		}
@@ -182,6 +184,8 @@ public class DisplayPanel extends JPanel implements MouseListener, MouseMotionLi
 	}
 	
 	public void mouseReleased(MouseEvent e) {
+		if(SystemManager.client.isConnected()) { return; }
+		
 		if(m_editMode == EditMode.ViewOnly) {
 			if(e.getButton() == MouseEvent.BUTTON3) {
 				showPopupMenu(e.getX(), e.getY());
@@ -237,7 +241,7 @@ public class DisplayPanel extends JPanel implements MouseListener, MouseMotionLi
 	}
 	
 	public void mouseDragged(MouseEvent e) {
-		if(m_editMode == EditMode.ViewOnly) { return; }
+		if(m_editMode == EditMode.ViewOnly || SystemManager.client.isConnected()) { return; }
 		else if(m_editMode == EditMode.Path) {
 			SystemManager.pathSystem.mouseDragged(e);
 		}
@@ -264,7 +268,7 @@ public class DisplayPanel extends JPanel implements MouseListener, MouseMotionLi
 	}
 	
 	public void mouseMoved(MouseEvent e) {
-		if(m_editMode == EditMode.ViewOnly) { return; }
+		if(m_editMode == EditMode.ViewOnly || SystemManager.client.isConnected()) { return; }
 		else if(m_editMode == EditMode.Path) {
 			SystemManager.pathSystem.mouseMoved(e);
 		}
@@ -319,6 +323,8 @@ public class DisplayPanel extends JPanel implements MouseListener, MouseMotionLi
 	}
 	
 	private void showPopupMenu(int x, int y) {
+		if(SystemManager.client.isConnected()) { return; }
+		
 		m_editModeMenuItem[m_editMode].setSelected(true);
 		m_autoConnectVerticesMenuItem.setSelected(SystemManager.pathSystem.getAutoConnectVertices());
 		m_autoConnectVerticesMenuItem.setEnabled(m_editMode == EditMode.Path);

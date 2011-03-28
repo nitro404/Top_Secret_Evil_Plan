@@ -83,6 +83,8 @@ public class DebugWindow extends JFrame implements ActionListener, WindowListene
         m_settingsAutoScrollConsoleMenuWindowItem.setSelected(true);
         m_editModeMenuItem[0].setSelected(true);
         m_settingsSignalsMenuItem[0].setSelected(true);
+		m_fileDisconnectMenuItem.setEnabled(false);
+		m_fileStartSimulationMenuItem.setEnabled(false);
         
         m_editModeButtonGroup = new ButtonGroup();
         m_settingsSignalsButtonGroup = new ButtonGroup();
@@ -162,9 +164,17 @@ public class DebugWindow extends JFrame implements ActionListener, WindowListene
 		
 		if(e.getSource() == m_fileConnectMenuItem) {
 			SystemManager.client.connect();
+			m_fileConnectMenuItem.setEnabled(!SystemManager.client.isConnected());
+			m_fileDisconnectMenuItem.setEnabled(SystemManager.client.isConnected());
+			m_fileStartSimulationMenuItem.setEnabled(SystemManager.client.isConnected());
+			m_editModeMenu.setEnabled(!SystemManager.client.isConnected());
 		}
 		else if(e.getSource() == m_fileDisconnectMenuItem) {
 			SystemManager.client.disconnect();
+			m_fileConnectMenuItem.setEnabled(true);
+			m_fileDisconnectMenuItem.setEnabled(false);
+			m_fileStartSimulationMenuItem.setEnabled(false);
+			m_editModeMenu.setEnabled(true);
 		}
 		else if(e.getSource() == m_fileStartSimulationMenuItem) {
 			SystemManager.start();
@@ -204,6 +214,10 @@ public class DebugWindow extends JFrame implements ActionListener, WindowListene
 		m_editModeMenuItem[SystemManager.displayWindow.getEditMode()].setSelected(true);
 		m_settingsSignalsMenuItem[SystemManager.settings.getSignalDebugLevel()].setSelected(true);
 		m_settingsAutoScrollConsoleMenuWindowItem.setSelected(SystemManager.settings.getAutoScrollConsoleWindow());
+		m_fileConnectMenuItem.setEnabled(!SystemManager.client.isConnected());
+		m_fileDisconnectMenuItem.setEnabled(SystemManager.client.isConnected());
+		m_fileStartSimulationMenuItem.setEnabled(SystemManager.client.isConnected());
+		m_editModeMenu.setEnabled(!SystemManager.client.isConnected());
 		
 		try {
 			m_consoleText.setText(SystemManager.console.toString());
