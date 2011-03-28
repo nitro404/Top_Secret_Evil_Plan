@@ -2,10 +2,10 @@ package robot;
 
 import java.util.Vector;
 import java.awt.Graphics2D;
+import java.awt.event.*;
+import shared.*;
 
-import shared.RobotPose;
-
-public class RobotSystem {
+public class RobotSystem implements MouseListener, MouseMotionListener {
 	
 	private Vector<Robot> m_robots;
 	
@@ -54,6 +54,26 @@ public class RobotSystem {
 	public boolean setInitialPose(byte robotID, RobotPose initialRobotPose) {
 		if(robotID < 0 || robotID >= m_robots.size() || !RobotPose.isValid(initialRobotPose)) { return false; }
 		return m_robots.elementAt(robotID).setInitialPose(initialRobotPose);
+	}
+	
+	public void mouseClicked(MouseEvent e) { }
+	public void mouseEntered(MouseEvent e) { }
+	public void mouseExited(MouseEvent e) { }
+	
+	public void mousePressed(MouseEvent e) {
+		
+	}
+	
+	public void mouseReleased(MouseEvent e) {
+		
+	}
+	
+	public void mouseDragged(MouseEvent e) {
+		
+	}
+	
+	public void mouseMoved(MouseEvent e) {
+		
 	}
 	
 	public void draw(Graphics2D g) {

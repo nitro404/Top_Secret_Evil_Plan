@@ -121,6 +121,16 @@ public class Graph {
 		return this.edges.elementAt(index);
 	}
 	
+	public int indexOfVertex(Vertex v) {
+		if(v == null) { return -1; }
+		return this.vertices.indexOf(v);
+	}
+	
+	public int indexOfEdge(Edge e) {
+		if(e == null) { return -1; }
+		return this.edges.indexOf(e);
+	}
+	
 	/**
 	 * Check to see if the Graph contains the specified Vertex. 
 	 * 
@@ -152,13 +162,46 @@ public class Graph {
 			return false;
 		}
 		
-		// loop through the collection of Edges to see if any of them are equal to the specified Edge
+		// loop through the collection of Edges to see if any of them are equal to the specified Edge (undirected)
 		for(int i=0;i<this.edges.size();i++) {
 			if(this.edges.elementAt(i).equals(e)) {
 				return true;
 			}
 		}
 		return false;
+	}
+	
+	public boolean removeVertex(int index) {
+		if(index < 0 || index >= this.vertices.size()) { return false; }
+		
+		Vertex v = this.vertices.remove(index);
+		
+		if(v != null) {
+			for(int i=0;i<this.edges.size();i++) {
+				if(this.edges.elementAt(i).containsVertex(v)) {
+					this.edges.remove(i);
+					i--;
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean removeEdge(int index) {
+		if(index < 0 || index >= this.edges.size()) { return false; }
+		
+		return this.edges.remove(index) != null;
+	}
+	
+	public boolean removeVertex(Vertex v) {
+		if(v == null) { return false; }
+		return removeVertex(this.vertices.indexOf(v));
+	}
+	
+	public boolean removeEdge(Edge e) {
+		if(e == null) { return false; }
+		return removeVertex(this.edges.indexOf(e));
 	}
 	
 	/**
@@ -188,7 +231,7 @@ public class Graph {
 	 * @param edgeColour the colour to render each Edge of the Graph.
 	 * @param vertexColour the colour to render each Vertex of the Graph. 
 	 */
-	public void paintOn(Graphics g, Color edgeColour, Color vertexColour) {
+	public void draw(Graphics g, Color edgeColour, Color vertexColour) {
 		// render the edges
 		g.setColor(edgeColour);
 		for(int i=0;i<this.edges.size();i++) {

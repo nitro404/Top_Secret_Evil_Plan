@@ -1,10 +1,11 @@
 package block;
 
 import java.util.Vector;
-import java.awt.Graphics2D;
+import java.awt.*;
+import java.awt.event.*;
 import shared.*;
 
-public class BlockSystem {
+public class BlockSystem implements MouseListener, MouseMotionListener {
 	
 	private Vector<Block> m_blocks;
 	
@@ -52,6 +53,26 @@ public class BlockSystem {
 	public boolean setActualBlockPosition(byte blockID, Position actualBlockPosition) {
 		if(blockID < 0 || blockID >= m_blocks.size() || !Position.isValid(actualBlockPosition)) { return false; }
 		return m_blocks.elementAt(blockID).setActualPosition(actualBlockPosition);
+	}
+	
+	public void mouseClicked(MouseEvent e) { }
+	public void mouseEntered(MouseEvent e) { }
+	public void mouseExited(MouseEvent e) { }
+	
+	public void mousePressed(MouseEvent e) {
+		
+	}
+	
+	public void mouseReleased(MouseEvent e) {
+		
+	}
+	
+	public void mouseDragged(MouseEvent e) {
+		
+	}
+	
+	public void mouseMoved(MouseEvent e) {
+		
 	}
 	
 	public void draw(Graphics2D g) {

@@ -54,6 +54,12 @@ public class SystemManager {
 		
 		console = new SystemConsole();
 		
+		pathSystem = PathSystem.readFrom(settings.getPathDataFileName());
+		
+		robotSystem = new RobotSystem();
+		blockSystem = new BlockSystem();
+		potSystem = new PotSystem();
+		
 		displayWindow = new DisplayWindow();
 		debugWindow = new DebugWindow();
 		debugWindow.setLocation(displayWindow.getLocation().x + displayWindow.getWidth(), displayWindow.getLocation().y);
@@ -68,12 +74,6 @@ public class SystemManager {
 		loadLocalTrackerImage();
 		
 		if(planner != null) { planner.setTrackerFrameRate(settings.getFrameRate()); }
-		
-		pathSystem = PathSystem.readFrom(settings.getPathDataFileName());
-		
-		robotSystem = new RobotSystem();
-		blockSystem = new BlockSystem();
-		potSystem = new PotSystem();
 		
 		webcam = new Webcam(Webcam.DEFAULT_RESOLUTION);
 		if(!webcam.initialize()) {
@@ -100,20 +100,8 @@ public class SystemManager {
 		client.sendSignal(new Signal(SignalType.StartSimulation));
 		m_started = true;
 		
-		//taskManager.start();
+		taskManager.start();
 		timer.start();
-		
-		/*
-		client.sendSignal(new BlockStateChangeSignal((byte) 1, (byte) 1, BlockState.Delivered));
-		client.sendSignal(new PotStateChangeSignal((byte) 0, (byte) 2, PotState.Delivered));
-		client.sendSignal(new RobotStateChangeSignal((byte) 2, RobotState.FindingBlock));
-		client.sendSignal(new TaskCompletedSignal((byte) 4, (byte) 2));
-		client.sendSignal(new TaskStartedSignal((byte) 5, (byte) 2));
-		client.sendSignal(new UpdateActualRobotPoseSignal((byte) 2, 320, 240, 90));
-		client.sendSignal(new UpdateEstimatedRobotPoseSignal((byte) 1, 259, 136, 42));
-		client.sendSignal(new UpdateBlockPositionSignal((byte) 8, 124, 248));
-		client.sendSignal(new UpdatePotPositionSignal((byte) 2, 90, 138));
-		*/
 	}
 	
 	public static void setTrackerImage(byte trackerNumber, BufferedImage trackerImage) {

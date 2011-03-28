@@ -13,10 +13,13 @@ public class DisplayWindow extends JFrame implements WindowListener, Updatable {
 	private JScrollPane m_displayScrollPane;
 	private AutomaticUpdater m_updater;
 	
+	private boolean m_resized;
+	
 	private static final long serialVersionUID = 1L;
 	
 	public DisplayWindow() {
 		setTitle("Display Window");
+		setMinimumSize(new Dimension(320, 240));
 		int screenHeight = Toolkit.getDefaultToolkit().getScreenSize().height;
 		int scrollBarWidth = 17;
 		try { scrollBarWidth = Integer.parseInt(UIManager.getDefaults().get("ScrollBar.width").toString()); }
@@ -25,24 +28,33 @@ public class DisplayWindow extends JFrame implements WindowListener, Updatable {
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		addWindowListener(this);
 		
-		m_updater = new AutomaticUpdater(250);
+		m_updater = new AutomaticUpdater(33);
 		m_updater.setTarget(this);
 		m_updater.start();
+		
+		m_resized = false;
 		
 		initComponents();
 	}
 	
-	public void initComponents() {
+	private void initComponents() {
 		m_displayPanel = new DisplayPanel();
 		m_displayScrollPane = new JScrollPane(m_displayPanel);
 		add(m_displayScrollPane);
 	}
-
+	
+	public byte getEditMode() { return m_displayPanel.getEditMode(); }
+	
+	public boolean setEditMode(byte editMode) { return m_displayPanel.setEditMode(editMode); }
+	
 	public void setVisible(boolean visiblity){
 		super.setVisible(visiblity);
 		
-		setSize(getWidth() + getInsets().left + getInsets().right, getHeight());
-		SystemManager.debugWindow.setLocation(SystemManager.debugWindow.getX() + getInsets().left + getInsets().right, SystemManager.debugWindow.getY());
+		if(!m_resized) {
+			setSize(getWidth() + getInsets().left + getInsets().right, getHeight());
+			SystemManager.debugWindow.setLocation(SystemManager.debugWindow.getX() + getInsets().left + getInsets().right, SystemManager.debugWindow.getY());
+			m_resized = true;
+		}
 	}
 	
 	public void setTrackerImage(byte trackerNumber, BufferedImage trackerImage) {
@@ -58,6 +70,7 @@ public class DisplayWindow extends JFrame implements WindowListener, Updatable {
 	
 	public void windowClosing(WindowEvent e){
 		SystemManager.settings.save();
+		SystemManager.pathSystem.writeTo(SystemManager.settings.getPathDataFileName());
 		dispose();
 	}
 	

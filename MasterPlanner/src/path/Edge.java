@@ -160,8 +160,9 @@ public class Edge {
 		
 		Edge e = (Edge) o;
 		
-		// check to see that each Vertex in the Edge matches the corresponding Vertex of the other
-		return this.a == e.a && this.b == e.b;
+		// check to see that each Vertex in the Edge matches the corresponding Vertex of the other (undirected)
+		return this.a == e.a && this.b == e.b ||
+			   this.a == e.b && this.b == e.a;
 	}
 	
 	/* (non-Javadoc)

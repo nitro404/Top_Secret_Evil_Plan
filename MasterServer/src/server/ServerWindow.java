@@ -13,19 +13,19 @@ public class ServerWindow extends JFrame implements ActionListener, WindowListen
 	
 	private boolean m_updating;
 	
-	private JMenuBar menuBar;
+	private JMenuBar m_menuBar;
 	
-	private JMenu fileMenu;
-	private JMenuItem fileExitMenuItem;
+	private JMenu m_fileMenu;
+	private JMenuItem m_fileExitMenuItem;
     
-	private JMenu settingsMenu;
-	private JCheckBoxMenuItem settingsAutoScrollConsoleMenuWindowItem;
-	private JMenu settingsSignalsMenu;
-	private JRadioButtonMenuItem[] settingsSignalsMenuItem;
-	private ButtonGroup settingsSignalsButtonGroup;
-	private JMenuItem settingsSaveMenuItem;
+	private JMenu m_settingsMenu;
+	private JCheckBoxMenuItem m_settingsAutoScrollConsoleMenuWindowItem;
+	private JMenu m_settingsSignalsMenu;
+	private JRadioButtonMenuItem[] m_settingsSignalsMenuItem;
+	private ButtonGroup m_settingsSignalsButtonGroup;
+	private JMenuItem m_settingsSaveMenuItem;
 	
-	private JMenu helpMenu;
+	private JMenu m_helpMenu;
 	private JMenuItem helpAboutMenuItem;
 	
 	private static final long serialVersionUID = 1L;
@@ -49,56 +49,56 @@ public class ServerWindow extends JFrame implements ActionListener, WindowListen
 	}
 	
 	private void initMenu() {
-		menuBar = new JMenuBar();
+		m_menuBar = new JMenuBar();
         
-        fileMenu = new JMenu("File");
-        fileExitMenuItem = new JMenuItem("Exit");
+        m_fileMenu = new JMenu("File");
+        m_fileExitMenuItem = new JMenuItem("Exit");
         
-        settingsMenu = new JMenu("Settings");
-        settingsAutoScrollConsoleMenuWindowItem = new JCheckBoxMenuItem("Auto-scroll Console Window");
-        settingsSignalsMenu = new JMenu("Signal Debugging");
-        settingsSignalsMenuItem = new JRadioButtonMenuItem[SignalDebugLevel.signalDebugLevels.length];
+        m_settingsMenu = new JMenu("Settings");
+        m_settingsAutoScrollConsoleMenuWindowItem = new JCheckBoxMenuItem("Auto-scroll Console Window");
+        m_settingsSignalsMenu = new JMenu("Signal Debugging");
+        m_settingsSignalsMenuItem = new JRadioButtonMenuItem[SignalDebugLevel.signalDebugLevels.length];
         for(byte i=0;i<SignalDebugLevel.signalDebugLevels.length;i++) {
-        	settingsSignalsMenuItem[i] = new JRadioButtonMenuItem(SignalDebugLevel.signalDebugLevels[i]); 
+        	m_settingsSignalsMenuItem[i] = new JRadioButtonMenuItem(SignalDebugLevel.signalDebugLevels[i]); 
         }
-        settingsSaveMenuItem = new JMenuItem("Save Settings");
+        m_settingsSaveMenuItem = new JMenuItem("Save Settings");
         
-        helpMenu = new JMenu("Help");
+        m_helpMenu = new JMenu("Help");
         helpAboutMenuItem = new JMenuItem("About");
         
-        settingsAutoScrollConsoleMenuWindowItem.setSelected(true);
-        settingsSignalsMenuItem[0].setSelected(true);
+        m_settingsAutoScrollConsoleMenuWindowItem.setSelected(true);
+        m_settingsSignalsMenuItem[0].setSelected(true);
         
-        settingsSignalsButtonGroup = new ButtonGroup();
+        m_settingsSignalsButtonGroup = new ButtonGroup();
         
-        fileExitMenuItem.addActionListener(this);
-        settingsAutoScrollConsoleMenuWindowItem.addActionListener(this);
+        m_fileExitMenuItem.addActionListener(this);
+        m_settingsAutoScrollConsoleMenuWindowItem.addActionListener(this);
         for(byte i=0;i<SignalDebugLevel.signalDebugLevels.length;i++) {
-        	settingsSignalsMenuItem[i].addActionListener(this);
+        	m_settingsSignalsMenuItem[i].addActionListener(this);
         }
-        settingsSaveMenuItem.addActionListener(this);
+        m_settingsSaveMenuItem.addActionListener(this);
         helpAboutMenuItem.addActionListener(this);
         
         for(byte i=0;i<SignalDebugLevel.signalDebugLevels.length;i++) {
-        	settingsSignalsButtonGroup.add(settingsSignalsMenuItem[i]);
+        	m_settingsSignalsButtonGroup.add(m_settingsSignalsMenuItem[i]);
         }
         
-        fileMenu.add(fileExitMenuItem);
+        m_fileMenu.add(m_fileExitMenuItem);
         
-        settingsMenu.add(settingsAutoScrollConsoleMenuWindowItem);
+        m_settingsMenu.add(m_settingsAutoScrollConsoleMenuWindowItem);
         for(byte i=0;i<SignalDebugLevel.signalDebugLevels.length;i++) {
-        	settingsSignalsMenu.add(settingsSignalsMenuItem[i]);
+        	m_settingsSignalsMenu.add(m_settingsSignalsMenuItem[i]);
         }
-        settingsMenu.add(settingsSignalsMenu);
-        settingsMenu.add(settingsSaveMenuItem);
+        m_settingsMenu.add(m_settingsSignalsMenu);
+        m_settingsMenu.add(m_settingsSaveMenuItem);
         
-        helpMenu.add(helpAboutMenuItem);
+        m_helpMenu.add(helpAboutMenuItem);
 
-        menuBar.add(fileMenu);
-        menuBar.add(settingsMenu);
-        menuBar.add(helpMenu);
+        m_menuBar.add(m_fileMenu);
+        m_menuBar.add(m_settingsMenu);
+        m_menuBar.add(m_helpMenu);
 
-        setJMenuBar(menuBar);
+        setJMenuBar(m_menuBar);
 	}
 	
 	private void initComponents() {
@@ -132,13 +132,13 @@ public class ServerWindow extends JFrame implements ActionListener, WindowListen
 	public void actionPerformed(ActionEvent e) {
 		if(m_updating) { return; }
 		
-		if(e.getSource() == fileExitMenuItem) {
+		if(e.getSource() == m_fileExitMenuItem) {
 			System.exit(0);
 		}
-		else if(e.getSource() == settingsAutoScrollConsoleMenuWindowItem) {
-			SystemManager.settings.setAutoScrollConsoleWindow(settingsAutoScrollConsoleMenuWindowItem.isSelected());
+		else if(e.getSource() == m_settingsAutoScrollConsoleMenuWindowItem) {
+			SystemManager.settings.setAutoScrollConsoleWindow(m_settingsAutoScrollConsoleMenuWindowItem.isSelected());
 		}
-		else if(e.getSource() == settingsSaveMenuItem) {
+		else if(e.getSource() == m_settingsSaveMenuItem) {
 			SystemManager.settings.save();
 		}
 		else if(e.getSource() == helpAboutMenuItem) {
@@ -146,7 +146,7 @@ public class ServerWindow extends JFrame implements ActionListener, WindowListen
 		}
 		else {
 			for(byte i=0;i<SignalDebugLevel.signalDebugLevels.length;i++) {
-	        	if(e.getSource() == settingsSignalsMenuItem[i]) {
+	        	if(e.getSource() == m_settingsSignalsMenuItem[i]) {
 	        		SystemManager.settings.setSignalDebugLevel(i);
 	        	}
 	        }
@@ -156,8 +156,8 @@ public class ServerWindow extends JFrame implements ActionListener, WindowListen
 	public void update() {
 		m_updating = true;
 		
-		settingsSignalsMenuItem[SystemManager.settings.getSignalDebugLevel()].setSelected(true);
-		settingsAutoScrollConsoleMenuWindowItem.setSelected(SystemManager.settings.getAutoScrollConsoleWindow());
+		m_settingsSignalsMenuItem[SystemManager.settings.getSignalDebugLevel()].setSelected(true);
+		m_settingsAutoScrollConsoleMenuWindowItem.setSelected(SystemManager.settings.getAutoScrollConsoleWindow());
 		
 		try {
 			m_consoleText.setText(SystemManager.console.toString());

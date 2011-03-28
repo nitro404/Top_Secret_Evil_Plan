@@ -2,10 +2,10 @@ package pot;
 
 import java.util.Vector;
 import java.awt.Graphics2D;
+import java.awt.event.*;
+import shared.*;
 
-import shared.Position;
-
-public class PotSystem {
+public class PotSystem implements MouseListener, MouseMotionListener {
 	
 	private Vector<Pot> m_pots;
 	
@@ -35,6 +35,26 @@ public class PotSystem {
 	public boolean setActualPotPosition(byte potID, Position potPosition) {
 		if(potID < 0 || potID >= m_pots.size() || !Position.isValid(potPosition)) { return false; }
 		return m_pots.elementAt(potID).setPosition(potPosition);
+	}
+	
+	public void mouseClicked(MouseEvent e) { }
+	public void mouseEntered(MouseEvent e) { }
+	public void mouseExited(MouseEvent e) { }
+	
+	public void mousePressed(MouseEvent e) {
+		
+	}
+	
+	public void mouseReleased(MouseEvent e) {
+		
+	}
+	
+	public void mouseDragged(MouseEvent e) {
+		
+	}
+	
+	public void mouseMoved(MouseEvent e) {
+		
 	}
 	
 	public void draw(Graphics2D g) {
