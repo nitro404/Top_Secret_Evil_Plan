@@ -1,9 +1,8 @@
 package pot;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
-
-import shared.Position;
+import planner.*;
+import shared.*;
 
 public class Pot {
 	
@@ -12,7 +11,6 @@ public class Pot {
 	private byte m_state;
 	
 	final public static int SIZE = (int) (21.6 * 3); // size in cm * pixel scaling
-	final public static Color DEFAULT_COLOUR = Color.BLUE;
 	
 	public Pot(byte id, Position position) {
 		m_id = id;
@@ -51,7 +49,7 @@ public class Pot {
 	public void draw(Graphics2D g) {
 		if(g == null) { return; }
 		
-		g.setColor(DEFAULT_COLOUR);
+		g.setColor(SystemManager.settings.getPotColour());
 		
 		if(m_state == PotState.Delivered) {
 			g.fillOval(m_position.x - (SIZE/2), m_position.y - (SIZE/2), SIZE, SIZE);

@@ -50,10 +50,10 @@ public class ClientInputSignalQueue extends Thread {
 		if(s == null) { return; }
 		
 		if(s.getSignalType() == SignalType.Ping) {
-			s2 = s;
+			sendSignal(new Signal(SignalType.Pong));
 		}
 		else if(s.getSignalType() == SignalType.Pong) {
-			s2 = s;
+			m_client.pong();
 		}
 		else if(s.getSignalType() == SignalType.StartSimulation) {
 			s2 = s;
@@ -101,7 +101,9 @@ public class ClientInputSignalQueue extends Thread {
 			SystemManager.console.writeLine("Unexpected input signal of type: " + s.getSignalType());
 		}
 		
-		addSignal(s2);
+		if(s2 != null) {
+			addSignal(s2);
+		}
 	}
 	
 	public void run() {
@@ -114,13 +116,7 @@ public class ClientInputSignalQueue extends Thread {
 					SystemManager.console.writeLine("Received from " + m_client.getName() + ": " + s.toString());
 				}
 				
-				if(s.getSignalType() == SignalType.Ping) {
-					sendSignal(new Signal(SignalType.Pong));
-				}
-				else if(s.getSignalType() == SignalType.Pong) {
-					m_client.pong();
-				}
-				else if(s.getSignalType() == SignalType.ReplyTrackerImage) {
+				if(s.getSignalType() == SignalType.ReplyTrackerImage) {
 					ReplyTrackerImageSignal s2 = (ReplyTrackerImageSignal) s;
 					
 					if(m_client.isIdentified()) {

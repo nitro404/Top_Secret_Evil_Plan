@@ -50,10 +50,10 @@ public class ServerInputSignalQueue extends Thread {
 		if(s == null) { return; }
 		
 		if(s.getSignalType() == SignalType.Ping) {
-			s2 = s;
+			sendSignal(new Signal(SignalType.Pong));
 		}
 		else if(s.getSignalType() == SignalType.Pong) {
-			s2 = s;
+			m_client.pong();
 		}
 		else if(s.getSignalType() == SignalType.StartSimulation) {
 			s2 = s;
@@ -101,7 +101,9 @@ public class ServerInputSignalQueue extends Thread {
 			return;
 		}
 		
-		addSignal(s2);
+		if(s2 != null) {
+			addSignal(s2);
+		}
 	}
 	
 	public void run() {
@@ -116,13 +118,7 @@ public class ServerInputSignalQueue extends Thread {
 					SystemManager.console.writeLine("Received: " + s.toString());
 				}
 				
-				if(s.getSignalType() == SignalType.Ping) {
-					sendSignal(new Signal(SignalType.Pong));
-				}
-				else if(s.getSignalType() == SignalType.Pong) {
-					m_client.pong();
-				}
-				else if(s.getSignalType() == SignalType.StartSimulation) {
+				if(s.getSignalType() == SignalType.StartSimulation) {
 					SystemManager.start();
 				}
 				else if(s.getSignalType() == SignalType.BlockStateChange) {

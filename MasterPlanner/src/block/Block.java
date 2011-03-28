@@ -3,7 +3,8 @@ package block;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-import shared.Position;
+import planner.SystemManager;
+import shared.*;
 
 public class Block {
 	
@@ -13,8 +14,6 @@ public class Block {
 	private byte m_state;
 	
 	final public static int SIZE = (int) (2.8 * 3); // size in cm * pixel scaling
-	final public static Color DEFAULT_COLOUR = Color.ORANGE;
-	final public static Color MISSING_COLOUR = Color.GRAY;
 	
 	public Block(byte id, Position defaultPosition) {
 		m_id = id;
@@ -64,7 +63,7 @@ public class Block {
 	public void draw(Graphics2D g) {
 		if(g == null) { return; }
 		
-		g.setColor(m_state == BlockState.Missing ? MISSING_COLOUR : DEFAULT_COLOUR);
+		g.setColor(m_state == BlockState.Missing ? SystemManager.settings.getMissingColour() : SystemManager.settings.getBlockColour());
 		
 		if(m_state == BlockState.Unknown || m_state == BlockState.Missing) {
 			g.drawOval(m_defaultPosition.x - (SIZE/2), m_defaultPosition.y - (SIZE/2), SIZE, SIZE);

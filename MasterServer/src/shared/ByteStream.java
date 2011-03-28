@@ -419,16 +419,25 @@ public class ByteStream {
 	public static ByteStream readFrom(DataInputStream in, int length) {
 		if(in == null || length < 1) { return null; }
 		ByteStream bs = new ByteStream(length);
-		long startTime = System.currentTimeMillis(); 
-		long maxTime = 8000L;
+		//long startTime = System.currentTimeMillis(); 
+		//long maxTime = 8000L;
 		try {
 			if(in.available() <= 0) { return null; }
-			while(in.available() < length && startTime + maxTime > System.currentTimeMillis());
+			/*
+			while(in.available() < length && startTime + maxTime > System.currentTimeMillis()) {
+				Thread.sleep(10);
+			}
+			*/
 			in.read(bs.getContents(), 0, length);
 		}
 		catch(IOException e) {
 			return null;
 		}
+		/*
+		catch(InterruptedException e) {
+			return null;
+		}
+		*/
 		return bs;
 	}
 	

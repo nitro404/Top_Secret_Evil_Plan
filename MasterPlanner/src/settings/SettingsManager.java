@@ -25,6 +25,7 @@ public class SettingsManager {
 	private int m_timeLimit;
 	private int m_numberOfTrackers;
 	private Color m_selectedColour;
+	private Color m_missingColour;
 	private Color m_vertexColour;
 	private Color m_edgeColour;
 	private Color m_robotColour;
@@ -44,12 +45,13 @@ public class SettingsManager {
 	final public static Dimension defaultWebcamResolution = Webcam.DEFAULT_RESOLUTION;
 	final public static int defaultTimeLimit = 15;
 	final public static int defaultNumberOfTrackers = 3;
-	final public static Color defaultSelectedColor = Color.RED;
-	final public static Color defaultVertexColor = Color.BLACK;
-	final public static Color defaultEdgeColor = Color.BLUE;
-	final public static Color defaultRobotColor = Color.GREEN;
-	final public static Color defaultBlockColor = Color.ORANGE;
-	final public static Color defaultPotColor = Color.BLUE;
+	final public static Color defaultSelectedColour = Color.RED;
+	final public static Color defaultMissingColour = Color.GRAY;
+	final public static Color defaultVertexColour = Color.BLUE;
+	final public static Color defaultEdgeColour = Color.GREEN;
+	final public static Color defaultRobotColour = Color.GREEN;
+	final public static Color defaultBlockColour = Color.ORANGE;
+	final public static Color defaultPotColour = Color.CYAN;
 	
 	public SettingsManager() {
 		m_settings = new VariableSystem();
@@ -70,12 +72,13 @@ public class SettingsManager {
 		m_webcamResolution = defaultWebcamResolution;
 		m_timeLimit = defaultTimeLimit;
 		m_numberOfTrackers = defaultNumberOfTrackers;
-		m_selectedColour = defaultSelectedColor;
-		m_vertexColour = defaultVertexColor;
-		m_edgeColour = defaultEdgeColor;
-		m_robotColour = defaultRobotColor;
-		m_blockColour = defaultBlockColor;
-		m_potColour = defaultPotColor;
+		m_selectedColour = defaultSelectedColour;
+		m_missingColour = defaultMissingColour;
+		m_vertexColour = defaultVertexColour;
+		m_edgeColour = defaultEdgeColour;
+		m_robotColour = defaultRobotColour;
+		m_blockColour = defaultBlockColour;
+		m_potColour = defaultPotColour;
 	}
 	
 	public String getPathDataFileName() { return m_pathDataFileName; }
@@ -112,6 +115,7 @@ public class SettingsManager {
 	public int getNumberOfTrackers() { return m_numberOfTrackers; }
 	
 	public Color getSelectedColour() { return m_selectedColour; }
+	public Color getMissingColour() { return m_missingColour; }
 	public Color getVertexColour() { return m_vertexColour; }
 	public Color getEdgeColour() { return m_edgeColour; }
 	public Color getRobotColour() { return m_robotColour; }
@@ -250,7 +254,18 @@ public class SettingsManager {
 		return true;
 	}
 	
+	public void resetAllColours() {
+		m_selectedColour = defaultSelectedColour;
+		m_missingColour = defaultMissingColour;
+		m_vertexColour = defaultVertexColour;
+		m_edgeColour = defaultEdgeColour;
+		m_robotColour = defaultRobotColour;
+		m_blockColour = defaultBlockColour;
+		m_potColour = defaultPotColour;
+	}
+	
 	public boolean setSelectedColour(Color c) { if(c != null) { m_selectedColour = c; return true; } return false; }
+	public boolean setMissingColour(Color c) { if(c != null) { m_missingColour = c; return true; } return false; }
 	public boolean setVertexColour(Color c) { if(c != null) { m_vertexColour = c; return true; } return false; }
 	public boolean setEdgeColour(Color c) { if(c != null) { m_edgeColour = c; return true; } return false; }
 	public boolean setRobotColour(Color c) { if(c != null) { m_robotColour = c; return true; } return false; }
@@ -258,6 +273,7 @@ public class SettingsManager {
 	public boolean setPotColour(Color c) { if(c != null) { m_potColour = c; return true; } return false; }
 	
 	public boolean setSelectedColour(String data) { return setSelectedColour(parseColour(data)); }
+	public boolean setMissingColour(String data) { return setMissingColour(parseColour(data)); }
 	public boolean setVertexColour(String data) { return setVertexColour(parseColour(data)); }
 	public boolean setEdgeColour(String data) { return setEdgeColour(parseColour(data)); }
 	public boolean setRobotColour(String data) { return setRobotColour(parseColour(data)); }

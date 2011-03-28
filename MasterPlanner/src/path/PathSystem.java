@@ -6,6 +6,8 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import planner.SystemManager;
+
 public class PathSystem implements MouseListener, MouseMotionListener {
 	
 	private Vector<Path> m_paths;
@@ -432,14 +434,14 @@ public class PathSystem implements MouseListener, MouseMotionListener {
 		if(g == null) { return; }
 		
 		for(int i=0;i<m_paths.size();i++) {
-			m_paths.elementAt(i).draw(g, Color.GREEN, Color.BLUE);
+			m_paths.elementAt(i).draw(g, SystemManager.settings.getEdgeColour(), SystemManager.settings.getVertexColour());
 		}
 	}
 	
 	public void draw(Graphics g) {
 		if(g == null || m_activePath < 0 || m_activePath >= m_paths.size()) { return; }
 		
-		m_paths.elementAt(m_activePath).draw(g, Color.GREEN, Color.BLUE);
+		m_paths.elementAt(m_activePath).draw(g, SystemManager.settings.getEdgeColour(), SystemManager.settings.getVertexColour());
 	}
 	
 	public String toString() {

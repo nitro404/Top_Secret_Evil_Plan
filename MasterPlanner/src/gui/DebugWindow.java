@@ -27,6 +27,15 @@ public class DebugWindow extends JFrame implements ActionListener, WindowListene
 	private JMenu m_editModeMenu;
 	private JRadioButtonMenuItem[] m_editModeMenuItem;
 	private ButtonGroup m_editModeButtonGroup;
+	private JMenu m_editColourMenu;
+	private JMenuItem m_editColourSelectedMenuItem;
+	private JMenuItem m_editColourMissingMenuItem;
+	private JMenuItem m_editColourVertexMenuItem;
+	private JMenuItem m_editColourEdgeMenuItem;
+	private JMenuItem m_editColourRobotMenuItem;
+	private JMenuItem m_editColourBlockMenuItem;
+	private JMenuItem m_editColourPotMenuItem;
+	private JMenuItem m_editColourResetAllMenuItem;
 	private JMenuItem m_editUpdateTrackerImageMenuItem;
 	
 	private JMenu m_settingsMenu;
@@ -74,6 +83,15 @@ public class DebugWindow extends JFrame implements ActionListener, WindowListene
     	for(int i=0;i<EditMode.displayEditModes.length;i++) {
     		m_editModeMenuItem[i] = new JRadioButtonMenuItem(EditMode.displayEditModes[i]);
     	}
+    	m_editColourMenu = new JMenu("Colours");
+    	m_editColourSelectedMenuItem = new JMenuItem("Selected Colour");
+    	m_editColourMissingMenuItem = new JMenuItem("Missing Colour");
+    	m_editColourVertexMenuItem = new JMenuItem("Vertex Colour");
+    	m_editColourEdgeMenuItem = new JMenuItem("Edge Colour");
+    	m_editColourRobotMenuItem = new JMenuItem("Robot Colour");
+    	m_editColourBlockMenuItem = new JMenuItem("Block Colour");
+    	m_editColourPotMenuItem = new JMenuItem("Pot Colour");
+    	m_editColourResetAllMenuItem = new JMenuItem("Reset All Colours");
     	m_editUpdateTrackerImageMenuItem = new JMenuItem("Update Tracker Image");
         
         m_settingsMenu = new JMenu("Settings");
@@ -111,6 +129,14 @@ public class DebugWindow extends JFrame implements ActionListener, WindowListene
         for(byte i=0;i<EditMode.displayEditModes.length;i++) {
         	m_editModeMenuItem[i].addActionListener(this);
         }
+    	m_editColourSelectedMenuItem.addActionListener(this);
+    	m_editColourMissingMenuItem.addActionListener(this);
+    	m_editColourVertexMenuItem.addActionListener(this);
+    	m_editColourEdgeMenuItem.addActionListener(this);
+    	m_editColourRobotMenuItem.addActionListener(this);
+    	m_editColourBlockMenuItem.addActionListener(this);
+    	m_editColourPotMenuItem.addActionListener(this);
+    	m_editColourResetAllMenuItem.addActionListener(this);
         m_editUpdateTrackerImageMenuItem.addActionListener(this);
         m_settingsAutoConnectOnStartupMenuItem.addActionListener(this);
         m_settingsTakeWebcamSnapshotOnStartupMenuItem.addActionListener(this);
@@ -140,6 +166,15 @@ public class DebugWindow extends JFrame implements ActionListener, WindowListene
         for(byte i=0;i<EditMode.displayEditModes.length;i++) {
         	m_editModeMenu.add(m_editModeMenuItem[i]);
         }
+		m_editColourMenu.add(m_editColourSelectedMenuItem);
+		m_editColourMenu.add(m_editColourMissingMenuItem);
+		m_editColourMenu.add(m_editColourVertexMenuItem);
+		m_editColourMenu.add(m_editColourEdgeMenuItem);
+		m_editColourMenu.add(m_editColourRobotMenuItem);
+		m_editColourMenu.add(m_editColourBlockMenuItem);
+		m_editColourMenu.add(m_editColourPotMenuItem);
+		m_editColourMenu.add(m_editColourResetAllMenuItem);
+        m_editMenu.add(m_editColourMenu);
         m_editMenu.add(m_editUpdateTrackerImageMenuItem);
         
         m_settingsMenu.add(m_settingsAutoConnectOnStartupMenuItem);
@@ -208,6 +243,37 @@ public class DebugWindow extends JFrame implements ActionListener, WindowListene
 		}
 		else if(e.getSource() == m_fileExitMenuItem) {
 			System.exit(0);
+		}
+		else if(e.getSource() == m_editColourSelectedMenuItem) {
+			Color c = JColorChooser.showDialog(this, "Choose a colour for selected items:", SystemManager.settings.getSelectedColour());
+			SystemManager.settings.setSelectedColour(c);
+		}
+		if(e.getSource() == m_editColourMissingMenuItem) {
+			Color c = JColorChooser.showDialog(this, "Choose a colour for missing items:", SystemManager.settings.getMissingColour());
+			SystemManager.settings.setMissingColour(c);
+		}
+		else if(e.getSource() == m_editColourVertexMenuItem) {
+			Color c = JColorChooser.showDialog(this, "Choose a colour for vertices:", SystemManager.settings.getVertexColour());
+			SystemManager.settings.setVertexColour(c);
+		}
+		else if(e.getSource() == m_editColourEdgeMenuItem) {
+			Color c = JColorChooser.showDialog(this, "Choose a colour for edges:", SystemManager.settings.getEdgeColour());
+			SystemManager.settings.setEdgeColour(c);
+		}
+		else if(e.getSource() == m_editColourRobotMenuItem) {
+			Color c = JColorChooser.showDialog(this, "Choose a colour for robots:", SystemManager.settings.getRobotColour());
+			SystemManager.settings.setRobotColour(c);
+		}
+		else if(e.getSource() == m_editColourBlockMenuItem) {
+			Color c = JColorChooser.showDialog(this, "Choose a colour for blocks:", SystemManager.settings.getBlockColour());
+			SystemManager.settings.setBlockColour(c);
+		}
+		else if(e.getSource() == m_editColourPotMenuItem) {
+			Color c = JColorChooser.showDialog(this, "Choose a colour for pots:", SystemManager.settings.getPotColour());
+			SystemManager.settings.setPotColour(c);
+		}
+		else if(e.getSource() == m_editColourResetAllMenuItem) {
+			SystemManager.settings.resetAllColours();
 		}
 		else if(e.getSource() == m_editUpdateTrackerImageMenuItem) {
 			SystemManager.updateLocalTrackerImage();

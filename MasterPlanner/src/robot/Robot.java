@@ -1,7 +1,7 @@
 package robot;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
+import planner.*;
 import block.*;
 import shared.*;
 
@@ -17,7 +17,6 @@ public class Robot {
 	private byte m_state;
 	
 	final public static int SIZE = (int) (10 * 3); // size in cm * pixel scaling
-	final public static Color DEFAULT_COLOUR = Color.GREEN;
 	
 	public Robot(byte id, byte robotNumber, int x, int y, int angle) {
 		this(id, robotNumber, null, new RobotPose(x, y, angle));
@@ -115,7 +114,7 @@ public class Robot {
 	public void draw(Graphics2D g) {
 		if(g == null) { return; }
 		
-		g.setColor(DEFAULT_COLOUR);
+		g.setColor(SystemManager.settings.getRobotColour());
 		
 		RobotPose pose = !RobotPose.isValid(m_actualPose) ? m_defaultPose : (RobotPose.isValid(m_actualPose) ? m_actualPose : m_estimatedPose);
 		
