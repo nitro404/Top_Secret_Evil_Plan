@@ -117,13 +117,14 @@ public class ByteStream {
 	}
 	
 	public void addBufferedImage(BufferedImage image) {
-		if(image == null) { return; }
+		if(image == null) {
+			addInteger(0);
+			return;
+		}
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try { ImageIO.write(image, DEFAULT_IMAGE_FORMAT, baos); }
 		catch(IOException e) { return; }
-		try { baos.flush(); } catch(Exception e) { }
 		byte[] data = baos.toByteArray();
-		try { baos.close(); } catch(Exception e) { }
 		addInteger(data.length);
 		for(int i=0;i<data.length;i++) {
 			addByte(data[i]);
@@ -390,9 +391,7 @@ public class ByteStream {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try { ImageIO.write(img, DEFAULT_IMAGE_FORMAT, baos); }
 		catch(IOException e) { return 0; }
-		try { baos.flush(); } catch(Exception e) { }
 		byte[] data = baos.toByteArray();
-		try { baos.close(); } catch(Exception e) { }
 		checksum += getChecksum(data.length);
 		for(int i=0;i<data.length;i++) {
 			checksum += getChecksum(data[i]);
@@ -420,8 +419,11 @@ public class ByteStream {
 	public static ByteStream readFrom(DataInputStream in, int length) {
 		if(in == null || length < 1) { return null; }
 		ByteStream bs = new ByteStream(length);
+		long startTime = System.currentTimeMillis(); 
+		long maxTime = 8000L;
 		try {
 			if(in.available() <= 0) { return null; }
+			while(in.available() < length && startTime + maxTime > System.currentTimeMillis());
 			in.read(bs.getContents(), 0, length);
 		}
 		catch(IOException e) {
