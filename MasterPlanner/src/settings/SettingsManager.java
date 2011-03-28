@@ -3,6 +3,7 @@ package settings;
 import java.util.StringTokenizer;
 import java.net.*;
 import java.awt.Dimension;
+import java.awt.Color;
 import imaging.*;
 import client.*;
 import shared.*;
@@ -23,6 +24,12 @@ public class SettingsManager {
 	private Dimension m_webcamResolution;
 	private int m_timeLimit;
 	private int m_numberOfTrackers;
+	private Color m_selectedColour;
+	private Color m_vertexColour;
+	private Color m_edgeColour;
+	private Color m_robotColour;
+	private Color m_blockColour;
+	private Color m_potColour;
 	
 	final public static String defaultSettingsFileName = "planner.ini";
 	final public static String defaultPathDataFileName = "paths.ini";
@@ -37,6 +44,12 @@ public class SettingsManager {
 	final public static Dimension defaultWebcamResolution = Webcam.DEFAULT_RESOLUTION;
 	final public static int defaultTimeLimit = 15;
 	final public static int defaultNumberOfTrackers = 3;
+	final public static Color defaultSelectedColor = Color.RED;
+	final public static Color defaultVertexColor = Color.BLACK;
+	final public static Color defaultEdgeColor = Color.BLUE;
+	final public static Color defaultRobotColor = Color.GREEN;
+	final public static Color defaultBlockColor = Color.ORANGE;
+	final public static Color defaultPotColor = Color.BLUE;
 	
 	public SettingsManager() {
 		m_settings = new VariableSystem();
@@ -57,6 +70,12 @@ public class SettingsManager {
 		m_webcamResolution = defaultWebcamResolution;
 		m_timeLimit = defaultTimeLimit;
 		m_numberOfTrackers = defaultNumberOfTrackers;
+		m_selectedColour = defaultSelectedColor;
+		m_vertexColour = defaultVertexColor;
+		m_edgeColour = defaultEdgeColor;
+		m_robotColour = defaultRobotColor;
+		m_blockColour = defaultBlockColor;
+		m_potColour = defaultPotColor;
 	}
 	
 	public String getPathDataFileName() { return m_pathDataFileName; }
@@ -91,6 +110,13 @@ public class SettingsManager {
 	public int getTimeLimit() { return m_timeLimit; }
 	
 	public int getNumberOfTrackers() { return m_numberOfTrackers; }
+	
+	public Color getSelectedColour() { return m_selectedColour; }
+	public Color getVertexColour() { return m_vertexColour; }
+	public Color getEdgeColour() { return m_edgeColour; }
+	public Color getRobotColour() { return m_robotColour; }
+	public Color getBlockColour() { return m_blockColour; }
+	public Color getPotColour() { return m_potColour; }
 	
 	public boolean setPathDataFileName(String fileName) {
 		if(fileName == null) { return false; }
@@ -224,6 +250,36 @@ public class SettingsManager {
 		return true;
 	}
 	
+	public boolean setSelectedColour(Color c) { if(c != null) { m_selectedColour = c; return true; } return false; }
+	public boolean setVertexColour(Color c) { if(c != null) { m_vertexColour = c; return true; } return false; }
+	public boolean setEdgeColour(Color c) { if(c != null) { m_edgeColour = c; return true; } return false; }
+	public boolean setRobotColour(Color c) { if(c != null) { m_robotColour = c; return true; } return false; }
+	public boolean setBlockColour(Color c) { if(c != null) { m_blockColour = c; return true; } return false; }
+	public boolean setPotColour(Color c) { if(c != null) { m_potColour = c; return true; } return false; }
+	
+	public boolean setSelectedColour(String data) { return setSelectedColour(parseColour(data)); }
+	public boolean setVertexColour(String data) { return setVertexColour(parseColour(data)); }
+	public boolean setEdgeColour(String data) { return setEdgeColour(parseColour(data)); }
+	public boolean setRobotColour(String data) { return setRobotColour(parseColour(data)); }
+	public boolean setBlockColour(String data) { return setBlockColour(parseColour(data)); }
+	public boolean setPotColour(String data) { return setPotColour(parseColour(data)); }
+	
+	private static Color parseColour(String data) {
+		if(data == null) { return null; }
+		String temp = data.trim();
+		if(temp.length() == 0) { return null; }
+		StringTokenizer st = new StringTokenizer(temp, ", ");
+		if(st.countTokens() != 3) { return null; }
+		int r, g, b;
+		try {
+			r = Integer.parseInt(st.nextToken());
+			g = Integer.parseInt(st.nextToken());
+			b = Integer.parseInt(st.nextToken());
+		}
+		catch(NumberFormatException e) { return null; }
+		return new Color(r, g, b);
+	}
+	
 	public boolean load() { return loadFrom(defaultSettingsFileName); }
 	
 	public boolean save() { return saveTo(defaultSettingsFileName); }
@@ -251,6 +307,13 @@ public class SettingsManager {
 		try { setTimeLimit(Integer.parseInt(m_settings.getValue("Time Limit", "Settings"))); } catch(NumberFormatException e) { }
 		try { setNumberOfTrackers(Integer.parseInt(m_settings.getValue("Number of Trackers", "Settings"))); } catch(NumberFormatException e) { }
 		
+		setSelectedColour(parseColour(m_settings.getValue("Selected Colour", "Colours")));
+		setVertexColour(parseColour(m_settings.getValue("Vertex Colour", "Colours")));
+		setEdgeColour(parseColour(m_settings.getValue("Edge Colour", "Colours")));
+		setRobotColour(parseColour(m_settings.getValue("Robot Colour", "Colours")));
+		setBlockColour(parseColour(m_settings.getValue("Block Colour", "Colours")));
+		setPotColour(parseColour(m_settings.getValue("Pot Colour", "Colours")));
+		
 		return true;
 	}
 	
@@ -268,6 +331,12 @@ public class SettingsManager {
 		m_settings.setValue("Webcam Resolution", m_webcamResolution.width + ", " + m_webcamResolution.height, "Settings");
 		m_settings.setValue("Time Limit", m_timeLimit, "Settings");
 		m_settings.setValue("Number of Trackers", m_numberOfTrackers, "Settings");
+		m_settings.setValue("Selected Colour", m_selectedColour.getRed() + ", " + m_selectedColour.getGreen() + ", " + m_selectedColour.getBlue(), "Colours");
+		m_settings.setValue("Vertex Colour", m_vertexColour.getRed() + ", " + m_vertexColour.getGreen() + ", " + m_vertexColour.getBlue(), "Colours");
+		m_settings.setValue("Edge Colour", m_edgeColour.getRed() + ", " + m_edgeColour.getGreen() + ", " + m_edgeColour.getBlue(), "Colours");
+		m_settings.setValue("Robot Colour", m_robotColour.getRed() + ", " + m_robotColour.getGreen() + ", " + m_robotColour.getBlue(), "Colours");
+		m_settings.setValue("Block Colour", m_blockColour.getRed() + ", " + m_blockColour.getGreen() + ", " + m_blockColour.getBlue(), "Colours");
+		m_settings.setValue("Pot Colour", m_potColour.getRed() + ", " + m_potColour.getGreen() + ", " + m_potColour.getBlue(), "Colours");
 		
 		// group the settings by categories
 		m_settings.sort();
