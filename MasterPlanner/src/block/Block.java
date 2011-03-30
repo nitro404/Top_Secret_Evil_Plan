@@ -8,15 +8,15 @@ public class Block {
 	
 	private byte m_id;
 	private Position m_actualPosition;
-	private Position m_defaultPosition;
+	private Position m_initialPosition;
 	private byte m_state;
 	
 	final public static int SIZE = (int) (2.8 * 3); // size in cm * pixel scaling
 	
-	public Block(byte id, Position defaultPosition) {
+	public Block(byte id, Position position) {
 		m_id = id;
-		m_actualPosition = new Position(-1, -1);
-		m_defaultPosition = defaultPosition;
+		m_actualPosition = position;
+		m_initialPosition = position;
 		m_state = BlockState.Unknown;
 	}
 	
@@ -28,8 +28,8 @@ public class Block {
 		return m_actualPosition;
 	}
 	
-	public Position getDefaultPosition() {
-		return m_defaultPosition;
+	public Position getInitialPosition() {
+		return m_initialPosition;
 	}
 	
 	public void setID(byte id) {
@@ -46,9 +46,9 @@ public class Block {
 		return true;
 	}
 	
-	public boolean setDefaultPosition(Position defaultPosition) {
-		if(!Position.isValid(defaultPosition)) { return false; }
-		m_defaultPosition = defaultPosition;
+	public boolean setInitialPosition(Position initialPosition) {
+		if(!Position.isValid(initialPosition)) { return false; }
+		m_initialPosition = initialPosition;
 		return true;
 	}
 
@@ -58,13 +58,18 @@ public class Block {
 		return true;
 	}
 	
+	public void reset() {
+		m_actualPosition = m_initialPosition;
+		m_state = BlockState.Unknown;
+	}
+	
 	public void draw(Graphics2D g) {
 		if(g == null) { return; }
 		
 		g.setColor(m_state == BlockState.Missing ? SystemManager.settings.getMissingColour() : SystemManager.settings.getBlockColour());
 		
 		if(m_state == BlockState.Unknown || m_state == BlockState.Missing) {
-			g.drawOval(m_defaultPosition.x - (SIZE/2), m_defaultPosition.y - (SIZE/2), SIZE, SIZE);
+			g.drawOval(m_initialPosition.x - (SIZE/2), m_initialPosition.y - (SIZE/2), SIZE, SIZE);
 		}
 		else {
 			g.fillOval(m_actualPosition.x - (SIZE/2), m_actualPosition.y - (SIZE/2), SIZE, SIZE);
@@ -78,7 +83,7 @@ public class Block {
 	}
 	
 	public String toString() {
-		return "Block #" + m_id + " " + (m_state == BlockState.Unknown ? m_defaultPosition : m_actualPosition) + ": " + BlockState.toString(m_state);
+		return "Block #" + m_id + " " + (m_state == BlockState.Unknown ? m_initialPosition : m_actualPosition) + ": " + BlockState.toString(m_state);
 	}
 	
 }

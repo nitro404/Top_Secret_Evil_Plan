@@ -14,9 +14,9 @@ public class RobotSystem implements MouseListener, MouseMotionListener {
 	private int m_robotToMove;
 	
 	final public static RobotPosition[] defaultRobotPositions = {
-		new RobotPosition(0, 0, 270),
-		new RobotPosition(0, 0, 270),
-		new RobotPosition(0, 0, 270),
+		new RobotPosition(0, 0, 90),
+		new RobotPosition(0, 0, 90),
+		new RobotPosition(0, 0, 90),
 	};
 	
 	final public static byte[] robotNumbers = { 0, 5, 7 };
@@ -52,14 +52,14 @@ public class RobotSystem implements MouseListener, MouseMotionListener {
 		return m_robots.elementAt(robotID).setEstimatedPosition(estimatedRobtPosition);
 	}
 	
-	public boolean setDefaultPosition(byte robotID, RobotPosition defaultRobotPosition) {
-		if(robotID < 0 || robotID >= m_robots.size() || !RobotPosition.isValid(defaultRobotPosition)) { return false; }
-		return m_robots.elementAt(robotID).setDefaultPosition(defaultRobotPosition);
-	}
-	
 	public boolean setInitialPosition(byte robotID, RobotPosition initialRobotPosition) {
 		if(robotID < 0 || robotID >= m_robots.size() || !RobotPosition.isValid(initialRobotPosition)) { return false; }
 		return m_robots.elementAt(robotID).setInitialPosition(initialRobotPosition);
+	}
+	
+	public boolean setSpawnPosition(byte robotID, RobotPosition spawnRobotPosition) {
+		if(robotID < 0 || robotID >= m_robots.size() || !RobotPosition.isValid(spawnRobotPosition)) { return false; }
+		return m_robots.elementAt(robotID).setSpawnPosition(spawnRobotPosition);
 	}
 	
 	public void mouseClicked(MouseEvent e) { }
@@ -101,6 +101,12 @@ public class RobotSystem implements MouseListener, MouseMotionListener {
 			}
 		}
 		return false;
+	}
+	
+	public void reset() {
+		for(int i=0;i<m_robots.size();i++) {
+			m_robots.elementAt(i).reset();
+		}
 	}
 	
 	public void clearSelection() {

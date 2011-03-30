@@ -1,5 +1,7 @@
 package pot;
 
+import gui.EditMode;
+
 import java.awt.Graphics2D;
 import planner.*;
 import shared.*;
@@ -7,14 +9,16 @@ import shared.*;
 public class Pot {
 	
 	private byte m_id;
-	private Position m_position;
+	private Position m_actualPosition;
+	private Position m_initialPosition;
 	private byte m_state;
 	
 	final public static int SIZE = (int) (21.6 * 3); // size in cm * pixel scaling
 	
 	public Pot(byte id, Position position) {
 		m_id = id;
-		m_position = position;
+		m_actualPosition = position;
+		m_initialPosition = position;
 		m_state = PotState.Origin;
 	}
 	
@@ -22,8 +26,12 @@ public class Pot {
 		return m_id;
 	}
 
-	public Position getPosition() {
-		return m_position;
+	public Position getActualPosition() {
+		return m_actualPosition;
+	}
+	
+	public Position getInitialPosition() {
+		return m_initialPosition;
 	}
 
 	public byte getState() {
@@ -34,9 +42,15 @@ public class Pot {
 		m_id = id;
 	}
 
-	public boolean setPosition(Position position) {
+	public boolean setActualPosition(Position actualPosition) {
+		if(!Position.isValid(actualPosition)) { return false; }
+		m_actualPosition = actualPosition;
+		return true;
+	}
+	
+	public boolean setInitialPosition(Position position) {
 		if(!Position.isValid(position)) { return false; }
-		m_position = position;
+		m_initialPosition = position;
 		return true;
 	}
 
@@ -46,16 +60,23 @@ public class Pot {
 		return true;
 	}
 	
+	public void reset() {
+		m_actualPosition = m_initialPosition;
+		m_state = PotState.Origin;
+	}
+	
 	public void draw(Graphics2D g) {
 		if(g == null) { return; }
 		
 		g.setColor(SystemManager.settings.getPotColour());
 		
+		Position p = SystemManager.isStarted() ? m_actualPosition : m_initialPosition ;
+		
 		if(m_state == PotState.Delivered) {
-			g.fillOval(m_position.x - (SIZE/2), m_position.y - (SIZE/2), SIZE, SIZE);
+			g.fillOval(p.x - (SIZE/2), p.y - (SIZE/2), SIZE, SIZE);
 		}
 		else {
-			g.drawOval(m_position.x - (SIZE/2), m_position.y - (SIZE/2), SIZE, SIZE);
+			g.drawOval(p.x - (SIZE/2), p.y - (SIZE/2), SIZE, SIZE);
 		}
 	}
 	
@@ -66,7 +87,7 @@ public class Pot {
 	}
 	
 	public String toString() {
-		return "Pot #" + m_id + " " + m_position + ": " + PotState.toString(m_state);
+		return "Pot #" + m_id + " " + m_actualPosition + ": " + PotState.toString(m_state);
 	}
 	
 }

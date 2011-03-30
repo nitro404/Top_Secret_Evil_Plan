@@ -95,6 +95,8 @@ public class SystemManager {
 		client.sendSignal(new Signal(SignalType.StartSimulation));
 		m_started = true;
 		
+		reset();
+		
 		taskManager.start();
 		timer.start();
 	}
@@ -165,6 +167,12 @@ public class SystemManager {
 			console.writeLine("Failed to take snapshot from webcam.");
 			return false;
 		}
+	}
+	
+	public static void reset() {
+		robotSystem.reset();
+		blockSystem.reset();
+		potSystem.reset();
 	}
 	
 	public static void handlePose(Position position, int angle) {

@@ -9,6 +9,9 @@ public class BlockSystem implements MouseListener, MouseMotionListener {
 	
 	private Vector<Block> m_blocks;
 	
+	private int m_selectedBlock;
+	private int m_blockToMove;
+	
 	final public static Position[] defaultBlockPositions = {
 		// zone 1 (top)
 		new Position(0, 0),
@@ -38,6 +41,8 @@ public class BlockSystem implements MouseListener, MouseMotionListener {
 		for(byte i=0;i<defaultBlockPositions.length;i++) {
 			m_blocks.add(new Block(i, defaultBlockPositions[i]));
 		}
+		m_selectedBlock = -1;
+		m_blockToMove = -1;
 	}
 	
 	public Block getBlock(byte blockID) {
@@ -60,23 +65,51 @@ public class BlockSystem implements MouseListener, MouseMotionListener {
 	public void mouseExited(MouseEvent e) { }
 	
 	public void mousePressed(MouseEvent e) {
-		
+		if(e.getButton() == MouseEvent.BUTTON2) {
+			selectPot(e.getPoint());
+			m_blockToMove = m_selectedBlock;
+		}
 	}
 	
 	public void mouseReleased(MouseEvent e) {
-		
+		if(e.getButton() == MouseEvent.BUTTON2) {
+			m_blockToMove = -1;
+		}
 	}
 	
 	public void mouseDragged(MouseEvent e) {
-		
+		if(m_blockToMove != -1) {
+			m_blocks.elementAt(m_blockToMove).setInitialPosition(new Position(e.getX(), e.getY()));
+		}
 	}
 	
-	public void mouseMoved(MouseEvent e) {
+	public void mouseMoved(MouseEvent e) { }
+	
+	public boolean selectPot(Point p) {
+		m_selectedBlock = -1;
 		
+		if(p == null) { return false; }
+		Position position = new Position(p);
+		if(!position.isValid()) { return false; }
+		
+		for(int i=0;i<m_blocks.size();i++) {
+			if(Math.sqrt(Math.pow(m_blocks.elementAt(i).getInitialPosition().getX() - p.x, 2) + Math.pow(m_blocks.elementAt(i).getInitialPosition().getY() - p.y, 2)) <= Block.SIZE / 2) {
+				m_selectedBlock = i;
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public void reset() {
+		for(int i=0;i<m_blocks.size();i++) {
+			m_blocks.elementAt(i).reset();
+		}
 	}
 	
 	public void clearSelection() {
-		
+		m_selectedBlock = -1;
+		m_blockToMove = -1;
 	}
 	
 	public void draw(Graphics2D g) {

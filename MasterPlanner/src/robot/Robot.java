@@ -13,8 +13,8 @@ public class Robot {
 	private RobotPosition m_actualPosition;
 	private RobotPosition m_lastValidActualPosition;
 	private RobotPosition m_estimatedPosition;
-	private RobotPosition m_defaultPosition;
 	private RobotPosition m_initialPosition;
+	private RobotPosition m_spawnPosition;
 	private byte m_state;
 	
 	final public static int SIZE = (int) (10 * 3); // size in cm * pixel scaling
@@ -23,23 +23,22 @@ public class Robot {
 		this(id, robotNumber, null, new RobotPosition(x, y, angle));
 	}
 	
-	public Robot(byte id, byte robotNumber, Position defaultPosition, int angle) {
-		this(id, robotNumber, null, new RobotPosition(defaultPosition, angle));
+	public Robot(byte id, byte robotNumber, Position position, int angle) {
+		this(id, robotNumber, null, new RobotPosition(position, angle));
 	}
 	
-	public Robot(byte id, byte robotNumber, RobotPosition defaultPosition) {
-		this(id, robotNumber, null, defaultPosition);
+	public Robot(byte id, byte robotNumber, RobotPosition position) {
+		this(id, robotNumber, null, position);
 	}
 	
-	public Robot(byte id, byte robotNumber, String name, RobotPosition defaultPosition) {
+	public Robot(byte id, byte robotNumber, String name, RobotPosition position) {
 		m_id = id;
 		m_robotNumber = robotNumber;
 		m_name = (name == null) ? "" : name.trim();
 		m_actualPosition = new RobotPosition(-1, -1, -1);
 		m_lastValidActualPosition = m_actualPosition;
 		m_estimatedPosition = new RobotPosition(-1, -1, -1);
-		m_defaultPosition = (defaultPosition == null) ? new RobotPosition(-1, -1, -1) : defaultPosition;
-		m_initialPosition = m_defaultPosition;
+		m_initialPosition = position;
 		m_state = RobotState.Idle;
 	}
 	
@@ -59,16 +58,20 @@ public class Robot {
 		return m_actualPosition;
 	}
 	
+	public RobotPosition getLastValidActualPosition() {
+		return m_lastValidActualPosition;
+	}
+	
 	public RobotPosition getEstimatedPosition() {
 		return m_estimatedPosition;
 	}
 	
-	public RobotPosition getDefaultPosition() {
-		return m_defaultPosition;
-	}
-	
 	public RobotPosition getInitialPosition() {
 		return m_initialPosition;
+	}
+	
+	public RobotPosition getSpawnPosition() {
+		return m_spawnPosition;
 	}
 
 	public byte getState() {
@@ -98,22 +101,30 @@ public class Robot {
 		return true;
 	}
 	
-	public boolean setDefaultPosition(RobotPosition defaultPosition) {
-		if(!RobotPosition.isValid(defaultPosition)) { return false; }
-		m_defaultPosition = defaultPosition;
-		return true;
-	}
-	
 	public boolean setInitialPosition(RobotPosition initialPosition) {
 		if(!RobotPosition.isValid(initialPosition)) { return false; }
 		m_initialPosition = initialPosition;
 		return true;
 	}
-
+	
+	public boolean setSpawnPosition(RobotPosition spawnPosition) {
+		if(!RobotPosition.isValid(spawnPosition)) { return false; }
+		m_spawnPosition = spawnPosition;
+		return true;
+	}
+	
 	public boolean setState(byte state) {
 		if(!RobotState.isValid(state)) { return false; }
 		m_state = state;
 		return true;
+	}
+	
+	public void reset() {
+		m_actualPosition = new RobotPosition(-1, -1, -1);
+		m_lastValidActualPosition = m_actualPosition;
+		m_estimatedPosition = new RobotPosition(-1, -1, -1);
+		m_spawnPosition = new RobotPosition(-1, -1, -1);
+		m_state = RobotState.Idle;
 	}
 	
 	public void draw(Graphics2D g) {
