@@ -91,13 +91,11 @@ public class RobotSystem implements MouseListener, MouseMotionListener {
 		m_selectedRobot = -1;
 		
 		if(p == null) { return false; }
-		Position position = (Position) p;
+		Position position = new Position(p);
 		if(!position.isValid()) { return false; }
 		
 		for(int i=0;i<m_robots.size();i++) {
-System.out.println(Math.sqrt(Math.pow(m_robots.elementAt(i).getInitialPosition().getX() - p.x, 2) + Math.pow(m_robots.elementAt(i).getInitialPosition().getY() - p.y, 2)) + " <= " + Robot.SIZE / 2);
 			if(Math.sqrt(Math.pow(m_robots.elementAt(i).getInitialPosition().getX() - p.x, 2) + Math.pow(m_robots.elementAt(i).getInitialPosition().getY() - p.y, 2)) <= Robot.SIZE / 2) {
-System.out.println("Selected " + i);
 				m_selectedRobot = i;
 				return true;
 			}
