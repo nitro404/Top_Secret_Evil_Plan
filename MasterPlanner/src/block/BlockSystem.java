@@ -75,6 +75,10 @@ public class BlockSystem implements MouseListener, MouseMotionListener {
 		
 	}
 	
+	public void clearSelection() {
+		
+	}
+	
 	public void draw(Graphics2D g) {
 		for(int i=0;i<m_blocks.size();i++) {
 			m_blocks.elementAt(i).draw(g);

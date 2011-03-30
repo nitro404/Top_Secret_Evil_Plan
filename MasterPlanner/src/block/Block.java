@@ -1,9 +1,7 @@
 package block;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
-
-import planner.SystemManager;
+import planner.*;
 import shared.*;
 
 public class Block {

@@ -50,10 +50,10 @@ public class ClientInputSignalQueue extends Thread {
 		if(s == null) { return; }
 		
 		if(s.getSignalType() == SignalType.Ping) {
-			sendSignal(new Signal(SignalType.Pong));
+			s2 = s;
 		}
 		else if(s.getSignalType() == SignalType.Pong) {
-			m_client.pong();
+			s2 = s;
 		}
 		else if(s.getSignalType() == SignalType.StartSimulation) {
 			s2 = s;
@@ -79,11 +79,11 @@ public class ClientInputSignalQueue extends Thread {
 		else if(s.getSignalType() == SignalType.UpdatePotPosition) {
 			s2 = UpdatePotPositionSignal.readFrom(ByteStream.readFrom(m_in, UpdatePotPositionSignal.LENGTH)); 
 		}
-		else if(s.getSignalType() == SignalType.UpdateActualRobotPose) {
-			s2 = UpdateActualRobotPoseSignal.readFrom(ByteStream.readFrom(m_in, UpdateActualRobotPoseSignal.LENGTH)); 
+		else if(s.getSignalType() == SignalType.UpdateActualRobotPosition) {
+			s2 = UpdateActualRobotPositionSignal.readFrom(ByteStream.readFrom(m_in, UpdateActualRobotPositionSignal.LENGTH)); 
 		}
-		else if(s.getSignalType() == SignalType.UpdateEstimatedRobotPose) {
-			s2 = UpdateEstimatedRobotPoseSignal.readFrom(ByteStream.readFrom(m_in, UpdateEstimatedRobotPoseSignal.LENGTH)); 
+		else if(s.getSignalType() == SignalType.UpdateEstimatedRobotPosition) {
+			s2 = UpdateEstimatedRobotPositionSignal.readFrom(ByteStream.readFrom(m_in, UpdateEstimatedRobotPositionSignal.LENGTH)); 
 		}
 		else if(s.getSignalType() == SignalType.RequestTrackerImage) {
 			s2 = RequestTrackerImageSignal.readFrom(ByteStream.readFrom(m_in, RequestTrackerImageSignal.LENGTH)); 
@@ -101,9 +101,7 @@ public class ClientInputSignalQueue extends Thread {
 			SystemManager.console.writeLine("Unexpected input signal of type: " + s.getSignalType());
 		}
 		
-		if(s2 != null) {
-			addSignal(s2);
-		}
+		addSignal(s2);
 	}
 	
 	public void run() {
@@ -116,7 +114,13 @@ public class ClientInputSignalQueue extends Thread {
 					SystemManager.console.writeLine("Received from " + m_client.getName() + ": " + s.toString());
 				}
 				
-				if(s.getSignalType() == SignalType.ReplyTrackerImage) {
+				if(s.getSignalType() == SignalType.Ping) {
+					sendSignal(new Signal(SignalType.Pong));
+				}
+				if(s.getSignalType() == SignalType.Pong) {
+					m_client.pong();
+				}
+				else if(s.getSignalType() == SignalType.ReplyTrackerImage) {
 					ReplyTrackerImageSignal s2 = (ReplyTrackerImageSignal) s;
 					
 					if(m_client.isIdentified()) {

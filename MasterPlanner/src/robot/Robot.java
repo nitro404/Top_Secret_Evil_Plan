@@ -10,34 +10,36 @@ public class Robot {
 	private byte m_id;
 	private byte m_robotNumber;
 	private String m_name;
-	private RobotPose m_actualPose;
-	private RobotPose m_estimatedPose;
-	private RobotPose m_defaultPose;
-	private RobotPose m_initialPose;
+	private RobotPosition m_actualPosition;
+	private RobotPosition m_lastValidActualPosition;
+	private RobotPosition m_estimatedPosition;
+	private RobotPosition m_defaultPosition;
+	private RobotPosition m_initialPosition;
 	private byte m_state;
 	
 	final public static int SIZE = (int) (10 * 3); // size in cm * pixel scaling
 	
 	public Robot(byte id, byte robotNumber, int x, int y, int angle) {
-		this(id, robotNumber, null, new RobotPose(x, y, angle));
+		this(id, robotNumber, null, new RobotPosition(x, y, angle));
 	}
 	
 	public Robot(byte id, byte robotNumber, Position defaultPosition, int angle) {
-		this(id, robotNumber, null, new RobotPose(defaultPosition, angle));
+		this(id, robotNumber, null, new RobotPosition(defaultPosition, angle));
 	}
 	
-	public Robot(byte id, byte robotNumber, RobotPose defaultPose) {
-		this(id, robotNumber, null, defaultPose);
+	public Robot(byte id, byte robotNumber, RobotPosition defaultPosition) {
+		this(id, robotNumber, null, defaultPosition);
 	}
 	
-	public Robot(byte id, byte robotNumber, String name, RobotPose defaultPose) {
+	public Robot(byte id, byte robotNumber, String name, RobotPosition defaultPosition) {
 		m_id = id;
 		m_robotNumber = robotNumber;
 		m_name = (name == null) ? "" : name.trim();
-		m_actualPose = new RobotPose(-1, -1, -1);
-		m_estimatedPose = new RobotPose(-1, -1, -1);
-		m_defaultPose = (defaultPose == null) ? new RobotPose(-1, -1, -1) : defaultPose;
-		m_initialPose = m_defaultPose;
+		m_actualPosition = new RobotPosition(-1, -1, -1);
+		m_lastValidActualPosition = m_actualPosition;
+		m_estimatedPosition = new RobotPosition(-1, -1, -1);
+		m_defaultPosition = (defaultPosition == null) ? new RobotPosition(-1, -1, -1) : defaultPosition;
+		m_initialPosition = m_defaultPosition;
 		m_state = RobotState.Idle;
 	}
 	
@@ -53,20 +55,20 @@ public class Robot {
 		return m_name;
 	}
 
-	public RobotPose getActualPose() {
-		return m_actualPose;
+	public RobotPosition getActualPosition() {
+		return m_actualPosition;
 	}
 	
-	public RobotPose getEstimatedPose() {
-		return m_estimatedPose;
+	public RobotPosition getEstimatedPosition() {
+		return m_estimatedPosition;
 	}
 	
-	public RobotPose getDefaultPose() {
-		return m_defaultPose;
+	public RobotPosition getDefaultPosition() {
+		return m_defaultPosition;
 	}
 	
-	public RobotPose getInitialPose() {
-		return m_initialPose;
+	public RobotPosition getInitialPosition() {
+		return m_initialPosition;
 	}
 
 	public byte getState() {
@@ -81,27 +83,30 @@ public class Robot {
 		m_robotNumber = robotNumber;
 	}
 
-	public boolean setActualPose(RobotPose actualPose) {
-		if(!RobotPose.isValid(actualPose)) { return false; }
-		m_actualPose = actualPose;
+	public boolean setActualPosition(RobotPosition actualPosition) {
+		if(actualPosition == null) { return false; }
+		m_actualPosition = actualPosition;
+		if(m_actualPosition.isValid()) {
+			m_lastValidActualPosition = m_actualPosition;
+		}
 		return true;
 	}
 
-	public boolean setEstimatedPose(RobotPose estimatedPose) {
-		if(!RobotPose.isValid(estimatedPose)) { return false; }
-		m_estimatedPose = estimatedPose;
+	public boolean setEstimatedPosition(RobotPosition estimatedPosition) {
+		if(!RobotPosition.isValid(estimatedPosition)) { return false; }
+		m_estimatedPosition = estimatedPosition;
 		return true;
 	}
 	
-	public boolean setDefaultPose(RobotPose defaultPose) {
-		if(!RobotPose.isValid(defaultPose)) { return false; }
-		m_defaultPose = defaultPose;
+	public boolean setDefaultPosition(RobotPosition defaultPosition) {
+		if(!RobotPosition.isValid(defaultPosition)) { return false; }
+		m_defaultPosition = defaultPosition;
 		return true;
 	}
 	
-	public boolean setInitialPose(RobotPose initialPose) {
-		if(!RobotPose.isValid(initialPose)) { return false; }
-		m_initialPose = initialPose;
+	public boolean setInitialPosition(RobotPosition initialPosition) {
+		if(!RobotPosition.isValid(initialPosition)) { return false; }
+		m_initialPosition = initialPosition;
 		return true;
 	}
 
@@ -116,9 +121,9 @@ public class Robot {
 		
 		g.setColor(SystemManager.settings.getRobotColour());
 		
-		RobotPose pose = !RobotPose.isValid(m_actualPose) ? m_defaultPose : (RobotPose.isValid(m_actualPose) ? m_actualPose : m_estimatedPose);
+		RobotPosition position = !RobotPosition.isValid(m_actualPosition) ? m_initialPosition : (RobotPosition.isValid(m_actualPosition) ? m_actualPosition : m_lastValidActualPosition);
 		
-		g.drawOval(pose.getX() - (SIZE/2), pose.getY() - (SIZE/2), SIZE, SIZE);
+		g.drawOval(position.getX() - (SIZE/2), position.getY() - (SIZE/2), SIZE, SIZE);
 	}
 	
 	public boolean equals(Object o) {
@@ -128,7 +133,7 @@ public class Robot {
 	}
 	
 	public String toString() {
-		return "Robot #" + m_robotNumber + " (ID #" + m_id + ") " + " (" + m_name + ") " + m_actualPose + ": " + BlockState.toString(m_state);
+		return "Robot #" + m_robotNumber + " (ID #" + m_id + ") " + " (" + m_name + ") " + m_actualPosition + ": " + BlockState.toString(m_state);
 	}
 	
 }

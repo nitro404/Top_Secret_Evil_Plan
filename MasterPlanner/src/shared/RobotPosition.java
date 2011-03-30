@@ -2,16 +2,16 @@ package shared;
 
 import java.awt.Point;
 
-public class RobotPose {
+public class RobotPosition {
 	
 	private Position m_position;
 	private int m_angle;
 	
-	public RobotPose(int x, int y, int angle) {
+	public RobotPosition(int x, int y, int angle) {
 		this(new Position(x, y), angle);
 	}
 	
-	public RobotPose(Position position, int angle) {
+	public RobotPosition(Position position, int angle) {
 		m_position = (position == null) ? new Position(-1, -1) : position;
 		m_angle = angle; 
 	}
@@ -56,8 +56,8 @@ public class RobotPose {
 		m_angle = (int) Math.toDegrees(angle);
 	}
 	
-	public static boolean isValid(RobotPose pose) {
-		return pose != null && pose.isValid();
+	public static boolean isValid(RobotPosition robotPosition) {
+		return robotPosition != null && robotPosition.isValid();
 	}
 	
 	public boolean isValid() {
@@ -66,8 +66,8 @@ public class RobotPose {
 	}
 	
 	public boolean equals(Object o) {
-		if(o == null || !(o instanceof RobotPose)) { return false; }
-		RobotPose p = (RobotPose) o;
+		if(o == null || !(o instanceof RobotPosition)) { return false; }
+		RobotPosition p = (RobotPosition) o;
 		return m_position.equals(p.m_position) && m_angle == p.m_angle;
 	}
 	

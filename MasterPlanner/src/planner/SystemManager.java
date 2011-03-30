@@ -52,6 +52,7 @@ public class SystemManager {
 		console = new SystemConsole();
 		
 		pathSystem = PathSystem.readFrom(settings.getPathDataFileName());
+		if(pathSystem == null) { pathSystem = new PathSystem(); }
 		
 		robotSystem = new RobotSystem();
 		blockSystem = new BlockSystem();

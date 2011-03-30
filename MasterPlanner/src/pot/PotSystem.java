@@ -9,16 +9,16 @@ public class PotSystem implements MouseListener, MouseMotionListener {
 	
 	private Vector<Pot> m_pots;
 	
-	final public static Position[] estimatedPotPositions = {
+	final public static Position[] defaultPotPositions = {
 		new Position(0, 0),
 		new Position(0, 0),
 		new Position(0, 0),
 	};
 	
 	public PotSystem() {
-		m_pots = new Vector<Pot>(estimatedPotPositions.length);
-		for(byte i=0;i<estimatedPotPositions.length;i++) {
-			m_pots.add(new Pot(i, estimatedPotPositions[i]));
+		m_pots = new Vector<Pot>(defaultPotPositions.length);
+		for(byte i=0;i<defaultPotPositions.length;i++) {
+			m_pots.add(new Pot(i, defaultPotPositions[i]));
 		}
 	}
 	
@@ -54,6 +54,10 @@ public class PotSystem implements MouseListener, MouseMotionListener {
 	}
 	
 	public void mouseMoved(MouseEvent e) {
+		
+	}
+
+	public void clearSelection() {
 		
 	}
 	

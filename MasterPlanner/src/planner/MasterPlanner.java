@@ -1,66 +1,31 @@
 package planner;
 
-import shared.Position;
-
+import shared.*;
 import com.rbcapp.planner.*;
 
 public class MasterPlanner extends Planner {
 	
 	public MasterPlanner(RBCPlannerHandler handler) {
 		super(handler);
-		
 		userTitle = "";
-		
 		SystemManager.initialize(this);
 	}
 	
-	// receive robot's pose from tracker
 	public void receivedPoseFromTracker(Pose robotPose) {
-		try {
-			if(robotPose == null) { return; }
-			SystemManager.handlePose(new Position(robotPose.x, robotPose.y), robotPose.angle);
-		}
-		catch(Exception e) {
-			System.out.println(e.getClass().getSimpleName() + " thrown while executing receivedPoseFromTracker: " + e.getMessage());
-			e.printStackTrace();
-			System.out.println();
-		}
+		if(robotPose == null) { return; }
+		SystemManager.handlePose(new Position(robotPose.x, robotPose.y), robotPose.angle);
 	}
 	
-	// receive data from robot
 	public void receivedDataFromRobot(int[] data) {
-		try {
-			SystemManager.handleRobotData(castToByteArray(data));
-		}
-		catch(Exception e) {
-			System.out.println(e.getClass().getSimpleName() + " thrown while executing receivedDataFromRobot: " + e.getMessage());
-			e.printStackTrace();
-			System.out.println();
-		}
+		SystemManager.handleRobotData(castToByteArray(data));
 	}
 	
-	// receive data from another station
 	public void receivedDataFromStation(int stationID, int[] data) {
-		try {
-			SystemManager.handleStationData(stationID, castToByteArray(data));
-		}
-		catch(Exception e) {
-			System.out.println(e.getClass().getSimpleName() + " thrown while executing receivedDataFromStation: " + e.getMessage());
-			e.printStackTrace();
-			System.out.println();
-		}
+		SystemManager.handleStationData(stationID, castToByteArray(data));
 	}
 	
-	// receive data from another tracker
 	public void receivedDataFromTracker(int[] data) {
-		try {
-			SystemManager.handleTrackerData(castToByteArray(data));
-		}
-		catch(Exception e) {
-			System.out.println(e.getClass().getSimpleName() + " thrown while executing receivedDataFromTracker: " + e.getMessage());
-			e.printStackTrace();
-			System.out.println();
-		}
+		SystemManager.handleTrackerData(castToByteArray(data));
 	}
 	
 	public void setTrackerFrameRate(int frameRate) {
@@ -69,7 +34,6 @@ public class MasterPlanner extends Planner {
 		}
 	}
 	
-	// convert an integer array to a byte array
 	public byte[] castToByteArray(int[] data) {
 		if(data == null) { return null; }
 		byte[] newData = new byte[data.length];

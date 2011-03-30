@@ -13,8 +13,8 @@ public class SignalType {
 	final public static int TaskCompleted = 7;
 	final public static int UpdateBlockPosition = 8;
 	final public static int UpdatePotPosition = 9;
-	final public static int UpdateActualRobotPose = 10;
-	final public static int UpdateEstimatedRobotPose = 11;
+	final public static int UpdateActualRobotPosition = 10;
+	final public static int UpdateEstimatedRobotPosition = 11;
 	final public static int RequestTrackerImage = 12;
 	final public static int ReplyTrackerImage = 13;
 	final public static int BroadcastTrackerImage = 14;
@@ -31,8 +31,8 @@ public class SignalType {
 		"TaskCompleted",
 		"UpdateBlockPosition",
 		"UpdatePotPosition",
-		"UpdateActualRobotPose",
-		"UpdateEstimatedRobotPose",
+		"UpdateActualRobotPosition",
+		"UpdateEstimatedRobotPosition",
 		"RequestTrackerImage",
 		"ReplyTrackerImage",
 		"BroadcastTrackerImage",

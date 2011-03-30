@@ -103,7 +103,9 @@ public class DisplayPanel extends JPanel implements MouseListener, MouseMotionLi
 		if(!EditMode.isValid(editMode)) { return false; }
 		m_editMode = editMode;
 		SystemManager.pathSystem.clearSelection();
-//TODO: Clear all system selections
+		SystemManager.robotSystem.clearSelection();
+		SystemManager.blockSystem.clearSelection();
+		SystemManager.potSystem.clearSelection();
 		return true;
 	}
 	
@@ -169,33 +171,14 @@ public class DisplayPanel extends JPanel implements MouseListener, MouseMotionLi
 		else if(m_editMode == EditMode.Pot) {
 			SystemManager.potSystem.mousePressed(e);
 		}
-		
-		/*
-		if(e.getButton() == MouseEvent.BUTTON2) {
-			if(mode == MODE_TILING) {
-				editorWindow.activeSprite = null;
-				vertexToMove = null;
-				
-				selectSprite(e.getPoint());
-				spriteToMove = selectedSprite;
-			}
-		}
-		*/
 	}
 	
 	public void mouseReleased(MouseEvent e) {
 		if(SystemManager.client.isConnected()) { return; }
 		
-		if(m_editMode == EditMode.ViewOnly) {
-			if(e.getButton() == MouseEvent.BUTTON3) {
-				showPopupMenu(e.getX(), e.getY());
-			}
-		}
+		if(m_editMode == EditMode.ViewOnly) { }
 		else if(m_editMode == EditMode.Path) {
 			SystemManager.pathSystem.mouseReleased(e);
-			if(e.getButton() == MouseEvent.BUTTON3) {
-				showPopupMenu(e.getX(), e.getY());
-			}
 		}
 		else if(m_editMode == EditMode.Robot) {
 			SystemManager.robotSystem.mouseReleased(e);
@@ -207,37 +190,9 @@ public class DisplayPanel extends JPanel implements MouseListener, MouseMotionLi
 			SystemManager.potSystem.mouseReleased(e);
 		}
 		
-		/*
 		if(e.getButton() == MouseEvent.BUTTON3) {
-			if(mode == MODE_TILING) {
-				selectedPoint = e.getPoint();
-				selectSprite(e.getPoint());
-				tilingPopupMenuBringSpriteToFront.setEnabled(selectedSprite != null);
-				tilingPopupMenuSendSpriteToBack.setEnabled(selectedSprite != null);
-				tilingPopupMenuDeleteSprite.setEnabled(selectedSprite != null);
-				tilingPopupMenu.show(this, e.getX(), e.getY());
-			}
+			showPopupMenu(e.getX(), e.getY());
 		}
-		else if(e.getButton() == MouseEvent.BUTTON2) {
-			spriteToMove = null;
-		}
-		else if(e.getButton() == MouseEvent.BUTTON1) {
-			else if(mode == MODE_TILING) {
-				if(selectedGridBlock != null && editorWindow.activeSprite != null) {
-					Vertex v = new Vertex((editorWindow.activeSprite.isTiled()) ? selectedGridBlock.x : (int) (e.getX() - (editorWindow.activeSprite.getWidth() / 2.0f)),
-							 			  (editorWindow.activeSprite.isTiled()) ? selectedGridBlock.y : (int) (e.getY() - (editorWindow.activeSprite.getHeight() / 2.0f)));
-					Entity newEntity = new Entity(v, editorWindow.activeSprite);
-					newEntity.spriteSheetIndex = editorWindow.spriteSheets.getSpriteSheetIndex(editorWindow.activeSprite.getParentName());
-					if(newEntity.isTiled()) {
-						level.addTile(newEntity);
-					}
-					else {
-						level.addEntity(newEntity);
-					}
-				}
-			}
-		}
-		*/
 	}
 	
 	public void mouseDragged(MouseEvent e) {
@@ -254,17 +209,6 @@ public class DisplayPanel extends JPanel implements MouseListener, MouseMotionLi
 		else if(m_editMode == EditMode.Pot) {
 			SystemManager.potSystem.mouseDragged(e);
 		}
-		
-		/*
-		mousePosition = e.getPoint();
-		if(mode == MODE_TILING) {
-			getSelectedGridBlock(e.getPoint());
-			if(spriteToMove != null) {
-				spriteToMove.location.x = spriteToMove.isTiled() ? selectedGridBlock.x : (int) (e.getX() - (spriteToMove.getWidth() / 2.0f));
-				spriteToMove.location.y = spriteToMove.isTiled() ? selectedGridBlock.y : (int) (e.getY() - (spriteToMove.getHeight() / 2.0f));
-			}
-		}
-		*/
 	}
 	
 	public void mouseMoved(MouseEvent e) {
@@ -281,12 +225,6 @@ public class DisplayPanel extends JPanel implements MouseListener, MouseMotionLi
 		else if(m_editMode == EditMode.Pot) {
 			SystemManager.potSystem.mouseMoved(e);
 		}
-		/*
-		mousePosition = e.getPoint();
-		if(mode == MODE_TILING) {
-			getSelectedGridBlock(e.getPoint());
-		}
-		*/
 	}
 	
 	public void actionPerformed(ActionEvent e) {

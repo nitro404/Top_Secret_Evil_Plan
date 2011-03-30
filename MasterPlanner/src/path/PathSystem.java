@@ -6,7 +6,8 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-import planner.SystemManager;
+import planner.*;
+import shared.*;
 
 public class PathSystem implements MouseListener, MouseMotionListener {
 	
@@ -17,7 +18,6 @@ public class PathSystem implements MouseListener, MouseMotionListener {
 	private Vertex m_selectedVertex;
 	private Vertex m_lastSelectedVertex;
 	private Vertex m_vertexToMove;
-	private Point m_mousePosition;
 	private boolean m_autoConnectVertices;
 	final private static long m_doubleClickSpeed = 200;
 	private long m_lastMouseDown = 0;
@@ -32,7 +32,6 @@ public class PathSystem implements MouseListener, MouseMotionListener {
 		m_selectedVertex = null;
 		m_lastSelectedVertex = null;
 		m_vertexToMove = null;
-		m_mousePosition = null;
 		m_autoConnectVertices = true;
 	}
 	
@@ -317,7 +316,10 @@ public class PathSystem implements MouseListener, MouseMotionListener {
 			
 			for(int i=0;i<m_paths.size();i++) {
 				out.println("[" + m_paths.elementAt(i).getName() + "]");
-				m_paths.elementAt(i).writeTo(out);
+				for(int j=0;j<m_paths.elementAt(i).numberOfEdges();j++) {
+					m_paths.elementAt(i).getEdge(j).writeTo(out);
+					out.println();
+				}
 				out.println();
 			}
 			
@@ -396,18 +398,15 @@ public class PathSystem implements MouseListener, MouseMotionListener {
 	public void mouseDragged(MouseEvent e) {
 		if(m_activePath < 0) { return; }
 		
-		m_mousePosition = e.getPoint();
 		if(m_vertexToMove != null) {
-			m_vertexToMove.x = e.getX();
-			m_vertexToMove.y = e.getY();
+			if(Position.isValid(e.getPoint())) {
+				m_vertexToMove.x = e.getX();
+				m_vertexToMove.y = e.getY();
+			}
 		}
 	}
 	
-	public void mouseMoved(MouseEvent e) {
-		if(m_activePath < 0) { return; }
-		
-		m_mousePosition = e.getPoint();
-	}
+	public void mouseMoved(MouseEvent e) { }
 	
 	private void selectVertex(Point p, int r) {
 		if(p == null) { return; }
@@ -427,7 +426,6 @@ public class PathSystem implements MouseListener, MouseMotionListener {
 		m_selectedVertex = null;
 		m_lastSelectedVertex = null;
 		m_vertexToMove = null;
-		m_mousePosition = null;
 	}
 	
 	public void drawAll(Graphics g) {

@@ -292,12 +292,10 @@ public class ByteStream {
 	}
 	
 	public BufferedImage nextBufferedImage(int length) {
-		if(length <= 0) { return null; }
+		if(length <= 0 || m_position + length >= m_data.length) { return null; }
 		byte[] data = new byte[length];
 		for(int i=0;i<length;i++) {
-			if(m_position >= m_data.length) { return null; }
-			data[i] = getByte(m_position);
-			m_position++;
+			data[i] = nextByte();
 		}
 		ByteArrayInputStream in = new ByteArrayInputStream(data);
 		BufferedImage image = null;
@@ -419,24 +417,15 @@ public class ByteStream {
 	public static ByteStream readFrom(DataInputStream in, int length) {
 		if(in == null || length < 1) { return null; }
 		ByteStream bs = new ByteStream(length);
-		//long startTime = System.currentTimeMillis(); 
-		//long maxTime = 8000L;
+		long startTime = System.currentTimeMillis(); 
 		try {
 			if(in.available() <= 0) { return null; }
-			/*
-			while(in.available() < length && startTime + maxTime > System.currentTimeMillis()) {
-				Thread.sleep(10);
-			}
-			*/
+			while(in.available() < length && startTime + 8000L > System.currentTimeMillis());
 			in.read(bs.getContents(), 0, length);
 		}
 		catch(IOException e) {
 			return null;
 		}
-		/*
-		catch(InterruptedException e) {
-			return null;
-		}*/
 		return bs;
 	}
 	

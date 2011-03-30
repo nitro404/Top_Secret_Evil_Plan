@@ -2,7 +2,7 @@ package signal;
 
 import shared.*;
 
-public class UpdateActualRobotPoseSignal extends Signal {
+public class UpdateEstimatedRobotPositionSignal extends Signal {
 	
 	private byte m_robotID;
 	private int m_x;
@@ -15,16 +15,16 @@ public class UpdateActualRobotPoseSignal extends Signal {
 									  Integer.SIZE +
 									  Long.SIZE) / 8;
 	
-	private UpdateActualRobotPoseSignal() {
-		super(SignalType.UpdateActualRobotPose);
+	private UpdateEstimatedRobotPositionSignal() {
+		super(SignalType.UpdateEstimatedRobotPosition);
 	}
 	
-	public UpdateActualRobotPoseSignal(byte robotID, RobotPose robotPose) {
-		this(robotID, (robotPose == null ? -1 : robotPose.getX()), (robotPose == null ? -1 : robotPose.getY()), (robotPose == null ? -1 : robotPose.getAngleDegrees()));
+	public UpdateEstimatedRobotPositionSignal(byte robotID, RobotPosition robotPosition) {
+		this(robotID, (robotPosition == null ? -1 : robotPosition.getX()), (robotPosition == null ? -1 : robotPosition.getY()), (robotPosition == null ? -1 : robotPosition.getAngleDegrees()));
 	}
 	
-	public UpdateActualRobotPoseSignal(byte robotID, int x, int y, int angle) {
-		super(SignalType.UpdateActualRobotPose);
+	public UpdateEstimatedRobotPositionSignal(byte robotID, int x, int y, int angle) {
+		super(SignalType.UpdateEstimatedRobotPosition);
 		m_robotID = robotID;
 		m_x = x;
 		m_y = y;
@@ -51,8 +51,8 @@ public class UpdateActualRobotPoseSignal extends Signal {
 		return new Position(m_x, m_y);
 	}
 	
-	public RobotPose getPose() {
-		return new RobotPose(m_x, m_y, m_angle);
+	public RobotPosition getRobotPosition() {
+		return new RobotPosition(m_x, m_y, m_angle);
 	}
 	
 	public long checksum() {
@@ -64,10 +64,10 @@ public class UpdateActualRobotPoseSignal extends Signal {
 		return checksum;
 	}
 	
-	public static UpdateActualRobotPoseSignal readFrom(ByteStream byteStream) {
+	public static UpdateEstimatedRobotPositionSignal readFrom(ByteStream byteStream) {
 		if(byteStream == null) { return null; }
 		
-		UpdateActualRobotPoseSignal s2 = new UpdateActualRobotPoseSignal();
+		UpdateEstimatedRobotPositionSignal s2 = new UpdateEstimatedRobotPositionSignal();
 		
 		s2.m_robotID = byteStream.nextByte();
 		s2.m_x = byteStream.nextInteger();
