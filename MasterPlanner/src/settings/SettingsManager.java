@@ -14,6 +14,7 @@ public class SettingsManager {
 	
 	private String m_pathDataFileName;
 	private String m_trackerImageFileName;
+	private String m_staticStationImageFileNameFormat;
 	private int m_frameRate;
 	private InetAddress m_serverIPAddress;
 	private int m_serverPort;
@@ -21,6 +22,7 @@ public class SettingsManager {
 	private boolean m_autoScrollConsoleWindow;
 	private boolean m_autoConnectOnStartup;
 	private boolean m_takeWebcamSnapshotOnStartup;
+	private boolean m_useStaticStationImages;
 	private Dimension m_webcamResolution;
 	private int m_timeLimit;
 	private int m_numberOfTrackers;
@@ -35,6 +37,7 @@ public class SettingsManager {
 	final public static String defaultSettingsFileName = "planner.ini";
 	final public static String defaultPathDataFileName = "paths.ini";
 	final public static String defaultTrackerImageFileName = "TrackerImage.jpg";
+	final public static String defaultStaticStationImageFileNameFormat = "Station.jpg";
 	final public static int defaultFrameRate = 2;
 	public static InetAddress defaultServerIPAddress;
 	final public static int defaultServerPort = Client.DEFAULT_PORT;
@@ -42,6 +45,7 @@ public class SettingsManager {
 	final public static boolean defaultAutoScrollConsoleWindow = true;
 	final public static boolean defaultAutoConnectOnStartup = true;
 	final public static boolean defaultTakeWebcamSnapshotOnStartup = true;
+	final public static boolean defaultUseStaticStationImages = false;
 	final public static Dimension defaultWebcamResolution = Webcam.DEFAULT_RESOLUTION;
 	final public static int defaultTimeLimit = 15;
 	final public static int defaultNumberOfTrackers = 3;
@@ -57,6 +61,7 @@ public class SettingsManager {
 		m_settings = new VariableSystem();
 		m_pathDataFileName = defaultPathDataFileName;
 		m_trackerImageFileName = defaultTrackerImageFileName;
+		m_staticStationImageFileNameFormat = defaultStaticStationImageFileNameFormat;
 		m_frameRate = defaultFrameRate;
 		try { defaultServerIPAddress = InetAddress.getByName(Client.DEFAULT_HOST); }
 		catch(UnknownHostException e) {
@@ -69,6 +74,7 @@ public class SettingsManager {
 		m_autoScrollConsoleWindow = defaultAutoScrollConsoleWindow;
 		m_autoConnectOnStartup = defaultAutoConnectOnStartup;
 		m_takeWebcamSnapshotOnStartup = defaultTakeWebcamSnapshotOnStartup;
+		m_useStaticStationImages = defaultUseStaticStationImages;
 		m_webcamResolution = defaultWebcamResolution;
 		m_timeLimit = defaultTimeLimit;
 		m_numberOfTrackers = defaultNumberOfTrackers;
@@ -84,6 +90,35 @@ public class SettingsManager {
 	public String getPathDataFileName() { return m_pathDataFileName; }
 	
 	public String getTrackerImageFileName() { return m_trackerImageFileName; };
+	
+	public String getStaticStationImageFileNameFormat() { return m_staticStationImageFileNameFormat; }
+	
+	public String getStaticStationImageFileName(byte trackerNumber) {
+		String fileName = null;
+		String extension = null;
+		
+		// locate the beginning of the file extension
+		int separatorIndex = -1;
+		for(int i=m_staticStationImageFileNameFormat.length()-1;i>=0;i--) {
+			if(m_staticStationImageFileNameFormat.charAt(i) == '.') {
+				separatorIndex = i;
+				break;
+			}
+		}
+		
+		// generate the new file name
+		if(separatorIndex == -1) {
+			fileName = m_staticStationImageFileNameFormat;
+			extension = "";
+		}
+		else {
+			fileName = m_staticStationImageFileNameFormat.substring(0, separatorIndex);
+			extension = m_staticStationImageFileNameFormat.substring(separatorIndex + 1, m_staticStationImageFileNameFormat.length());
+		}
+		
+		// generate the new output file
+		return fileName + " " + trackerNumber + (extension.length() > 0 ? "." + extension : "");
+	}
 	
 	public int getFrameRate() { return m_frameRate; }
 	
@@ -108,6 +143,8 @@ public class SettingsManager {
 	
 	public boolean getTakeWebcamSnapshotOnStartup() { return m_takeWebcamSnapshotOnStartup; }
 	
+	public boolean getUseStaticStationImages() { return m_useStaticStationImages; }
+	
 	public Dimension getWebcamResolution() { return m_webcamResolution; }
 	
 	public int getTimeLimit() { return m_timeLimit; }
@@ -124,13 +161,25 @@ public class SettingsManager {
 	
 	public boolean setPathDataFileName(String fileName) {
 		if(fileName == null) { return false; }
-		m_pathDataFileName = fileName;
+		String data = fileName.trim();
+		if(data.length() == 0) { return false; }
+		m_pathDataFileName = data;
 		return true;
 	}
 	
 	public boolean setTrackerImageFileName(String fileName) {
 		if(fileName == null) { return false; }
-		m_trackerImageFileName = fileName;
+		String data = fileName.trim();
+		if(data.length() == 0) { return false; }
+		m_trackerImageFileName = data;
+		return true;
+	}
+	
+	public boolean setStaticStationImageFileNameFormat(String fileNameFormat) {
+		if(fileNameFormat == null) { return false; }
+		String data = fileNameFormat.trim();
+		if(data.length() == 0) { return false; }
+		m_staticStationImageFileNameFormat = data;
 		return true;
 	}
 	
@@ -203,6 +252,22 @@ public class SettingsManager {
 		}
 		else if(value.equalsIgnoreCase("false")) {
 			m_takeWebcamSnapshotOnStartup = false;
+			return true;
+		}
+		return false;
+	}
+	
+	public void setUseStaticStationImages(boolean staticImages) { m_useStaticStationImages = staticImages; }
+	
+	public boolean setUseStaticStationImages(String data) {
+		if(data == null) { return false; }
+		String value = data.trim();
+		if(value.equalsIgnoreCase("true")) {
+			m_useStaticStationImages = true;
+			return true;
+		}
+		else if(value.equalsIgnoreCase("false")) {
+			m_useStaticStationImages = false;
 			return true;
 		}
 		return false;
@@ -312,6 +377,7 @@ public class SettingsManager {
 		// create local variables instantiated with data parsed from the variable system
 		setPathDataFileName(m_settings.getValue("Path File", "Data Files"));
 		setTrackerImageFileName(m_settings.getValue("Tracker Image", "Data Files"));
+		setStaticStationImageFileNameFormat(m_settings.getValue("Static Station Image File Name Format", "Settings"));
 		try { setFrameRate(Integer.parseInt(m_settings.getValue("Framerate", "Settings"))); } catch(NumberFormatException e) { }
 		setServerIPAddress(m_settings.getValue("Server IP Address", "Settings"));
 		try { setServerPort(Integer.parseInt(m_settings.getValue("Server Port", "Settings"))); } catch(NumberFormatException e) { }
@@ -319,10 +385,10 @@ public class SettingsManager {
 		setAutoScrollConsoleWindow(m_settings.getValue("Auto-scroll Console Window", "Settings"));
 		setAutoConnectOnStartup(m_settings.getValue("Auto-connect on Startup", "Settings"));
 		setTakeWebcamSnapshotOnStartup(m_settings.getValue("Take Webcam Snapshot on Startup", "Settings"));
+		setUseStaticStationImages(m_settings.getValue("Use Static Station Image", "Settings"));
 		setWebcamResolution(m_settings.getValue("Webcam Resolution", "Settings"));
 		try { setTimeLimit(Integer.parseInt(m_settings.getValue("Time Limit", "Settings"))); } catch(NumberFormatException e) { }
 		try { setNumberOfTrackers(Integer.parseInt(m_settings.getValue("Number of Trackers", "Settings"))); } catch(NumberFormatException e) { }
-		
 		setSelectedColour(parseColour(m_settings.getValue("Selected Colour", "Colours")));
 		setVertexColour(parseColour(m_settings.getValue("Vertex Colour", "Colours")));
 		setEdgeColour(parseColour(m_settings.getValue("Edge Colour", "Colours")));
@@ -337,6 +403,7 @@ public class SettingsManager {
 		// update the variable system with the new settings values
 		m_settings.setValue("Path File", m_pathDataFileName, "Data Files");
 		m_settings.setValue("Tracker Image", m_trackerImageFileName, "Data Files");
+		m_settings.setValue("Static Station Image File Name Format", m_staticStationImageFileNameFormat, "Settings");
 		m_settings.setValue("Framerate", m_frameRate, "Settings");
 		m_settings.setValue("Server IP Address", m_serverIPAddress.getHostName(), "Settings");
 		m_settings.setValue("Server Port", m_serverPort, "Settings");
@@ -344,6 +411,7 @@ public class SettingsManager {
 		m_settings.setValue("Auto-scroll Console Window", m_autoScrollConsoleWindow, "Settings");
 		m_settings.setValue("Auto-connect on Startup", m_autoConnectOnStartup, "Settings");
 		m_settings.setValue("Take Webcam Snapshot on Startup", m_takeWebcamSnapshotOnStartup, "Settings");
+		m_settings.setValue("Use Static Station Image", m_useStaticStationImages, "Settings");
 		m_settings.setValue("Webcam Resolution", m_webcamResolution.width + ", " + m_webcamResolution.height, "Settings");
 		m_settings.setValue("Time Limit", m_timeLimit, "Settings");
 		m_settings.setValue("Number of Trackers", m_numberOfTrackers, "Settings");

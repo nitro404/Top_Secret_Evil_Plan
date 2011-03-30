@@ -1,7 +1,5 @@
 package pot;
 
-import gui.EditMode;
-
 import java.awt.Graphics2D;
 import planner.*;
 import shared.*;
