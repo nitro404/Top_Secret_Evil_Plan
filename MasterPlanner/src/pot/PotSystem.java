@@ -15,9 +15,9 @@ public class PotSystem implements MouseListener, MouseMotionListener {
 	private int m_potToMove;
 	
 	final public static Position[] defaultPotPositions = {
-		new Position(0, 0),
-		new Position(0, 0),
-		new Position(0, 0),
+		new Position(274, 561),
+		new Position(269, 874),
+		new Position(76, 711),
 	};
 	
 	public PotSystem() {

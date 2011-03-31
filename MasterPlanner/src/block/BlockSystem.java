@@ -15,26 +15,26 @@ public class BlockSystem implements MouseListener, MouseMotionListener {
 	
 	final public static Position[] defaultBlockPositions = {
 		// zone 1 (top)
-		new Position(0, 0),
-		new Position(0, 0),
-		new Position(0, 0),
-		new Position(0, 0),
-		new Position(0, 0),
-		new Position(0, 0),
+		new Position(34, 310),
+		new Position(49, 416),
+		new Position(255, 417),
+		new Position(378, 415),
+		new Position(541, 400),
+		new Position(538, 319),
 		// zone 2 (middle)
-		new Position(0, 0),
-		new Position(0, 0),
-		new Position(0, 0),
-		new Position(0, 0),
-		new Position(0, 0),
-		new Position(0, 0),
+		new Position(61, 546),
+		new Position(56, 873),
+		new Position(261, 715),
+		new Position(410, 716),
+		new Position(592, 903),
+		new Position(596, 538),
 		// zone 3 (bottom)
-		new Position(0, 0),
-		new Position(0, 0),
-		new Position(0, 0),
-		new Position(0, 0),
-		new Position(0, 0),
-		new Position(0, 0)
+		new Position(38, 1022),
+		new Position(35, 1131),
+		new Position(258, 1017),
+		new Position(388, 1008),
+		new Position(556, 1044),
+		new Position(552, 1122)
 	};
 	
 	public BlockSystem() {

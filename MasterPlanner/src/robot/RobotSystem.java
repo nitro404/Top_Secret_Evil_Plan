@@ -15,9 +15,9 @@ public class RobotSystem implements MouseListener, MouseMotionListener {
 	private int m_robotToMove;
 	
 	final public static RobotPosition[] defaultRobotPositions = {
-		new RobotPosition(0, 0, 90),
-		new RobotPosition(0, 0, 90),
-		new RobotPosition(0, 0, 90),
+		new RobotPosition(361, 208, 90),
+		new RobotPosition(357, 709, 90),
+		new RobotPosition(356, 1189, 90),
 	};
 	
 	final public static byte[] robotNumbers = { 0, 5, 7 };
