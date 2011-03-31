@@ -42,9 +42,11 @@ public class SettingsManager {
 	private Color m_robotColour;
 	private Color m_blockColour;
 	private Color m_potColour;
+	private Color m_dropOffLocationColour;
 	private Vector<RobotPosition> m_initialRobotPositions;
 	private Vector<Position> m_initialBlockPositions;
 	private Vector<Position> m_initialPotPositions;
+	private Vector<Position> m_dropOffLocations;
 	
 	final public static String defaultSettingsFileName = "planner.ini";
 	final public static String defaultPathDataFileName = "paths.ini";
@@ -66,8 +68,9 @@ public class SettingsManager {
 	final public static Color defaultVertexColour = Color.BLUE;
 	final public static Color defaultEdgeColour = Color.GREEN;
 	final public static Color defaultRobotColour = Color.GREEN;
-	final public static Color defaultBlockColour = Color.ORANGE;
-	final public static Color defaultPotColour = Color.CYAN;
+	final public static Color defaultBlockColour = Color.RED;
+	final public static Color defaultPotColour = Color.BLUE;
+	final public static Color defaultDropOffLocationColour = Color.MAGENTA;
 	
 	public SettingsManager() {
 		m_settings = new VariableSystem();
@@ -97,6 +100,7 @@ public class SettingsManager {
 		m_robotColour = defaultRobotColour;
 		m_blockColour = defaultBlockColour;
 		m_potColour = defaultPotColour;
+		m_dropOffLocationColour = defaultDropOffLocationColour;
 		m_initialRobotPositions = new Vector<RobotPosition>();
 		for(int i=0;i<RobotSystem.defaultRobotPositions.length;i++) {
 			m_initialRobotPositions.add(RobotSystem.defaultRobotPositions[i]);
@@ -108,6 +112,10 @@ public class SettingsManager {
 		m_initialPotPositions = new Vector<Position>();
 		for(int i=0;i<PotSystem.defaultPotPositions.length;i++) {
 			m_initialPotPositions.add(PotSystem.defaultPotPositions[i]);
+		}
+		m_dropOffLocations = new Vector<Position>();
+		for(int i=0;i<BlockSystem.defaultDropOffLocations.length;i++) {
+			m_dropOffLocations.add(BlockSystem.defaultDropOffLocations[i]);
 		}
 	}
 	
@@ -187,6 +195,7 @@ public class SettingsManager {
 	public Color getRobotColour() { return m_robotColour; }
 	public Color getBlockColour() { return m_blockColour; }
 	public Color getPotColour() { return m_potColour; }
+	public Color getDropOffLocationColour() { return m_dropOffLocationColour; }
 	
 	public RobotPosition getInitialRobotPosition(byte robotID) {
 		if(robotID < 0 || robotID >= m_initialRobotPositions.size()) { return null; }
@@ -201,6 +210,11 @@ public class SettingsManager {
 	public Position getInitialPotPosition(byte potID) {
 		if(potID < 0 || potID >= m_initialPotPositions.size()) { return null; }
 		return m_initialPotPositions.elementAt(potID);
+	}
+	
+	public Position getDropOffLocation(byte dropOffLocationID) {
+		if(dropOffLocationID < 0 || dropOffLocationID >= m_dropOffLocations.size()) { return null; }
+		return m_dropOffLocations.elementAt(dropOffLocationID);
 	}
 	
 	public boolean setPathDataFileName(String fileName) {
@@ -371,6 +385,7 @@ public class SettingsManager {
 		m_robotColour = defaultRobotColour;
 		m_blockColour = defaultBlockColour;
 		m_potColour = defaultPotColour;
+		m_dropOffLocationColour = defaultDropOffLocationColour;
 	}
 	
 	public boolean setSelectedColour(Color c) { if(c != null) { m_selectedColour = c; return true; } return false; }
@@ -380,6 +395,7 @@ public class SettingsManager {
 	public boolean setRobotColour(Color c) { if(c != null) { m_robotColour = c; return true; } return false; }
 	public boolean setBlockColour(Color c) { if(c != null) { m_blockColour = c; return true; } return false; }
 	public boolean setPotColour(Color c) { if(c != null) { m_potColour = c; return true; } return false; }
+	public boolean setDropOffLocationColour(Color c) { if(c != null) { m_dropOffLocationColour = c; return true; } return false; }
 	
 	public boolean setSelectedColour(String data) { return setSelectedColour(parseColour(data)); }
 	public boolean setMissingColour(String data) { return setMissingColour(parseColour(data)); }
@@ -388,6 +404,7 @@ public class SettingsManager {
 	public boolean setRobotColour(String data) { return setRobotColour(parseColour(data)); }
 	public boolean setBlockColour(String data) { return setBlockColour(parseColour(data)); }
 	public boolean setPotColour(String data) { return setPotColour(parseColour(data)); }
+	public boolean setDropOffLocationColour(String data) { return setDropOffLocationColour(parseColour(data)); }
 	
 	public boolean setInitialRobotPosition(byte robotID, RobotPosition initialPosition) {
 		if(robotID < 0 || robotID >= m_initialRobotPositions.size() || !RobotPosition.isValid(initialPosition)) { return false; }
@@ -407,6 +424,12 @@ public class SettingsManager {
 		return true;
 	}
 	
+	public boolean setDropOffLocation(byte dropOffLocationID, Position position) {
+		if(dropOffLocationID < 0 || dropOffLocationID >= m_dropOffLocations.size() || !Position.isValid(position)) { return false; }
+		m_dropOffLocations.set(dropOffLocationID, position);
+		return true;
+	}
+	
 	public boolean setInitialRobotPosition(Variable v) {
 		if(v == null) { return false; }
 		return setInitialRobotPosition(parseRobotID(v.getID()), parseRobotPosition(v.getValue()));
@@ -420,6 +443,11 @@ public class SettingsManager {
 	public boolean setInitialPotPosition(Variable v) {
 		if(v == null) { return false; }
 		return setInitialPotPosition(parsePotID(v.getID()), parsePosition(v.getValue()));
+	}
+	
+	public boolean setDropOffLocation(Variable v) {
+		if(v == null) { return false; }
+		return setDropOffLocation(parseDropOffLocationID(v.getID()), parsePosition(v.getValue()));
 	}
 	
 	private static Color parseColour(String data) {
@@ -471,6 +499,21 @@ public class SettingsManager {
 		StringTokenizer st = new StringTokenizer(temp, " ", false);
 		if(st.countTokens() != 2) { return -1; }
 		if(!st.nextToken().equalsIgnoreCase("Pot")) { return -1; }
+		byte id;
+		try { id = Byte.parseByte(st.nextToken()); }
+		catch(NumberFormatException e) { return -1; }
+		return id;
+	}
+	
+	private static byte parseDropOffLocationID(String data) {
+		if(data == null) { return -1; }
+		String temp = data.trim();
+		if(temp.length() == 0) { return -1; }
+		StringTokenizer st = new StringTokenizer(temp, " ", false);
+		if(st.countTokens() != 4) { return -1; }
+		if(!st.nextToken().equalsIgnoreCase("Drop")) { return -1; }
+		if(!st.nextToken().equalsIgnoreCase("Off")) { return -1; }
+		if(!st.nextToken().equalsIgnoreCase("Location")) { return -1; }
 		byte id;
 		try { id = Byte.parseByte(st.nextToken()); }
 		catch(NumberFormatException e) { return -1; }
@@ -560,6 +603,7 @@ public class SettingsManager {
 		setRobotColour(parseColour(m_settings.getValue("Robot Colour", "Colours")));
 		setBlockColour(parseColour(m_settings.getValue("Block Colour", "Colours")));
 		setPotColour(parseColour(m_settings.getValue("Pot Colour", "Colours")));
+		setDropOffLocationColour(parseColour(m_settings.getValue("Drop Off Location Colour", "Colours")));
 		for(int i=0;i<m_initialRobotPositions.size();i++) {
 			setInitialRobotPosition(m_settings.getVariable("Robot " + i, "Robot Positions"));
 		}
@@ -568,6 +612,9 @@ public class SettingsManager {
 		}
 		for(int i=0;i<m_initialPotPositions.size();i++) {
 			setInitialPotPosition(m_settings.getVariable("Pot " + i, "Pot Positions"));
+		}
+		for(int i=0;i<m_dropOffLocations.size();i++) {
+			setDropOffLocation(m_settings.getVariable("Drop Off Location " + i, "Drop Off Locations"));
 		}
 		
 		// load static tracker images
@@ -598,6 +645,7 @@ public class SettingsManager {
 		m_settings.setValue("Robot Colour", m_robotColour.getRed() + ", " + m_robotColour.getGreen() + ", " + m_robotColour.getBlue(), "Colours");
 		m_settings.setValue("Block Colour", m_blockColour.getRed() + ", " + m_blockColour.getGreen() + ", " + m_blockColour.getBlue(), "Colours");
 		m_settings.setValue("Pot Colour", m_potColour.getRed() + ", " + m_potColour.getGreen() + ", " + m_potColour.getBlue(), "Colours");
+		m_settings.setValue("Drop Off Location Colour", m_dropOffLocationColour.getRed() + ", " + m_dropOffLocationColour.getGreen() + ", " + m_dropOffLocationColour.getBlue(), "Colours");
 		for(byte i=0;i<SystemManager.robotSystem.numberOfRobots();i++) {
 			m_settings.setValue("Robot " + i, SystemManager.robotSystem.getRobot(i).getInitialPosition().toString(), "Robot Positions");
 		}
@@ -606,6 +654,9 @@ public class SettingsManager {
 		}
 		for(byte i=0;i<SystemManager.potSystem.numberOfPots();i++) {
 			m_settings.setValue("Pot " + i, SystemManager.potSystem.getPot(i).getInitialPosition().toString(), "Pot Positions");
+		}
+		for(byte i=0;i<SystemManager.blockSystem.numberOfDropOffLocations();i++) {
+			m_settings.setValue("Drop Off Location " + i, SystemManager.blockSystem.getDropOffLocation(i).getPosition().toString(), "Drop Off Locations");
 		}
 		
 		// group the settings by categories

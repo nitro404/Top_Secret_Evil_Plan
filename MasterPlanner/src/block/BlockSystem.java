@@ -9,9 +9,12 @@ import shared.*;
 public class BlockSystem implements MouseListener, MouseMotionListener {
 	
 	private Vector<Block> m_blocks;
+	private Vector<DropOffLocation> m_dropOffLocations;
 	
 	private int m_selectedBlock;
 	private int m_blockToMove;
+	private int m_selectedDropOffLocation;
+	private int m_dropOffLocationToMove;
 	
 	final public static Position[] defaultBlockPositions = {
 		// zone 1 (top)
@@ -37,20 +40,45 @@ public class BlockSystem implements MouseListener, MouseMotionListener {
 		new Position(552, 1122)
 	};
 	
+	final public static Position[] defaultDropOffLocations = {
+		new Position(192, 694),
+		new Position(190, 736),
+		new Position(192, 653),
+		new Position(190, 778),
+		new Position(153, 676),
+		new Position(153, 746),
+		new Position(154, 646),
+		new Position(153, 779),
+		new Position(153, 711)
+	};
+	
 	public BlockSystem() {
 		m_blocks = new Vector<Block>(defaultBlockPositions.length);
 		for(byte i=0;i<defaultBlockPositions.length;i++) {
 			m_blocks.add(new Block(i, SystemManager.settings.getInitialBlockPosition(i)));
 		}
+		m_dropOffLocations = new Vector<DropOffLocation>(defaultDropOffLocations.length);
+		for(byte i=0;i<defaultDropOffLocations.length;i++) {
+			m_dropOffLocations.add(new DropOffLocation(i, SystemManager.settings.getDropOffLocation(i)));
+		}
 		m_selectedBlock = -1;
 		m_blockToMove = -1;
+		m_selectedDropOffLocation = -1;
+		m_dropOffLocationToMove = -1;
 	}
 	
 	public int numberOfBlocks() { return m_blocks.size(); }
 	
+	public int numberOfDropOffLocations() { return m_dropOffLocations.size(); }
+	
 	public Block getBlock(byte blockID) {
 		if(blockID < 0 || blockID >= m_blocks.size()) { return null; }
 		return m_blocks.elementAt(blockID);
+	}
+	
+	public DropOffLocation getDropOffLocation(byte dropOffLocationID) {
+		if(dropOffLocationID < 0 || dropOffLocationID >= m_dropOffLocations.size()) { return null; }
+		return m_dropOffLocations.elementAt(dropOffLocationID);
 	}
 	
 	public boolean setBlockState(byte blockID, byte robotID, byte blockState) {
@@ -69,14 +97,20 @@ public class BlockSystem implements MouseListener, MouseMotionListener {
 	
 	public void mousePressed(MouseEvent e) {
 		if(e.getButton() == MouseEvent.BUTTON2) {
-			selectPot(e.getPoint());
+			selectBlock(e.getPoint());
 			m_blockToMove = m_selectedBlock;
+			
+			if(m_blockToMove == -1) {
+				selectDropOffLocation(e.getPoint());
+				m_dropOffLocationToMove = m_selectedDropOffLocation;
+			}
 		}
 	}
 	
 	public void mouseReleased(MouseEvent e) {
 		if(e.getButton() == MouseEvent.BUTTON2) {
 			m_blockToMove = -1;
+			m_dropOffLocationToMove = -1;
 		}
 	}
 	
@@ -84,12 +118,16 @@ public class BlockSystem implements MouseListener, MouseMotionListener {
 		if(m_blockToMove != -1) {
 			m_blocks.elementAt(m_blockToMove).setInitialPosition(new Position(e.getX(), e.getY()));
 		}
+		else if(m_dropOffLocationToMove != -1) {
+			m_dropOffLocations.elementAt(m_dropOffLocationToMove).setPosition(new Position(e.getX(), e.getY()));
+		}
 	}
 	
 	public void mouseMoved(MouseEvent e) { }
 	
-	public boolean selectPot(Point p) {
+	public boolean selectBlock(Point p) {
 		m_selectedBlock = -1;
+		m_selectedDropOffLocation = -1;
 		
 		if(p == null) { return false; }
 		Position position = new Position(p);
@@ -104,18 +142,43 @@ public class BlockSystem implements MouseListener, MouseMotionListener {
 		return false;
 	}
 	
+	public boolean selectDropOffLocation(Point p) {
+		m_selectedBlock = -1;
+		m_selectedDropOffLocation = -1;
+		
+		if(p == null) { return false; }
+		Position position = new Position(p);
+		if(!position.isValid()) { return false; }
+		
+		for(int i=0;i<m_dropOffLocations.size();i++) {
+			if(Math.sqrt(Math.pow(m_dropOffLocations.elementAt(i).getPosition().getX() - p.x, 2) + Math.pow(m_dropOffLocations.elementAt(i).getPosition().getY() - p.y, 2)) <= DropOffLocation.SIZE / 2) {
+				m_selectedDropOffLocation = i;
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public void reset() {
 		for(int i=0;i<m_blocks.size();i++) {
 			m_blocks.elementAt(i).reset();
+		}
+		for(int i=0;i<m_dropOffLocations.size();i++) {
+			m_dropOffLocations.elementAt(i).reset();
 		}
 	}
 	
 	public void clearSelection() {
 		m_selectedBlock = -1;
 		m_blockToMove = -1;
+		m_selectedDropOffLocation = -1;
+		m_dropOffLocationToMove = -1;
 	}
 	
 	public void draw(Graphics2D g) {
+		for(int i=0;i<m_dropOffLocations.size();i++) {
+			m_dropOffLocations.elementAt(i).draw(g);
+		}
 		for(int i=0;i<m_blocks.size();i++) {
 			m_blocks.elementAt(i).draw(g);
 		}

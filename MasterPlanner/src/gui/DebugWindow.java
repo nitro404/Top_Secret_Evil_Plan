@@ -35,6 +35,7 @@ public class DebugWindow extends JFrame implements ActionListener, WindowListene
 	private JMenuItem m_editColourRobotMenuItem;
 	private JMenuItem m_editColourBlockMenuItem;
 	private JMenuItem m_editColourPotMenuItem;
+	private JMenuItem m_editColourDropOffLocationMenuItem;
 	private JMenuItem m_editColourResetAllMenuItem;
 	private JMenuItem m_editUpdateTrackerImageMenuItem;
 	
@@ -93,6 +94,7 @@ public class DebugWindow extends JFrame implements ActionListener, WindowListene
     	m_editColourRobotMenuItem = new JMenuItem("Robot Colour");
     	m_editColourBlockMenuItem = new JMenuItem("Block Colour");
     	m_editColourPotMenuItem = new JMenuItem("Pot Colour");
+    	m_editColourDropOffLocationMenuItem = new JMenuItem("Drop Off Location Colour");
     	m_editColourResetAllMenuItem = new JMenuItem("Reset All Colours");
     	m_editUpdateTrackerImageMenuItem = new JMenuItem("Update Tracker Image");
         
@@ -141,6 +143,7 @@ public class DebugWindow extends JFrame implements ActionListener, WindowListene
     	m_editColourRobotMenuItem.addActionListener(this);
     	m_editColourBlockMenuItem.addActionListener(this);
     	m_editColourPotMenuItem.addActionListener(this);
+    	m_editColourDropOffLocationMenuItem.addActionListener(this);
     	m_editColourResetAllMenuItem.addActionListener(this);
         m_editUpdateTrackerImageMenuItem.addActionListener(this);
         m_settingsAutoConnectOnStartupMenuItem.addActionListener(this);
@@ -180,6 +183,7 @@ public class DebugWindow extends JFrame implements ActionListener, WindowListene
 		m_editColourMenu.add(m_editColourRobotMenuItem);
 		m_editColourMenu.add(m_editColourBlockMenuItem);
 		m_editColourMenu.add(m_editColourPotMenuItem);
+		m_editColourMenu.add(m_editColourDropOffLocationMenuItem);
 		m_editColourMenu.add(m_editColourResetAllMenuItem);
         m_editMenu.add(m_editColourMenu);
         m_editMenu.add(m_editUpdateTrackerImageMenuItem);
@@ -280,6 +284,10 @@ public class DebugWindow extends JFrame implements ActionListener, WindowListene
 		else if(e.getSource() == m_editColourPotMenuItem) {
 			Color c = JColorChooser.showDialog(this, "Choose a colour for pots:", SystemManager.settings.getPotColour());
 			SystemManager.settings.setPotColour(c);
+		}
+		else if(e.getSource() == m_editColourDropOffLocationMenuItem) {
+			Color c = JColorChooser.showDialog(this, "Choose a colour for drop off locations:", SystemManager.settings.getDropOffLocationColour());
+			SystemManager.settings.setDropOffLocationColour(c);
 		}
 		else if(e.getSource() == m_editColourResetAllMenuItem) {
 			SystemManager.settings.resetAllColours();
