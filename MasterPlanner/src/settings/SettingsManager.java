@@ -1,9 +1,12 @@
 package settings;
 
 import java.util.StringTokenizer;
+import java.io.File;
 import java.net.*;
 import java.awt.Dimension;
 import java.awt.Color;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
 import imaging.*;
 import client.*;
 import shared.*;
@@ -15,6 +18,7 @@ public class SettingsManager {
 	private String m_pathDataFileName;
 	private String m_trackerImageFileName;
 	private String m_staticStationImageFileNameFormat;
+	private BufferedImage[] m_staticStationImage;
 	private int m_frameRate;
 	private InetAddress m_serverIPAddress;
 	private int m_serverPort;
@@ -45,7 +49,7 @@ public class SettingsManager {
 	final public static boolean defaultAutoScrollConsoleWindow = true;
 	final public static boolean defaultAutoConnectOnStartup = true;
 	final public static boolean defaultTakeWebcamSnapshotOnStartup = true;
-	final public static boolean defaultUseStaticStationImages = false;
+	final public static boolean defaultUseStaticStationImages = true;
 	final public static Dimension defaultWebcamResolution = Webcam.DEFAULT_RESOLUTION;
 	final public static int defaultTimeLimit = 15;
 	final public static int defaultNumberOfTrackers = 3;
@@ -118,6 +122,11 @@ public class SettingsManager {
 		
 		// generate the new output file
 		return fileName + " " + trackerNumber + (extension.length() > 0 ? "." + extension : "");
+	}
+	
+	public BufferedImage getStaticStationImage(byte trackerNumber) {
+		if(trackerNumber < 1 || trackerNumber > m_numberOfTrackers) { return null; }
+		return m_staticStationImage[trackerNumber - 1];
 	}
 	
 	public int getFrameRate() { return m_frameRate; }
@@ -361,6 +370,16 @@ public class SettingsManager {
 		return new Color(r, g, b);
 	}
 	
+	private void loadStaticStationImages() {
+		m_staticStationImage = new BufferedImage[m_numberOfTrackers];
+		for(byte i=0;i<m_numberOfTrackers;i++) {
+			try {
+				m_staticStationImage[i] = ImageIO.read(new File(getStaticStationImageFileName((byte) (i+1))));
+			}
+			catch(Exception e) { }
+		}
+	}
+	
 	public boolean load() { return loadFrom(defaultSettingsFileName); }
 	
 	public boolean save() { return saveTo(defaultSettingsFileName); }
@@ -377,7 +396,7 @@ public class SettingsManager {
 		// create local variables instantiated with data parsed from the variable system
 		setPathDataFileName(m_settings.getValue("Path File", "Data Files"));
 		setTrackerImageFileName(m_settings.getValue("Tracker Image", "Data Files"));
-		setStaticStationImageFileNameFormat(m_settings.getValue("Static Station Image File Name Format", "Settings"));
+		setStaticStationImageFileNameFormat(m_settings.getValue("Static Station Image File Name Format", "Data Files"));
 		try { setFrameRate(Integer.parseInt(m_settings.getValue("Framerate", "Settings"))); } catch(NumberFormatException e) { }
 		setServerIPAddress(m_settings.getValue("Server IP Address", "Settings"));
 		try { setServerPort(Integer.parseInt(m_settings.getValue("Server Port", "Settings"))); } catch(NumberFormatException e) { }
@@ -396,6 +415,9 @@ public class SettingsManager {
 		setBlockColour(parseColour(m_settings.getValue("Block Colour", "Colours")));
 		setPotColour(parseColour(m_settings.getValue("Pot Colour", "Colours")));
 		
+		// load static tracker images
+		loadStaticStationImages();
+		
 		return true;
 	}
 	
@@ -403,7 +425,7 @@ public class SettingsManager {
 		// update the variable system with the new settings values
 		m_settings.setValue("Path File", m_pathDataFileName, "Data Files");
 		m_settings.setValue("Tracker Image", m_trackerImageFileName, "Data Files");
-		m_settings.setValue("Static Station Image File Name Format", m_staticStationImageFileNameFormat, "Settings");
+		m_settings.setValue("Static Station Image File Name Format", m_staticStationImageFileNameFormat, "Data Files");
 		m_settings.setValue("Framerate", m_frameRate, "Settings");
 		m_settings.setValue("Server IP Address", m_serverIPAddress.getHostName(), "Settings");
 		m_settings.setValue("Server Port", m_serverPort, "Settings");

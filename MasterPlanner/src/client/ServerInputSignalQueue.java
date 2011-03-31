@@ -162,7 +162,9 @@ public class ServerInputSignalQueue extends Thread {
 				}
 				else if(s.getSignalType() == SignalType.RequestTrackerImage) {
 					RequestTrackerImageSignal s2 = (RequestTrackerImageSignal) s;
-					sendSignal(new ReplyTrackerImageSignal(SystemManager.trackerNumber, s2.getSourceTrackerNumber(), SystemManager.localTrackerImage));
+					if(!SystemManager.settings.getUseStaticStationImages()) {
+						sendSignal(new ReplyTrackerImageSignal(SystemManager.trackerNumber, s2.getSourceTrackerNumber(), SystemManager.localTrackerImage));
+					}
 				}
 				else if(s.getSignalType() == SignalType.ReplyTrackerImage) {
 					ReplyTrackerImageSignal s2 = (ReplyTrackerImageSignal) s;
@@ -178,7 +180,9 @@ public class ServerInputSignalQueue extends Thread {
 					ReceiveTrackerNumberSignal s2 = (ReceiveTrackerNumberSignal) s;
 					SystemManager.trackerNumber = s2.getTrackerNumber();
 					SystemManager.setTrackerImage(SystemManager.trackerNumber, SystemManager.localTrackerImage);
-					sendSignal(new BroadcastTrackerImageSignal(SystemManager.trackerNumber, SystemManager.localTrackerImage));
+					if(!SystemManager.settings.getUseStaticStationImages()) {
+						sendSignal(new BroadcastTrackerImageSignal(SystemManager.trackerNumber, SystemManager.localTrackerImage));
+					}
 				}
 			}
 			

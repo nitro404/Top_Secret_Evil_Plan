@@ -41,6 +41,8 @@ public class DebugWindow extends JFrame implements ActionListener, WindowListene
 	private JMenu m_settingsMenu;
 	private JCheckBoxMenuItem m_settingsAutoConnectOnStartupMenuItem;
 	private JCheckBoxMenuItem m_settingsTakeWebcamSnapshotOnStartupMenuItem;
+	private JCheckBoxMenuItem m_useStaticStationImagesMenuItem;
+	private JMenuItem m_staticStationImageFileNameFormatMenuItem;
 	private JCheckBoxMenuItem m_settingsAutoScrollConsoleWindowMenuItem;
 	private JMenu m_settingsSignalsMenu;
 	private JRadioButtonMenuItem[] m_settingsSignalsMenuItem;
@@ -97,6 +99,8 @@ public class DebugWindow extends JFrame implements ActionListener, WindowListene
         m_settingsMenu = new JMenu("Settings");
         m_settingsAutoConnectOnStartupMenuItem = new JCheckBoxMenuItem("Auto-connect on Startup");
         m_settingsTakeWebcamSnapshotOnStartupMenuItem = new JCheckBoxMenuItem("Take Webcam Snapshot on Startup");
+        m_useStaticStationImagesMenuItem = new JCheckBoxMenuItem("Use Static Station Images");
+    	m_staticStationImageFileNameFormatMenuItem = new JMenuItem("Static Station Image File Name Format");
         m_settingsAutoScrollConsoleWindowMenuItem = new JCheckBoxMenuItem("Auto-scroll Console Window");
         m_settingsSignalsMenu = new JMenu("Signal Debugging");
         m_settingsSignalsMenuItem = new JRadioButtonMenuItem[SignalDebugLevel.signalDebugLevels.length];
@@ -113,6 +117,7 @@ public class DebugWindow extends JFrame implements ActionListener, WindowListene
         
         m_settingsAutoConnectOnStartupMenuItem.setSelected(SettingsManager.defaultAutoConnectOnStartup);
         m_settingsTakeWebcamSnapshotOnStartupMenuItem.setSelected(SettingsManager.defaultTakeWebcamSnapshotOnStartup);
+        m_useStaticStationImagesMenuItem.setSelected(SettingsManager.defaultUseStaticStationImages);
         m_settingsAutoScrollConsoleWindowMenuItem.setSelected(SettingsManager.defaultAutoScrollConsoleWindow);
         m_editModeMenuItem[0].setSelected(true);
         m_settingsSignalsMenuItem[0].setSelected(true);
@@ -140,6 +145,8 @@ public class DebugWindow extends JFrame implements ActionListener, WindowListene
         m_editUpdateTrackerImageMenuItem.addActionListener(this);
         m_settingsAutoConnectOnStartupMenuItem.addActionListener(this);
         m_settingsTakeWebcamSnapshotOnStartupMenuItem.addActionListener(this);
+        m_useStaticStationImagesMenuItem.addActionListener(this);
+    	m_staticStationImageFileNameFormatMenuItem.addActionListener(this);
         m_settingsAutoScrollConsoleWindowMenuItem.addActionListener(this);
         for(byte i=0;i<SignalDebugLevel.signalDebugLevels.length;i++) {
         	m_settingsSignalsMenuItem[i].addActionListener(this);
@@ -179,6 +186,8 @@ public class DebugWindow extends JFrame implements ActionListener, WindowListene
         
         m_settingsMenu.add(m_settingsAutoConnectOnStartupMenuItem);
         m_settingsMenu.add(m_settingsTakeWebcamSnapshotOnStartupMenuItem);
+        m_settingsMenu.add(m_useStaticStationImagesMenuItem);
+    	m_settingsMenu.add(m_staticStationImageFileNameFormatMenuItem);
         m_settingsMenu.add(m_settingsAutoScrollConsoleWindowMenuItem);
         for(byte i=0;i<SignalDebugLevel.signalDebugLevels.length;i++) {
         	m_settingsSignalsMenu.add(m_settingsSignalsMenuItem[i]);
@@ -284,6 +293,14 @@ public class DebugWindow extends JFrame implements ActionListener, WindowListene
 		else if(e.getSource() == m_settingsTakeWebcamSnapshotOnStartupMenuItem) {
 			SystemManager.settings.setTakeWebcamSnapshotOnStartup(m_settingsTakeWebcamSnapshotOnStartupMenuItem.isSelected());
 		}
+		else if(e.getSource() == m_useStaticStationImagesMenuItem) {
+			SystemManager.settings.setUseStaticStationImages(m_useStaticStationImagesMenuItem.isSelected());
+		}
+		else if(e.getSource() == m_staticStationImageFileNameFormatMenuItem) {
+			String input = JOptionPane.showInputDialog(this, "Enter the file name format for static tracker images (ie. \"Station.jpg\":\n(Images will be read as \"Station X.jpg\" where X is the tracker number.", SystemManager.settings.getStaticStationImageFileNameFormat());
+			if(input == null) { return; }
+			SystemManager.settings.setStaticStationImageFileNameFormat(input);
+		}
 		else if(e.getSource() == m_settingsAutoScrollConsoleWindowMenuItem) {
 			SystemManager.settings.setAutoScrollConsoleWindow(m_settingsAutoScrollConsoleWindowMenuItem.isSelected());
 		}
@@ -362,6 +379,7 @@ public class DebugWindow extends JFrame implements ActionListener, WindowListene
 		m_settingsSignalsMenuItem[SystemManager.settings.getSignalDebugLevel()].setSelected(true);
 		m_settingsAutoConnectOnStartupMenuItem.setSelected(SystemManager.settings.getAutoConnectOnStartup());
         m_settingsTakeWebcamSnapshotOnStartupMenuItem.setSelected(SystemManager.settings.getTakeWebcamSnapshotOnStartup());
+		m_useStaticStationImagesMenuItem.setSelected(SystemManager.settings.getUseStaticStationImages());
         m_settingsAutoScrollConsoleWindowMenuItem.setSelected(SystemManager.settings.getAutoScrollConsoleWindow());
 		m_fileConnectMenuItem.setEnabled(!SystemManager.client.isConnected());
 		m_fileDisconnectMenuItem.setEnabled(SystemManager.client.isConnected());

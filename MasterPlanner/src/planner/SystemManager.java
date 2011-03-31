@@ -77,6 +77,12 @@ public class SystemManager {
 			updateLocalTrackerImage();
 		}
 		
+		if(settings.getUseStaticStationImages()) {
+			for(byte i=0;i<settings.getNumberOfTrackers();i++) {
+				displayWindow.setTrackerImage((byte) (i + 1), settings.getStaticStationImage((byte) (i + 1)));
+			}
+		}
+		
 		client.initialize();
 		if(settings.getAutoConnectOnStartup()) {
 			client.connect();
