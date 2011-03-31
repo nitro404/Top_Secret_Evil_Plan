@@ -4,6 +4,7 @@ import java.util.Vector;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.*;
+import planner.*;
 import shared.*;
 
 public class PotSystem implements MouseListener, MouseMotionListener {
@@ -22,11 +23,13 @@ public class PotSystem implements MouseListener, MouseMotionListener {
 	public PotSystem() {
 		m_pots = new Vector<Pot>(defaultPotPositions.length);
 		for(byte i=0;i<defaultPotPositions.length;i++) {
-			m_pots.add(new Pot(i, defaultPotPositions[i]));
+			m_pots.add(new Pot(i, SystemManager.settings.getInitialPotPosition(i)));
 		}
 		m_selectedPot = -1;
 		m_potToMove = -1;
 	}
+	
+	public int numberOfPots() { return m_pots.size(); }
 	
 	public Pot getPot(byte potID) {
 		if(potID < 0 || potID >= m_pots.size()) { return null; }

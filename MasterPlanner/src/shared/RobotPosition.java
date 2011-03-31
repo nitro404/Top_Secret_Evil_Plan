@@ -72,7 +72,7 @@ public class RobotPosition {
 	}
 	
 	public String toString() {
-		return m_position + ", angle";
+		return m_position + ", " + m_angle;
 	}
-
+	
 }

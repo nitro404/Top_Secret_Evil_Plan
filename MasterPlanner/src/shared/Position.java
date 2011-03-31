@@ -40,4 +40,8 @@ public class Position extends Point {
 		return SystemManager.settings.getWebcamResolution().height * SystemManager.settings.getNumberOfTrackers();
 	}
 	
+	public String toString() {
+		return "(" + x + ", " +  y + ")";
+	}
+	
 }

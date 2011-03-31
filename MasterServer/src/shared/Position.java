@@ -32,5 +32,9 @@ public class Position extends Point {
 	public static boolean isValid(Point p) {
 		return p != null && p.x >= 0 && p.y >= 0 && p.x < MAX_X && p.y < MAX_Y;
 	}
+
+	public String toString() {
+		return "(" + x + ", " +  y + ")";
+	}
 	
 }

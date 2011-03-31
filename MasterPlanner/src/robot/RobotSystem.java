@@ -4,6 +4,7 @@ import java.util.Vector;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.*;
+import planner.*;
 import shared.*;
 
 public class RobotSystem implements MouseListener, MouseMotionListener {
@@ -26,11 +27,13 @@ public class RobotSystem implements MouseListener, MouseMotionListener {
 	public RobotSystem() {
 		m_robots = new Vector<Robot>(defaultRobotPositions.length);
 		for(byte i=0;i<defaultRobotPositions.length;i++) {
-			m_robots.add(new Robot(i, robotNumbers[i], robotNames[i], defaultRobotPositions[i]));
+			m_robots.add(new Robot(i, robotNumbers[i], robotNames[i], SystemManager.settings.getInitialRobotPosition(i)));
 		}
 		m_selectedRobot = -1;
 		m_robotToMove = -1;
 	}
+	
+	public int numberOfRobots() { return m_robots.size(); }
 	
 	public Robot getRobot(byte id) {
 		if(id < 0 || id >= m_robots.size()) { return null; }

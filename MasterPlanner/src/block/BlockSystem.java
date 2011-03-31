@@ -3,6 +3,7 @@ package block;
 import java.util.Vector;
 import java.awt.*;
 import java.awt.event.*;
+import planner.*;
 import shared.*;
 
 public class BlockSystem implements MouseListener, MouseMotionListener {
@@ -39,11 +40,13 @@ public class BlockSystem implements MouseListener, MouseMotionListener {
 	public BlockSystem() {
 		m_blocks = new Vector<Block>(defaultBlockPositions.length);
 		for(byte i=0;i<defaultBlockPositions.length;i++) {
-			m_blocks.add(new Block(i, defaultBlockPositions[i]));
+			m_blocks.add(new Block(i, SystemManager.settings.getInitialBlockPosition(i)));
 		}
 		m_selectedBlock = -1;
 		m_blockToMove = -1;
 	}
+	
+	public int numberOfBlocks() { return m_blocks.size(); }
 	
 	public Block getBlock(byte blockID) {
 		if(blockID < 0 || blockID >= m_blocks.size()) { return null; }

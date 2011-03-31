@@ -1,5 +1,6 @@
 package settings;
 
+import java.util.Vector;
 import java.util.StringTokenizer;
 import java.io.File;
 import java.net.*;
@@ -7,8 +8,12 @@ import java.awt.Dimension;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
+import block.*;
+import robot.*;
+import pot.*;
 import imaging.*;
 import client.*;
+import planner.*;
 import shared.*;
 
 public class SettingsManager {
@@ -37,6 +42,9 @@ public class SettingsManager {
 	private Color m_robotColour;
 	private Color m_blockColour;
 	private Color m_potColour;
+	private Vector<RobotPosition> m_initialRobotPositions;
+	private Vector<Position> m_initialBlockPositions;
+	private Vector<Position> m_initialPotPositions;
 	
 	final public static String defaultSettingsFileName = "planner.ini";
 	final public static String defaultPathDataFileName = "paths.ini";
@@ -89,6 +97,18 @@ public class SettingsManager {
 		m_robotColour = defaultRobotColour;
 		m_blockColour = defaultBlockColour;
 		m_potColour = defaultPotColour;
+		m_initialRobotPositions = new Vector<RobotPosition>();
+		for(int i=0;i<RobotSystem.defaultRobotPositions.length;i++) {
+			m_initialRobotPositions.add(RobotSystem.defaultRobotPositions[i]);
+		}
+		m_initialBlockPositions = new Vector<Position>();
+		for(int i=0;i<BlockSystem.defaultBlockPositions.length;i++) {
+			m_initialBlockPositions.add(BlockSystem.defaultBlockPositions[i]);
+		}
+		m_initialPotPositions = new Vector<Position>();
+		for(int i=0;i<PotSystem.defaultPotPositions.length;i++) {
+			m_initialPotPositions.add(PotSystem.defaultPotPositions[i]);
+		}
 	}
 	
 	public String getPathDataFileName() { return m_pathDataFileName; }
@@ -167,6 +187,21 @@ public class SettingsManager {
 	public Color getRobotColour() { return m_robotColour; }
 	public Color getBlockColour() { return m_blockColour; }
 	public Color getPotColour() { return m_potColour; }
+	
+	public RobotPosition getInitialRobotPosition(byte robotID) {
+		if(robotID < 0 || robotID >= m_initialRobotPositions.size()) { return null; }
+		return m_initialRobotPositions.elementAt(robotID);
+	}
+	
+	public Position getInitialBlockPosition(byte blockID) {
+		if(blockID < 0 || blockID >= m_initialBlockPositions.size()) { return null; }
+		return m_initialBlockPositions.elementAt(blockID);
+	}
+	
+	public Position getInitialPotPosition(byte potID) {
+		if(potID < 0 || potID >= m_initialPotPositions.size()) { return null; }
+		return m_initialPotPositions.elementAt(potID);
+	}
 	
 	public boolean setPathDataFileName(String fileName) {
 		if(fileName == null) { return false; }
@@ -354,6 +389,39 @@ public class SettingsManager {
 	public boolean setBlockColour(String data) { return setBlockColour(parseColour(data)); }
 	public boolean setPotColour(String data) { return setPotColour(parseColour(data)); }
 	
+	public boolean setInitialRobotPosition(byte robotID, RobotPosition initialPosition) {
+		if(robotID < 0 || robotID >= m_initialRobotPositions.size() || !RobotPosition.isValid(initialPosition)) { return false; }
+		m_initialRobotPositions.set(robotID, initialPosition);
+		return true;
+	}
+	
+	public boolean setInitialBlockPosition(byte blockID, Position initialPosition) {
+		if(blockID < 0 || blockID >= m_initialBlockPositions.size() || !Position.isValid(initialPosition)) { return false; }
+		m_initialBlockPositions.set(blockID, initialPosition);
+		return true;
+	}
+
+	public boolean setInitialPotPosition(byte potID, Position initialPosition) {
+		if(potID < 0 || potID >= m_initialPotPositions.size() || !Position.isValid(initialPosition)) { return false; }
+		m_initialPotPositions.set(potID, initialPosition);
+		return true;
+	}
+	
+	public boolean setInitialRobotPosition(Variable v) {
+		if(v == null) { return false; }
+		return setInitialRobotPosition(parseRobotID(v.getID()), parseRobotPosition(v.getValue()));
+	}
+	
+	public boolean setInitialBlockPosition(Variable v) {
+		if(v == null) { return false; }
+		return setInitialBlockPosition(parseBlockID(v.getID()), parsePosition(v.getValue()));
+	}
+
+	public boolean setInitialPotPosition(Variable v) {
+		if(v == null) { return false; }
+		return setInitialPotPosition(parsePotID(v.getID()), parsePosition(v.getValue()));
+	}
+	
 	private static Color parseColour(String data) {
 		if(data == null) { return null; }
 		String temp = data.trim();
@@ -368,6 +436,84 @@ public class SettingsManager {
 		}
 		catch(NumberFormatException e) { return null; }
 		return new Color(r, g, b);
+	}
+	
+	private static byte parseRobotID(String data) {
+		if(data == null) { return -1; }
+		String temp = data.trim();
+		if(temp.length() == 0) { return -1; }
+		StringTokenizer st = new StringTokenizer(temp, " ", false);
+		if(st.countTokens() != 2) { return -1; }
+		if(!st.nextToken().equalsIgnoreCase("Robot")) { return -1; }
+		byte id;
+		try { id = Byte.parseByte(st.nextToken()); }
+		catch(NumberFormatException e) { return -1; }
+		return id;
+	}
+	
+	private static byte parseBlockID(String data) {
+		if(data == null) { return -1; }
+		String temp = data.trim();
+		if(temp.length() == 0) { return -1; }
+		StringTokenizer st = new StringTokenizer(temp, " ", false);
+		if(st.countTokens() != 2) { return -1; }
+		if(!st.nextToken().equalsIgnoreCase("Block")) { return -1; }
+		byte id;
+		try { id = Byte.parseByte(st.nextToken()); }
+		catch(NumberFormatException e) { return -1; }
+		return id;
+	}
+	
+	private static byte parsePotID(String data) {
+		if(data == null) { return -1; }
+		String temp = data.trim();
+		if(temp.length() == 0) { return -1; }
+		StringTokenizer st = new StringTokenizer(temp, " ", false);
+		if(st.countTokens() != 2) { return -1; }
+		if(!st.nextToken().equalsIgnoreCase("Pot")) { return -1; }
+		byte id;
+		try { id = Byte.parseByte(st.nextToken()); }
+		catch(NumberFormatException e) { return -1; }
+		return id;
+	}
+	
+	private static Position parsePosition(String data) {
+		if(data == null) { return null; }
+		String temp = data.trim();
+		if(temp.length() == 0) { return null; }
+		StringTokenizer st = new StringTokenizer(temp, "(,) ", false);
+		if(st.countTokens() != 2) { return null; }
+		int x, y;
+		try {
+			x = Integer.parseInt(st.nextToken());
+			y = Integer.parseInt(st.nextToken());
+		}
+		catch(NumberFormatException e) {
+			return null;
+		}
+		Position p = new Position(x, y);
+		if(!p.isValid()) { return null; }
+		return p;
+	}
+	
+	private static RobotPosition parseRobotPosition(String data) {
+		if(data == null) { return null; }
+		String temp = data.trim();
+		if(temp.length() == 0) { return null; }
+		StringTokenizer st = new StringTokenizer(temp, "(,) ", false);
+		if(st.countTokens() != 3) { return null; }
+		int x, y, a;
+		try {
+			x = Integer.parseInt(st.nextToken());
+			y = Integer.parseInt(st.nextToken());
+			a = Integer.parseInt(st.nextToken());
+		}
+		catch(NumberFormatException e) {
+			return null;
+		}
+		RobotPosition p = new RobotPosition(x, y, a);
+		if(!p.isValid()) { return null; }
+		return p;
 	}
 	
 	private void loadStaticStationImages() {
@@ -414,6 +560,15 @@ public class SettingsManager {
 		setRobotColour(parseColour(m_settings.getValue("Robot Colour", "Colours")));
 		setBlockColour(parseColour(m_settings.getValue("Block Colour", "Colours")));
 		setPotColour(parseColour(m_settings.getValue("Pot Colour", "Colours")));
+		for(int i=0;i<m_initialRobotPositions.size();i++) {
+			setInitialRobotPosition(m_settings.getVariable("Robot " + i, "Robot Positions"));
+		}
+		for(int i=0;i<m_initialBlockPositions.size();i++) {
+			setInitialBlockPosition(m_settings.getVariable("Block " + i, "Block Positions"));
+		}
+		for(int i=0;i<m_initialPotPositions.size();i++) {
+			setInitialPotPosition(m_settings.getVariable("Pot " + i, "Pot Positions"));
+		}
 		
 		// load static tracker images
 		loadStaticStationImages();
@@ -443,6 +598,15 @@ public class SettingsManager {
 		m_settings.setValue("Robot Colour", m_robotColour.getRed() + ", " + m_robotColour.getGreen() + ", " + m_robotColour.getBlue(), "Colours");
 		m_settings.setValue("Block Colour", m_blockColour.getRed() + ", " + m_blockColour.getGreen() + ", " + m_blockColour.getBlue(), "Colours");
 		m_settings.setValue("Pot Colour", m_potColour.getRed() + ", " + m_potColour.getGreen() + ", " + m_potColour.getBlue(), "Colours");
+		for(byte i=0;i<SystemManager.robotSystem.numberOfRobots();i++) {
+			m_settings.setValue("Robot " + i, SystemManager.robotSystem.getRobot(i).getInitialPosition().toString(), "Robot Positions");
+		}
+		for(byte i=0;i<SystemManager.blockSystem.numberOfBlocks();i++) {
+			m_settings.setValue("Block " + i, SystemManager.blockSystem.getBlock(i).getInitialPosition().toString(), "Block Positions");
+		}
+		for(byte i=0;i<SystemManager.potSystem.numberOfPots();i++) {
+			m_settings.setValue("Pot " + i, SystemManager.potSystem.getPot(i).getInitialPosition().toString(), "Pot Positions");
+		}
 		
 		// group the settings by categories
 		m_settings.sort();
