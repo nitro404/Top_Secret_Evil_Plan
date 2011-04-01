@@ -179,6 +179,7 @@ public class ServerInputSignalQueue extends Thread {
 				else if(s.getSignalType() == SignalType.ReceiveTrackerNumber) {
 					ReceiveTrackerNumberSignal s2 = (ReceiveTrackerNumberSignal) s;
 					SystemManager.trackerNumber = s2.getTrackerNumber();
+					SystemManager.robotSystem.setActiveRobotID(s2.getTrackerNumber());
 					SystemManager.setTrackerImage(SystemManager.trackerNumber, SystemManager.localTrackerImage);
 					if(!SystemManager.settings.getUseStaticStationImages()) {
 						sendSignal(new BroadcastTrackerImageSignal(SystemManager.trackerNumber, SystemManager.localTrackerImage));

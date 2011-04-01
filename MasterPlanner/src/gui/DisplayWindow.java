@@ -68,10 +68,12 @@ public class DisplayWindow extends JFrame implements WindowListener, Updatable {
 	public void windowIconified(WindowEvent e) { }
 	public void windowOpened(WindowEvent e) { }
 	
-	public void windowClosing(WindowEvent e){
-		SystemManager.settings.save();
-		SystemManager.pathSystem.writeTo(SystemManager.settings.getPathDataFileName());
-		dispose();
+	public void windowClosing(WindowEvent e) {
+		if(e.getSource() == this) {
+			SystemManager.settings.save();
+			SystemManager.pathSystem.writeTo(SystemManager.settings.getPathDataFileName());
+			dispose();
+		}
 	}
 	
 	public void update() {

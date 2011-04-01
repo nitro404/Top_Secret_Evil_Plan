@@ -34,6 +34,7 @@ public class SystemManager {
 	
 	public static DisplayWindow displayWindow;
 	public static DebugWindow debugWindow;
+	public static TaskEditorWindow taskEditorWindow;
 	
 	private static boolean m_started = false;
 	
@@ -63,6 +64,7 @@ public class SystemManager {
 		debugWindow.setLocation(displayWindow.getLocation().x + displayWindow.getWidth(), displayWindow.getLocation().y);
 		displayWindow.setVisible(true);
 		debugWindow.setVisible(true);
+		taskEditorWindow = new TaskEditorWindow();
 		
 		displayWindow.update();
 		debugWindow.update();
@@ -89,6 +91,10 @@ public class SystemManager {
 		}
 		
 		taskManager = new TaskManager();
+	}
+	
+	public static void showTaskEditorWindow() {
+		taskEditorWindow.setVisible(true);
 	}
 	
 	public static boolean isIdentified() { return trackerNumber > 0; }
@@ -182,11 +188,15 @@ public class SystemManager {
 	}
 	
 	public static void handlePose(Position position, int angle) {
+		if(trackerNumber < 1 || !robotSystem.hasActiveRobot()) { return; }
 		
+		robotSystem.setActualPosition(robotSystem.getActiveRobotID(), new RobotPosition(position, angle));
+		client.sendSignal(new UpdateActualRobotPositionSignal(trackerNumber, robotSystem.getActiveRobot().getActualPosition()));
 	}
 	
 	public static void handleRobotData(byte[] data) {
-		
+		if(trackerNumber < 1 || data == null || data.length < 1) { return; }
+		robotSystem.handleRobotResponse(data[0]);
 	}
 	
 	public static void handleStationData(int station, byte[] data) {
@@ -195,6 +205,48 @@ public class SystemManager {
 	
 	public static void handleTrackerData(byte[] data) {
 		
+	}
+	
+	public static boolean sendInstructionToRobot(byte instructionID) {
+		if(planner == null || !RobotInstruction.isValid(instructionID)) { return false; }
+		sendDataToRobot(new byte[] { instructionID });
+		return true;
+	}
+	
+	public static boolean sendDataToRobot(byte[] data) {
+		if(planner == null || data == null) { return false; }
+		planner.sendDataToRobot(data);
+		return true;
+	}
+	
+	public static boolean sendDataToStation(int station, byte[] data) {
+		if(planner == null || data == null) { return false; }
+		planner.sendDataToStation(station, data);
+		return true;
+	}
+	
+	public static boolean sendDataToTraceFile(String data) {
+		if(planner == null || data == null) { return false; }
+		planner.sendDataToTraceFile(data);
+		return true;
+	}
+	
+	public static boolean sendDataToTracker(byte[] data) {
+		if(planner == null || data == null) { return false; }
+		planner.sendDataToTracker(data);
+		return true;
+	}
+	
+	public static boolean sendEstimatedPositionToTracker(RobotPosition robotPosition) {
+		if(planner == null || !RobotPosition.isValid(robotPosition)) { return false; }
+		planner.sendEstimatedPositionToTracker(robotPosition.getX(), robotPosition.getY(), robotPosition.getAngleDegrees());
+		return true;
+	}
+	
+	public static boolean sendEstimatedPositionToTracker(int x, int y, int angle) {
+		if(planner == null) { return false; }
+		planner.sendEstimatedPositionToTracker(x, y, angle);
+		return true;
 	}
 	
 }

@@ -28,6 +28,26 @@ public class MasterPlanner extends Planner {
 		SystemManager.handleTrackerData(castToByteArray(data));
 	}
 	
+	public void sendDataToRobot(byte[] data) {
+		super.sendDataToRobot(data);
+	}
+	
+	public void sendDataToStation(int station, byte[] data) {
+		super.sendDataToStation(station, data);
+	}
+	
+	public void sendDataToTraceFile(String data) {
+		super.sendDataToTraceFile(data);
+	}
+	
+	public void sendDataToTracker(byte[] data) {
+		super.sendDataToTracker(data);
+	}
+	
+	public void sendEstimatedPositionToTracker(int x, int y, int angle) {
+		super.sendEstimatedPositionToTracker(x, y, angle);
+	}
+	
 	public void setTrackerFrameRate(int frameRate) {
 		if(frameRate >= 1 && frameRate <= 30) {
 			trackerFrameRate = frameRate;

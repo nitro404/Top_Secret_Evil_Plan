@@ -9,6 +9,7 @@ import shared.*;
 
 public class RobotSystem implements MouseListener, MouseMotionListener {
 	
+	private byte m_activeRobotID;
 	private Vector<Robot> m_robots;
 	
 	private int m_selectedRobot;
@@ -29,6 +30,7 @@ public class RobotSystem implements MouseListener, MouseMotionListener {
 		for(byte i=0;i<defaultRobotPositions.length;i++) {
 			m_robots.add(new Robot(i, robotNumbers[i], robotNames[i], SystemManager.settings.getInitialRobotPosition(i)));
 		}
+		m_activeRobotID = -1;
 		m_selectedRobot = -1;
 		m_robotToMove = -1;
 	}
@@ -38,6 +40,22 @@ public class RobotSystem implements MouseListener, MouseMotionListener {
 	public Robot getRobot(byte id) {
 		if(id < 0 || id >= m_robots.size()) { return null; }
 		return m_robots.elementAt(id);
+	}
+	
+	public Robot getActiveRobot() {
+		return (m_activeRobotID < 0 || m_activeRobotID >= m_robots.size()) ? null : m_robots.elementAt(m_activeRobotID);
+	}
+	
+	public byte getActiveRobotID() {
+		return m_activeRobotID;
+	}
+	
+	public boolean hasActiveRobot() {
+		return m_activeRobotID >= 0 && m_activeRobotID < m_robots.size();
+	}
+	
+	public void setActiveRobotID(byte robotID) {
+		m_activeRobotID = (robotID < -1) ? -1 : robotID;
 	}
 	
 	public boolean setRobotState(byte robotID, byte robotState) {
@@ -63,6 +81,30 @@ public class RobotSystem implements MouseListener, MouseMotionListener {
 	public boolean setSpawnPosition(byte robotID, RobotPosition spawnRobotPosition) {
 		if(robotID < 0 || robotID >= m_robots.size() || !RobotPosition.isValid(spawnRobotPosition)) { return false; }
 		return m_robots.elementAt(robotID).setSpawnPosition(spawnRobotPosition);
+	}
+	
+	public boolean handleRobotResponse(byte responseID) {
+		if(!SystemManager.isIdentified() || !hasActiveRobot()) { return false; }
+		
+		if(!RobotResponse.isValid(responseID)) {
+			SystemManager.console.writeLine("Received invalid response id from robot: " + responseID);
+			return false;
+		}
+		
+		// TODO: Inform current task of status
+		if(responseID == RobotResponse.FoundBlock) {
+			return true;
+		}
+		else if(responseID == RobotResponse.GrabbedBlock) {
+			return true;
+		}
+		else if(responseID == RobotResponse.BlockNotFound) {
+			return true;
+		}
+		else if(responseID == RobotResponse.DroppedOffBlock) {
+			return true;
+		}
+		return false;
 	}
 	
 	public void mouseClicked(MouseEvent e) { }

@@ -8,6 +8,7 @@ import shared.*;
 
 public class BlockSystem implements MouseListener, MouseMotionListener {
 	
+	private byte m_activeBlockID;
 	private Vector<Block> m_blocks;
 	private Vector<DropOffLocation> m_dropOffLocations;
 	
@@ -61,6 +62,7 @@ public class BlockSystem implements MouseListener, MouseMotionListener {
 		for(byte i=0;i<defaultDropOffLocations.length;i++) {
 			m_dropOffLocations.add(new DropOffLocation(i, SystemManager.settings.getDropOffLocation(i)));
 		}
+		m_activeBlockID = -1;
 		m_selectedBlock = -1;
 		m_blockToMove = -1;
 		m_selectedDropOffLocation = -1;
@@ -76,6 +78,22 @@ public class BlockSystem implements MouseListener, MouseMotionListener {
 		return m_blocks.elementAt(blockID);
 	}
 	
+	public Block getActiveBlock() {
+		return (m_activeBlockID < 0 || m_activeBlockID >= m_blocks.size()) ? null : m_blocks.elementAt(m_activeBlockID);
+	}
+	
+	public byte getActiveBlockID() {
+		return m_activeBlockID;
+	}
+	
+	public boolean hasActiveBlock() {
+		return m_activeBlockID >= 0 && m_activeBlockID < m_blocks.size();
+	}
+	
+	public void setActiveBlockID(byte blockID) {
+		m_activeBlockID = (blockID < -1) ? -1 : blockID;
+	}
+	
 	public DropOffLocation getDropOffLocation(byte dropOffLocationID) {
 		if(dropOffLocationID < 0 || dropOffLocationID >= m_dropOffLocations.size()) { return null; }
 		return m_dropOffLocations.elementAt(dropOffLocationID);
@@ -89,6 +107,19 @@ public class BlockSystem implements MouseListener, MouseMotionListener {
 	public boolean setActualBlockPosition(byte blockID, Position actualBlockPosition) {
 		if(blockID < 0 || blockID >= m_blocks.size() || !Position.isValid(actualBlockPosition)) { return false; }
 		return m_blocks.elementAt(blockID).setActualPosition(actualBlockPosition);
+	}
+	
+	public byte closestBlock(Position p) {
+		double distance, shortestDistance = Math.sqrt(Math.pow(m_blocks.elementAt(0).getActualPosition().getX() - p.x, 2) + Math.pow(m_blocks.elementAt(0).getActualPosition().getY() - p.y, 2));
+		byte shortestIndex = 0;
+		for(byte i=1;i<m_blocks.size();i++) {
+			distance = Math.sqrt(Math.pow(m_blocks.elementAt(i).getActualPosition().getX() - p.x, 2) + Math.pow(m_blocks.elementAt(i).getActualPosition().getY() - p.y, 2));
+			if(distance < shortestDistance) {
+				shortestDistance = distance;
+				shortestIndex = i;
+			}
+		}
+		return shortestIndex;
 	}
 	
 	public void mouseClicked(MouseEvent e) { }

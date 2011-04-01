@@ -24,6 +24,7 @@ public class DebugWindow extends JFrame implements ActionListener, WindowListene
 	private JMenuItem m_fileExitMenuItem;
     
 	private JMenu m_editMenu;
+	private JMenuItem m_taskEditorMenuItem; 
 	private JMenu m_editModeMenu;
 	private JRadioButtonMenuItem[] m_editModeMenuItem;
 	private ButtonGroup m_editModeButtonGroup;
@@ -81,6 +82,7 @@ public class DebugWindow extends JFrame implements ActionListener, WindowListene
         m_fileExitMenuItem = new JMenuItem("Exit");
         
         m_editMenu = new JMenu("Edit");
+        m_taskEditorMenuItem = new JMenuItem("Task Editor");
     	m_editModeMenu = new JMenu("Editing Mode");
     	m_editModeMenuItem = new JRadioButtonMenuItem[EditMode.displayEditModes.length];
     	for(int i=0;i<EditMode.displayEditModes.length;i++) {
@@ -133,6 +135,7 @@ public class DebugWindow extends JFrame implements ActionListener, WindowListene
         m_fileDisconnectMenuItem.addActionListener(this);
         m_fileStartSimulationMenuItem.addActionListener(this);
         m_fileExitMenuItem.addActionListener(this);
+        m_taskEditorMenuItem.addActionListener(this);
         for(byte i=0;i<EditMode.displayEditModes.length;i++) {
         	m_editModeMenuItem[i].addActionListener(this);
         }
@@ -172,10 +175,11 @@ public class DebugWindow extends JFrame implements ActionListener, WindowListene
         m_fileMenu.add(m_fileStartSimulationMenuItem);
         m_fileMenu.add(m_fileExitMenuItem);
         
-        m_editMenu.add(m_editModeMenu);
+        m_editMenu.add(m_taskEditorMenuItem);
         for(byte i=0;i<EditMode.displayEditModes.length;i++) {
         	m_editModeMenu.add(m_editModeMenuItem[i]);
         }
+        m_editMenu.add(m_editModeMenu);
 		m_editColourMenu.add(m_editColourSelectedMenuItem);
 		m_editColourMenu.add(m_editColourMissingMenuItem);
 		m_editColourMenu.add(m_editColourVertexMenuItem);
@@ -229,9 +233,11 @@ public class DebugWindow extends JFrame implements ActionListener, WindowListene
 	public void windowOpened(WindowEvent e) { }
 	
 	public void windowClosing(WindowEvent e) {
-		SystemManager.settings.save();
-		SystemManager.pathSystem.writeTo(SystemManager.settings.getPathDataFileName());
-		dispose();
+		if(e.getSource() == this) {
+			SystemManager.settings.save();
+			SystemManager.pathSystem.writeTo(SystemManager.settings.getPathDataFileName());
+			dispose();
+		}
 	}
 	
 	public void actionPerformed(ActionEvent e) {
@@ -256,6 +262,9 @@ public class DebugWindow extends JFrame implements ActionListener, WindowListene
 		}
 		else if(e.getSource() == m_fileExitMenuItem) {
 			System.exit(0);
+		}
+		else if(e.getSource() == m_taskEditorMenuItem) {
+			SystemManager.showTaskEditorWindow();
 		}
 		else if(e.getSource() == m_editColourSelectedMenuItem) {
 			Color c = JColorChooser.showDialog(this, "Choose a colour for selected items:", SystemManager.settings.getSelectedColour());
