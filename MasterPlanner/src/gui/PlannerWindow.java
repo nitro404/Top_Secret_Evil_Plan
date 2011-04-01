@@ -458,17 +458,17 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
 
         jSplitPane2.setRightComponent(jScrollPane1);
 
-        robotIDLabel5.setFont(new Font("Verdana", 0, 11)); // NOI18N
+        robotIDLabel5.setFont(new Font("Verdana", 0, 11));
         robotIDLabel5.setText("Robot ID:");
 
         robotIDTextField1.setEditable(false);
 
-        robotNameLabel5.setFont(new Font("Verdana", 0, 11)); // NOI18N
+        robotNameLabel5.setFont(new Font("Verdana", 0, 11));
         robotNameLabel5.setText("Robot Name:");
 
         robotNameTextField1.setEditable(false);
 
-        stateLabel5.setFont(new Font("Verdana", 0, 11)); // NOI18N
+        stateLabel5.setFont(new Font("Verdana", 0, 11));
         stateLabel5.setText("State:");
 
         robotInfoLabel5.setFont(new Font("Verdana", 3, 12));
@@ -479,22 +479,22 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
         tasksCompleteLabel1.setFont(new Font("Courier New", 0, 11));
         tasksCompleteLabel1.setText("X / Y Tasks Complete (100%)");
 
-        jLabel1.setFont(new Font("Verdana", 0, 11)); // NOI18N
+        jLabel1.setFont(new Font("Verdana", 0, 11));
         jLabel1.setText("Robot #:");
 
         jTextField1.setEditable(false);
 
-        jLabel2.setFont(new Font("Verdana", 0, 11)); // NOI18N
+        jLabel2.setFont(new Font("Verdana", 0, 11));
         jLabel2.setText("Actual Pose:");
 
         poseTextField1.setEditable(false);
 
-        jLabel3.setFont(new Font("Verdana", 0, 11)); // NOI18N
+        jLabel3.setFont(new Font("Verdana", 0, 11));
         jLabel3.setText("Estimated Pose:");
 
         estimatedPoseTextField1.setEditable(false);
 
-        spawnPoseLabel1.setFont(new Font("Verdana", 0, 11)); // NOI18N
+        spawnPoseLabel1.setFont(new Font("Verdana", 0, 11));
         spawnPoseLabel1.setText("Spawn Pose:");
 
         spawnPoseTextField1.setEditable(false);
@@ -511,17 +511,17 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
 
         jSplitPane1.setLeftComponent(jPanel3);
 
-        robotIDLabel6.setFont(new Font("Verdana", 0, 11)); // NOI18N
+        robotIDLabel6.setFont(new Font("Verdana", 0, 11));
         robotIDLabel6.setText("Robot ID:");
 
         robotIDTextField2.setEditable(false);
 
-        robotNameLabel6.setFont(new Font("Verdana", 0, 11)); // NOI18N
+        robotNameLabel6.setFont(new Font("Verdana", 0, 11));
         robotNameLabel6.setText("Robot Name:");
 
         robotNameTextField2.setEditable(false);
 
-        stateLabel6.setFont(new Font("Verdana", 0, 11)); // NOI18N
+        stateLabel6.setFont(new Font("Verdana", 0, 11));
         stateLabel6.setText("State:");
 
         robotInfoLabel6.setFont(new Font("Verdana", 3, 12));
@@ -532,22 +532,22 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
         tasksCompleteLabel2.setFont(new Font("Courier New", 0, 11));
         tasksCompleteLabel2.setText("X / Y Tasks Complete (100%)");
 
-        jLabel4.setFont(new Font("Verdana", 0, 11)); // NOI18N
+        jLabel4.setFont(new Font("Verdana", 0, 11));
         jLabel4.setText("Robot #:");
 
         jTextField2.setEditable(false);
 
-        jLabel5.setFont(new Font("Verdana", 0, 11)); // NOI18N
+        jLabel5.setFont(new Font("Verdana", 0, 11));
         jLabel5.setText("Actual Pose:");
 
         poseTextField2.setEditable(false);
 
-        jLabel6.setFont(new Font("Verdana", 0, 11)); // NOI18N
+        jLabel6.setFont(new Font("Verdana", 0, 11));
         jLabel6.setText("Estimated Pose:");
 
         estimatedPoseTextField2.setEditable(false);
 
-        spawnPoseLabel2.setFont(new Font("Verdana", 0, 11)); // NOI18N
+        spawnPoseLabel2.setFont(new Font("Verdana", 0, 11));
         spawnPoseLabel2.setText("Spawn Pose:");
 
         spawnPoseTextField2.setEditable(false);
@@ -564,17 +564,17 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
 
         jSplitPane3.setLeftComponent(jPanel11);
 
-        robotIDLabel7.setFont(new Font("Verdana", 0, 11)); // NOI18N
+        robotIDLabel7.setFont(new Font("Verdana", 0, 11));
         robotIDLabel7.setText("Robot ID:");
 
         robotIDTextField3.setEditable(false);
 
-        robotNameLabel7.setFont(new Font("Verdana", 0, 11)); // NOI18N
+        robotNameLabel7.setFont(new Font("Verdana", 0, 11));
         robotNameLabel7.setText("Robot Name:");
 
         robotNameTextField3.setEditable(false);
 
-        stateLabel7.setFont(new Font("Verdana", 0, 11)); // NOI18N
+        stateLabel7.setFont(new Font("Verdana", 0, 11));
         stateLabel7.setText("State:");
 
         robotInfoLabel7.setFont(new Font("Verdana", 3, 12));
@@ -585,22 +585,22 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
         tasksCompleteLabel3.setFont(new Font("Courier New", 0, 11));
         tasksCompleteLabel3.setText("X / Y Tasks Complete (100%)");
 
-        jLabel7.setFont(new Font("Verdana", 0, 11)); // NOI18N
+        jLabel7.setFont(new Font("Verdana", 0, 11));
         jLabel7.setText("Robot #:");
 
         jTextField3.setEditable(false);
 
-        jLabel8.setFont(new Font("Verdana", 0, 11)); // NOI18N
+        jLabel8.setFont(new Font("Verdana", 0, 11));
         jLabel8.setText("Actual Pose:");
 
         poseTextField3.setEditable(false);
 
-        jLabel9.setFont(new Font("Verdana", 0, 11)); // NOI18N
+        jLabel9.setFont(new Font("Verdana", 0, 11));
         jLabel9.setText("Estimated Pose:");
 
         estimatedPoseTextField3.setEditable(false);
 
-        spawnPoseLabel3.setFont(new Font("Verdana", 0, 11)); // NOI18N
+        spawnPoseLabel3.setFont(new Font("Verdana", 0, 11));
         spawnPoseLabel3.setText("Spawn Pose:");
 
         spawnPoseTextField3.setEditable(false);
@@ -618,7 +618,7 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
         jSeparator2.setForeground(new Color(51, 51, 51));
         jSeparator2.setFont(new Font("Tahoma", 0, 36));
 
-        consoleLabel.setFont(new Font("Verdana", 1, 12)); // NOI18N
+        consoleLabel.setFont(new Font("Verdana", 1, 12));
         consoleLabel.setText("Console:");
 
         currentTimeLabel.setFont(new Font("Verdana", 1, 11));
@@ -662,10 +662,10 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
         });
         jScrollPane12.setViewportView(blocksTable4);
 
-        jLabel10.setFont(new Font("Verdana", 1, 11)); // NOI18N
+        jLabel10.setFont(new Font("Verdana", 1, 11));
         jLabel10.setText("Pots:");
 
-        jLabel11.setFont(new Font("Verdana", 1, 11)); // NOI18N
+        jLabel11.setFont(new Font("Verdana", 1, 11));
         jLabel11.setText("Blocks:");
 
         blocksTable5.setModel(new DefaultTableModel(
@@ -695,18 +695,18 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
         });
         jScrollPane13.setViewportView(blocksTable5);
 
-        totalTasksCompleteLabel.setFont(new Font("Courier New", 1, 12)); // NOI18N
+        totalTasksCompleteLabel.setFont(new Font("Courier New", 1, 12));
         totalTasksCompleteLabel.setHorizontalAlignment(SwingConstants.CENTER);
         totalTasksCompleteLabel.setText("X / Y Pots Delivered (100%)");
 
-        jLabel12.setFont(new Font("Verdana", 1, 12)); // NOI18N
+        jLabel12.setFont(new Font("Verdana", 1, 12));
         jLabel12.setText("Total:");
 
-        totalTasksCompleteLabel1.setFont(new Font("Courier New", 1, 12)); // NOI18N
+        totalTasksCompleteLabel1.setFont(new Font("Courier New", 1, 12));
         totalTasksCompleteLabel1.setHorizontalAlignment(SwingConstants.CENTER);
         totalTasksCompleteLabel1.setText("X / Y Blocks Delivered (100%)");
 
-        totalTasksCompleteLabel2.setFont(new Font("Courier New", 1, 12)); // NOI18N
+        totalTasksCompleteLabel2.setFont(new Font("Courier New", 1, 12));
         totalTasksCompleteLabel2.setHorizontalAlignment(SwingConstants.CENTER);
         totalTasksCompleteLabel2.setText("X / Y Tasks Complete (100%)");
         
@@ -1321,6 +1321,7 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
 		if(e.getSource() == this) {
 			SystemManager.settings.save();
 			SystemManager.pathSystem.writeTo(SystemManager.settings.getPathDataFileName());
+			SystemManager.taskManager.writeTo(SystemManager.settings.getTaskListFileName());
 			dispose();
 		}
 	}
