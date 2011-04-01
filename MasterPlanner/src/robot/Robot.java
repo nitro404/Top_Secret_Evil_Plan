@@ -92,6 +92,9 @@ public class Robot {
 		m_actualPosition = actualPosition;
 		if(m_actualPosition.isValid()) {
 			m_lastValidActualPosition = m_actualPosition;
+			if(!m_spawnPosition.isValid()) {
+				m_spawnPosition = m_actualPosition;
+			}
 		}
 		return true;
 	}

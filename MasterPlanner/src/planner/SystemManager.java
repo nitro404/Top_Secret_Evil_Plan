@@ -90,7 +90,8 @@ public class SystemManager {
 			client.connect();
 		}
 		
-		taskManager = new TaskManager();
+		taskManager = TaskManager.readFrom(settings.getTaskListFileName());
+		if(taskManager == null) { taskManager = new TaskManager(); }
 	}
 	
 	public static void showTaskEditorWindow() {
@@ -106,6 +107,8 @@ public class SystemManager {
 		
 		client.sendSignal(new Signal(SignalType.StartSimulation));
 		m_started = true;
+		
+		taskEditorWindow.setVisible(false);
 		
 		reset();
 		

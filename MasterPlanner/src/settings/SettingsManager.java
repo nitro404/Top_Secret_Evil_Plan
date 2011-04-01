@@ -21,6 +21,7 @@ public class SettingsManager {
 	private VariableSystem m_settings;
 	
 	private String m_pathDataFileName;
+	private String m_taskListFileName;
 	private String m_trackerImageFileName;
 	private String m_staticStationImageFileNameFormat;
 	private BufferedImage[] m_staticStationImage;
@@ -50,6 +51,7 @@ public class SettingsManager {
 	
 	final public static String defaultSettingsFileName = "planner.ini";
 	final public static String defaultPathDataFileName = "paths.ini";
+	final public static String defaultTaskListFileName = "tasklist.ini";
 	final public static String defaultTrackerImageFileName = "TrackerImage.jpg";
 	final public static String defaultStaticStationImageFileNameFormat = "Station.jpg";
 	final public static int defaultFrameRate = 2;
@@ -75,6 +77,7 @@ public class SettingsManager {
 	public SettingsManager() {
 		m_settings = new VariableSystem();
 		m_pathDataFileName = defaultPathDataFileName;
+		m_taskListFileName = defaultTaskListFileName;
 		m_trackerImageFileName = defaultTrackerImageFileName;
 		m_staticStationImageFileNameFormat = defaultStaticStationImageFileNameFormat;
 		m_frameRate = defaultFrameRate;
@@ -120,6 +123,8 @@ public class SettingsManager {
 	}
 	
 	public String getPathDataFileName() { return m_pathDataFileName; }
+	
+	public String getTaskListFileName() { return m_taskListFileName; }
 	
 	public String getTrackerImageFileName() { return m_trackerImageFileName; };
 	
@@ -222,6 +227,14 @@ public class SettingsManager {
 		String data = fileName.trim();
 		if(data.length() == 0) { return false; }
 		m_pathDataFileName = data;
+		return true;
+	}
+	
+	public boolean setTaskListFileName(String fileName) {
+		if(fileName == null) { return false; }
+		String data = fileName.trim();
+		if(data.length() == 0) { return false; }
+		m_taskListFileName = data;
 		return true;
 	}
 	
@@ -584,6 +597,7 @@ public class SettingsManager {
 		
 		// create local variables instantiated with data parsed from the variable system
 		setPathDataFileName(m_settings.getValue("Path File", "Data Files"));
+		setTaskListFileName(m_settings.getValue("Task List File", "Data Files"));
 		setTrackerImageFileName(m_settings.getValue("Tracker Image", "Data Files"));
 		setStaticStationImageFileNameFormat(m_settings.getValue("Static Station Image File Name Format", "Data Files"));
 		try { setFrameRate(Integer.parseInt(m_settings.getValue("Framerate", "Settings"))); } catch(NumberFormatException e) { }
@@ -626,6 +640,7 @@ public class SettingsManager {
 	public boolean saveTo(String fileName) {
 		// update the variable system with the new settings values
 		m_settings.setValue("Path File", m_pathDataFileName, "Data Files");
+		m_settings.setValue("Task List File", m_taskListFileName, "Data Files");
 		m_settings.setValue("Tracker Image", m_trackerImageFileName, "Data Files");
 		m_settings.setValue("Static Station Image File Name Format", m_staticStationImageFileNameFormat, "Data Files");
 		m_settings.setValue("Framerate", m_frameRate, "Settings");
