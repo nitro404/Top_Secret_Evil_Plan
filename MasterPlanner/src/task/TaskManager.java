@@ -78,7 +78,6 @@ public class TaskManager implements Updatable {
 			
 			for(int i=0;i<m_taskLists.size();i++) {
 				m_taskLists.elementAt(i).writeTo(out);
-				out.println();
 			}
 			
 			out.close();
@@ -127,7 +126,7 @@ public class TaskManager implements Updatable {
 				// parse a task name
 				if(data.charAt(0) == '[' && data.charAt(data.length() - 1) == ']') {
 					// if a task was already read, then store it
-					if(newTask.numberOfObjectives() > 0) {
+					if(parseObjectives) {
 						if(newTask.getRobotID() >= 0 && newTask.getRobotID() < taskLists.size()) {
 							taskManager.m_taskLists.elementAt(newTask.getRobotID()).addTask(newTask);
 						}
@@ -184,8 +183,10 @@ public class TaskManager implements Updatable {
 			}
 			
 			// if the end of the file is reached while a task was being parsed, store it
-			if(newTask.numberOfObjectives() > 0) {
-				taskManager.m_taskLists.elementAt(newTask.getRobotID()).addTask(newTask);
+			if(parseObjectives) {
+				if(newTask.getRobotID() >= 0 && newTask.getRobotID() < taskLists.size()) {
+					taskManager.m_taskLists.elementAt(newTask.getRobotID()).addTask(newTask);
+				}
 			}
 			
 			in.close();

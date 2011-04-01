@@ -29,14 +29,38 @@ public class Task implements Updatable{
 		m_currentObjective = 0;
 	}
 	
-	public Task(byte taskID, String taskName) {
-		m_taskID = taskID;
+	public Task(String taskName) {
+		m_taskID = -1;
 		m_taskName = (taskName == null) ? "" : taskName;
 		m_robotID = -1;
 		m_taskState = TaskState.New;
 		m_nextTaskType = NextTaskType.Last;
 		m_nextTaskName = null;
 		m_altTaskName = null;
+		m_objectives = new Vector<Objective>();
+		m_currentObjective = 0;
+	}
+	
+	public Task(String taskName, String nextTaskName) {
+		m_taskID = -1;
+		m_taskName = (taskName == null) ? "" : taskName;
+		m_robotID = -1;
+		m_taskState = TaskState.New;
+		m_nextTaskType = NextTaskType.Normal;
+		m_nextTaskName = nextTaskName;
+		m_altTaskName = null;
+		m_objectives = new Vector<Objective>();
+		m_currentObjective = 0;
+	}
+	
+	public Task(String taskName, String nextTaskName, String altTaskName) {
+		m_taskID = -1;
+		m_taskName = (taskName == null) ? "" : taskName;
+		m_robotID = -1;
+		m_taskState = TaskState.New;
+		m_nextTaskType = NextTaskType.Choice;
+		m_nextTaskName = nextTaskName;
+		m_altTaskName = altTaskName;
 		m_objectives = new Vector<Objective>();
 		m_currentObjective = 0;
 	}
@@ -67,9 +91,23 @@ public class Task implements Updatable{
 		return (objectiveIndex < 0 || objectiveIndex >= m_objectives.size()) ? null : m_objectives.elementAt(objectiveIndex);
 	}
 	
+	public Vector<Objective> getObjectives() { return m_objectives; }
+	
 	public boolean addObjective(Objective o) {
 		if(o == null) { return false; }
 		m_objectives.add(o);
+		return true;
+	}
+	
+	public boolean setObjective(int index, Objective o) {
+		if(o == null || index < 0 || index >= m_objectives.size()) { return false; }
+		m_objectives.set(index, o);
+		return true;
+	}
+	
+	public boolean setObjectives(Vector<Objective> objectives) {
+		if(objectives == null) { return false; }
+		m_objectives = objectives;
 		return true;
 	}
 	

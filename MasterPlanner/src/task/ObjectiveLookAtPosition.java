@@ -45,5 +45,9 @@ public class ObjectiveLookAtPosition extends Objective {
 		out.print("Look at Position " + m_positionIndex + " of Path " + m_pathName);
 		return true;
 	}
+	
+	public String toString() {
+		return "Look at Position " + m_positionIndex + " of Path " + m_pathName;
+	}
 
 }

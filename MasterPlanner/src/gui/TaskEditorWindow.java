@@ -4,6 +4,8 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
+import task.*;
+import planner.*;
 import shared.*;
 
 /**
@@ -37,11 +39,11 @@ public class TaskEditorWindow extends JFrame implements ActionListener, ListSele
     private JRadioButton m_backUpToPositionRadioButton;
     private ButtonGroup m_objectiveButtonGroup;
     private ButtonGroup m_taskButtonGroup;
-    private JRadioButton m_choiceRadioButton;
+    private JRadioButton m_choiceTaskRadioButton;
     private JButton m_clearObjectiveButton;
     private JButton m_clearTaskButton;
     private JRadioButton m_dropOffBlockAtLocationRadioButton;
-    private JTextField m_choiceHasBlockTextField;
+    private JTextField m_choiceHasBlockTaskNameTextField;
     private JLabel m_robotListTitleLabel;
     private JLabel m_objectiveTitleLabel;
     private JLabel m_taskTitleLabel;
@@ -67,8 +69,8 @@ public class TaskEditorWindow extends JFrame implements ActionListener, ListSele
     private JRadioButton m_lookAtPositionRadioButton;
     private JRadioButton m_moveToPositionRadioButton;
     private JRadioButton m_nextTaskRadioButton;
-    private JTextField m_nextTaskTextField;
-    private JTextField m_choiceNoBlockTextField;
+    private JTextField m_nextTaskNameTextField;
+    private JTextField m_choiceNoBlockTaskNameTextField;
     private JRadioButton m_pickUpBlockRadioButton;
     private JTextField m_pickUpBlockTextField;
     private JTextField m_taskNameTextField;
@@ -148,18 +150,18 @@ public class TaskEditorWindow extends JFrame implements ActionListener, ListSele
         m_taskNameTextField = new JTextField();
         m_lastTaskRadioButton = new JRadioButton("Last Task");
         m_nextTaskRadioButton = new JRadioButton("Next Task");
-        m_nextTaskTextField = new JTextField();
-        m_choiceRadioButton = new JRadioButton("Choice");
+        m_nextTaskNameTextField = new JTextField();
+        m_choiceTaskRadioButton = new JRadioButton("Choice");
         m_choiceHasBlockLabel = new JLabel("Has Block");
-        m_choiceHasBlockTextField = new JTextField();
+        m_choiceHasBlockTaskNameTextField = new JTextField();
         m_choiceNoBlockLabel = new JLabel("No Block");
-        m_choiceNoBlockTextField = new JTextField();
+        m_choiceNoBlockTaskNameTextField = new JTextField();
         m_taskButtonGroup.add(m_lastTaskRadioButton);
         m_taskButtonGroup.add(m_nextTaskRadioButton);
-        m_taskButtonGroup.add(m_choiceRadioButton);
+        m_taskButtonGroup.add(m_choiceTaskRadioButton);
         m_lastTaskRadioButton.addActionListener(this);
         m_nextTaskRadioButton.addActionListener(this);
-        m_choiceRadioButton.addActionListener(this);
+        m_choiceTaskRadioButton.addActionListener(this);
         m_addTaskButton = new JButton("Add");
         m_updateTaskButton = new JButton("Update");
         m_clearTaskButton = new JButton("Clear");
@@ -301,7 +303,7 @@ public class TaskEditorWindow extends JFrame implements ActionListener, ListSele
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(jPanel3Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                            .addComponent(m_choiceRadioButton)
+                            .addComponent(m_choiceTaskRadioButton)
                             .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addComponent(m_lastTaskRadioButton)
                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 346, GroupLayout.PREFERRED_SIZE))
@@ -312,15 +314,15 @@ public class TaskEditorWindow extends JFrame implements ActionListener, ListSele
                                     .addComponent(m_choiceNoBlockLabel))
                                 .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(jPanel3Layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                                    .addComponent(m_choiceNoBlockTextField, GroupLayout.DEFAULT_SIZE, 307, Short.MAX_VALUE)
-                                    .addComponent(m_choiceHasBlockTextField, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 307, Short.MAX_VALUE)))
+                                    .addComponent(m_choiceNoBlockTaskNameTextField, GroupLayout.DEFAULT_SIZE, 307, Short.MAX_VALUE)
+                                    .addComponent(m_choiceHasBlockTaskNameTextField, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 307, Short.MAX_VALUE)))
                             .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addGroup(jPanel3Layout.createParallelGroup(GroupLayout.Alignment.TRAILING, false)
                                     .addComponent(m_taskNameLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(m_nextTaskRadioButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(jPanel3Layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(m_nextTaskTextField, GroupLayout.Alignment.TRAILING)
+                                    .addComponent(m_nextTaskNameTextField, GroupLayout.Alignment.TRAILING)
                                     .addComponent(m_taskNameTextField, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE)))))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(25, 25, 25)
@@ -346,16 +348,16 @@ public class TaskEditorWindow extends JFrame implements ActionListener, ListSele
                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                     .addComponent(m_nextTaskRadioButton)
-                    .addComponent(m_nextTaskTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addComponent(m_nextTaskNameTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(m_choiceRadioButton)
+                .addComponent(m_choiceTaskRadioButton)
                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(m_choiceHasBlockTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(m_choiceHasBlockTaskNameTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addComponent(m_choiceHasBlockLabel))
                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                    .addComponent(m_choiceNoBlockTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(m_choiceNoBlockTaskNameTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addComponent(m_choiceNoBlockLabel))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
@@ -439,17 +441,85 @@ public class TaskEditorWindow extends JFrame implements ActionListener, ListSele
         pack();
     }
     
+    private Task createTask() {
+    	Task newTask = null;
+    	
+    	String taskName = m_taskNameTextField.getText().trim();
+		if(taskName.length() == 0) {
+			JOptionPane.showMessageDialog(this, "Please enter a name for the task.", "No Task Name", JOptionPane.ERROR_MESSAGE);
+			return null;
+		}
+		
+		if(m_lastTaskRadioButton.isSelected()) {
+			newTask = new Task(taskName);
+		}
+		else if(m_nextTaskRadioButton.isSelected()) {
+			String nextTaskName = m_nextTaskNameTextField.getText().trim();
+			
+			if(nextTaskName.length() == 0) {
+				JOptionPane.showMessageDialog(this, "Please enter a name for the next task.", "No Next Task Name", JOptionPane.ERROR_MESSAGE);
+				return null;
+			}
+			
+			newTask = new Task(taskName, nextTaskName);
+		}
+		else if(m_choiceTaskRadioButton.isSelected()) {
+			String nextTaskName = m_choiceHasBlockTaskNameTextField.getText().trim();
+			String altTaskName = m_choiceNoBlockTaskNameTextField.getText().trim();
+			
+			if(nextTaskName.length() == 0) {
+				JOptionPane.showMessageDialog(this, "Please enter a name for the next task (robot has a block).", "No Next Task Name", JOptionPane.ERROR_MESSAGE);
+				return null;
+			}
+			if(altTaskName.length() == 0) {
+				JOptionPane.showMessageDialog(this, "Please enter a name for the alternate next task (robot has no block).", "No Alternate Task Name", JOptionPane.ERROR_MESSAGE);
+				return null;
+			}
+			
+			newTask = new Task(taskName, nextTaskName, altTaskName);
+		}
+		
+		if(newTask != null) {
+			newTask.setRobotID((byte) m_robotList.getSelectedIndex());
+		}
+		
+		return newTask;
+    }
+    
 	public void valueChanged(ListSelectionEvent e) {
 		if(m_updating) { return; }
 		
 		if(e.getSource() == m_robotList) {
-			
+			update();
 		}
 		else if(e.getSource() == m_taskList) {
+			if(m_robotList.getSelectedIndex() < 0 || m_robotList.getSelectedIndex() >= SystemManager.robotSystem.numberOfRobots()) { return; }
+			if(m_taskList.getSelectedIndex() < 0 || m_taskList.getSelectedIndex() >= SystemManager.taskManager.getTaskList(m_robotList.getSelectedIndex()).numberOfTasks()) { return; }
 			
+			Task t = SystemManager.taskManager.getTaskList(m_robotList.getSelectedIndex()).getTask(m_taskList.getSelectedIndex());
+			
+			m_taskNameTextField.setText(t.getTaskName());
+			m_nextTaskNameTextField.setText("");
+	        m_choiceHasBlockTaskNameTextField.setText("");
+	        m_choiceNoBlockTaskNameTextField.setText("");
+			
+			if(t.getNextTaskType() == NextTaskType.Last) {
+				m_lastTaskRadioButton.setSelected(true);
+			}
+			else if(t.getNextTaskType() == NextTaskType.Normal) {
+				m_nextTaskRadioButton.setSelected(true);
+				m_nextTaskNameTextField.setText(t.getNextTaskName());
+			}
+			else if(t.getNextTaskType() == NextTaskType.Choice) {
+				m_choiceTaskRadioButton.setSelected(true);
+				m_choiceHasBlockTaskNameTextField.setText(t.getNextTaskName());
+		        m_choiceNoBlockTaskNameTextField.setText(t.getAltTaskName());
+			}
+	        
+			update();
 		}
 		else if(e.getSource() == m_objectiveList) {
-			
+			update();
 		}
 	}
 	
@@ -472,11 +542,16 @@ public class TaskEditorWindow extends JFrame implements ActionListener, ListSele
 			
 		}
 		else if(e.getSource() == m_addObjectiveButton) {
-			
+			/*
+			clearTask();
+			update();
+			*/
 		}
 		else if(e.getSource() == m_updateObjectiveButton) {
-			clearObjective();
+			/*
+			clearTask();
 			update();
+			*/
 		}
 		else if(e.getSource() == m_clearObjectiveButton) {
 			clearObjective();
@@ -488,13 +563,40 @@ public class TaskEditorWindow extends JFrame implements ActionListener, ListSele
 		else if(e.getSource() == m_nextTaskRadioButton) {
 			
 		}
-		else if(e.getSource() == m_choiceRadioButton) {
+		else if(e.getSource() == m_choiceTaskRadioButton) {
 			
 		}
 		else if(e.getSource() == m_addTaskButton) {
+			if(m_robotList.getSelectedIndex() < 0 || m_robotList.getSelectedIndex() >= SystemManager.robotSystem.numberOfRobots()) {
+				JOptionPane.showMessageDialog(this, "Please select a robot first.", "No Robot Selected", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
 			
+			Task newTask = createTask();
+			if(newTask == null) { return; }
+			
+			SystemManager.taskManager.getTaskList(m_robotList.getSelectedIndex()).addTask(newTask);
+			
+			clearTask();
+			update();
 		}
 		else if(e.getSource() == m_updateTaskButton) {
+			if(m_robotList.getSelectedIndex() < 0 || m_robotList.getSelectedIndex() >= SystemManager.robotSystem.numberOfRobots()) {
+				JOptionPane.showMessageDialog(this, "Please select a robot first.", "No Robot Selected", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			
+			if(m_taskList.getSelectedIndex() < 0 || m_taskList.getSelectedIndex() >= SystemManager.taskManager.getTaskList(m_robotList.getSelectedIndex()).numberOfTasks()) {
+				JOptionPane.showMessageDialog(this, "Please select a task first.", "No Task Selected", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			
+			Task newTask = createTask();
+			newTask.setObjectives(SystemManager.taskManager.getTaskList(m_robotList.getSelectedIndex()).getTask(m_taskList.getSelectedIndex()).getObjectives());
+			if(newTask == null) { return; }
+			
+			SystemManager.taskManager.getTaskList(m_robotList.getSelectedIndex()).setTask(m_taskList.getSelectedIndex(), newTask);
+			
 			clearTask();
 			update();
 		}
@@ -519,9 +621,9 @@ public class TaskEditorWindow extends JFrame implements ActionListener, ListSele
 	public void clearTask() {
 		m_lastTaskRadioButton.setSelected(true);
 		m_taskNameTextField.setText("");
-        m_nextTaskTextField.setText("");
-        m_choiceHasBlockTextField.setText("");
-        m_choiceNoBlockTextField.setText("");
+        m_nextTaskNameTextField.setText("");
+        m_choiceHasBlockTaskNameTextField.setText("");
+        m_choiceNoBlockTaskNameTextField.setText("");
 	}
 	
 	public void update() {
@@ -536,28 +638,70 @@ public class TaskEditorWindow extends JFrame implements ActionListener, ListSele
     	m_pickUpBlockTextField.setText((m_pickUpBlockID < 0) ? "" : Byte.toString(m_pickUpBlockID));
     	m_dropOffBlockAtLocationTextField.setText((m_dropOffBlockAtLocationID < 0) ? "" : Byte.toString(m_dropOffBlockAtLocationID));
 		
-        /*
-        jList1.setModel(new AbstractListModel() {
-			private static final long serialVersionUID = 1L;
-			String[] strings = { "111111 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
-        
-        jList2.setModel(new AbstractListModel() {
-			private static final long serialVersionUID = 1L;
-			String[] strings = { "222222 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
-        
-        jList3.setModel(new AbstractListModel() {
-			private static final long serialVersionUID = 1L;
-			String[] strings = { "3333 1", "Item 2", "Item 3", "Item 4", "Item 5", "Back Up To 0 of 1", "Pick Up Block 2" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
-        */
+    	// update robot table
+    	int selectedRobotIndex = m_robotList.getSelectedIndex();
+    	int numberOfRobots = SystemManager.robotSystem.numberOfRobots();
+    	String[] robots = new String[numberOfRobots];
+    	for(int i=0;i<robots.length;i++) {
+    		robots[i] = "Robot " + (i+1);
+    	}
+    	m_robotList.setListData(robots);
+    	if(selectedRobotIndex >= 0 && selectedRobotIndex < numberOfRobots) {
+    		m_robotList.setSelectedIndex(selectedRobotIndex);
+    	}
+    	else {
+    		m_robotList.clearSelection();
+    	}
+    	
+    	// update task table
+    	int selectedTaskIndex = m_taskList.getSelectedIndex();
+    	int numberOfTasks = 0;
+    	if(selectedRobotIndex < 0 || selectedRobotIndex >= SystemManager.taskManager.numberOfTaskLists() ||
+    	   SystemManager.taskManager.getTaskList(selectedRobotIndex).numberOfTasks() == 0) {
+    		m_taskList.setListData(new Object[] { });
+    		m_taskList.clearSelection();
+    	}
+    	else {
+    		TaskList t = SystemManager.taskManager.getTaskList(selectedRobotIndex);
+    		String[] tasks = new String[t.numberOfTasks()];
+        	for(int i=0;i<tasks.length;i++) {
+        		tasks[i] = t.getTask(i).getTaskName();
+        	}
+        	m_taskList.setListData(tasks);
+        	numberOfTasks = SystemManager.taskManager.getTaskList(selectedRobotIndex).numberOfTasks();
+        	if(selectedTaskIndex >= 0 && selectedTaskIndex < numberOfTasks) {
+        		m_taskList.setSelectedIndex(selectedTaskIndex);
+        	}
+        	else {
+        		m_taskList.clearSelection();
+        	}
+    	}
+    	
+    	// update objective table
+    	int selectedObjectiveIndex = m_objectiveList.getSelectedIndex();
+    	int numberOfObjectives = 0;
+    	if(selectedRobotIndex < 0 || selectedRobotIndex >= SystemManager.taskManager.numberOfTaskLists() ||
+    	   SystemManager.taskManager.getTaskList(selectedRobotIndex).numberOfTasks() == 0 ||
+    	   selectedTaskIndex < 0 || selectedTaskIndex >= SystemManager.taskManager.getTaskList(selectedRobotIndex).numberOfTasks() ||
+    	   SystemManager.taskManager.getTaskList(selectedRobotIndex).getTask(selectedTaskIndex).numberOfObjectives() == 0) {
+    		m_objectiveList.setListData(new Object[] { });
+    		m_objectiveList.clearSelection();
+    	}
+    	else {
+    		Task t = SystemManager.taskManager.getTaskList(selectedRobotIndex).getTask(selectedTaskIndex);
+    		String[] objectives = new String[t.numberOfObjectives()];
+        	for(int i=0;i<objectives.length;i++) {
+        		objectives[i] = t.getObjective(i).toString();
+        	}
+        	m_objectiveList.setListData(objectives);
+        	numberOfObjectives = SystemManager.taskManager.getTaskList(selectedRobotIndex).getTask(selectedTaskIndex).numberOfObjectives();
+        	if(selectedObjectiveIndex >= 0 && selectedObjectiveIndex < numberOfObjectives) {
+        		m_objectiveList.setSelectedIndex(selectedObjectiveIndex);
+        	}
+        	else {
+        		m_objectiveList.clearSelection();
+        	}
+    	}
 		
 		m_updating = false;
 	}

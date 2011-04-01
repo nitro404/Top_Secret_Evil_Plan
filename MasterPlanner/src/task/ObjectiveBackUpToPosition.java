@@ -46,5 +46,9 @@ public class ObjectiveBackUpToPosition extends Objective {
 		out.print("Back Up to Position " + m_positionIndex + " of Path " + m_pathName);
 		return true;
 	}
-
+	
+	public String toString() {
+		return "Back Up to Position " + m_positionIndex + " of Path " + m_pathName;
+	}
+	
 }

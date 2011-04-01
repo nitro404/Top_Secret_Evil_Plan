@@ -36,5 +36,9 @@ public class ObjectivePickUpBlock extends Objective {
 		out.print("Pick Up Block " + m_blockID);
 		return true;
 	}
+	
+	public String toString() {
+		return "Pick Up Block " + m_blockID;
+	}
 
 }

@@ -38,5 +38,9 @@ public class ObjectiveDropOffBlock extends Objective {
 		out.print("Drop Off Block at Location " + m_dropOffLocationID);
 		return true;
 	}
+	
+	public String toString() {
+		return "Drop Off Block at Location " + m_dropOffLocationID;
+	}
 
 }

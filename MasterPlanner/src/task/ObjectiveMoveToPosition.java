@@ -46,4 +46,8 @@ public class ObjectiveMoveToPosition extends Objective {
 		return true;
 	}
 	
+	public String toString() {
+		return "Move to Position " + m_positionIndex + " of Path " + m_pathName;
+	}
+	
 }

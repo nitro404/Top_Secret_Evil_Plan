@@ -92,6 +92,7 @@ public class SystemManager {
 		
 		taskManager = TaskManager.readFrom(settings.getTaskListFileName());
 		if(taskManager == null) { taskManager = new TaskManager(); }
+		taskEditorWindow.update();
 	}
 	
 	public static void showTaskEditorWindow() {

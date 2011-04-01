@@ -97,6 +97,12 @@ public class TaskList implements Updatable {
 		return true;
 	}
 	
+	public boolean setTask(int index, Task t) {
+		if(t == null || index < 0 || index >= m_tasks.size()) { return false; }
+		m_tasks.set(index, t);
+		return true;
+	}
+	
 	public boolean removeTask(int index) {
 		if(index < 0 || index >= m_tasks.size()) { return false; }
 		m_tasks.remove(index);
