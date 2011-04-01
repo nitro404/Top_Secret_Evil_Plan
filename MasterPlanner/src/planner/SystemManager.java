@@ -33,7 +33,7 @@ public class SystemManager {
 	public static BufferedImage localTrackerImage;
 	
 	public static DisplayWindow displayWindow;
-	public static DebugWindow debugWindow;
+	public static PlannerWindow plannerWindow;
 	public static TaskEditorWindow taskEditorWindow;
 	
 	private static boolean m_started = false;
@@ -60,16 +60,16 @@ public class SystemManager {
 		potSystem = new PotSystem();
 		
 		displayWindow = new DisplayWindow();
-		debugWindow = new DebugWindow();
-		debugWindow.setLocation(displayWindow.getLocation().x + displayWindow.getWidth(), displayWindow.getLocation().y);
+		plannerWindow = new PlannerWindow();
+		plannerWindow.setLocation(displayWindow.getLocation().x + displayWindow.getWidth(), displayWindow.getLocation().y);
 		displayWindow.setVisible(true);
-		debugWindow.setVisible(true);
+		plannerWindow.setVisible(true);
 		taskEditorWindow = new TaskEditorWindow();
 		
 		displayWindow.update();
-		debugWindow.update();
+		plannerWindow.update();
 		
-		console.setTarget(debugWindow);
+		console.setTarget(plannerWindow);
 		
 		loadLocalTrackerImage();
 		

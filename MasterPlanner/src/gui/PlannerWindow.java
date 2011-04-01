@@ -8,7 +8,7 @@ import planner.*;
 import settings.*;
 import shared.*;
 
-public class DebugWindow extends JFrame implements ActionListener, WindowListener, Updatable {
+public class PlannerWindow extends JFrame implements ActionListener, WindowListener, Updatable {
 	
 	private Font m_consoleFont;
     private JTextArea m_consoleText;
@@ -164,7 +164,7 @@ public class DebugWindow extends JFrame implements ActionListener, WindowListene
 	
 	private static final long serialVersionUID = 1L;
 	
-	public DebugWindow() {
+	public PlannerWindow() {
 		setTitle("Planner Window");
 		setSize(640, 905);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);

@@ -52,7 +52,7 @@ public class DisplayWindow extends JFrame implements WindowListener, Updatable {
 		
 		if(!m_resized) {
 			setSize(getWidth() + getInsets().left + getInsets().right, getHeight());
-			SystemManager.debugWindow.setLocation(SystemManager.debugWindow.getX() + getInsets().left + getInsets().right, SystemManager.debugWindow.getY());
+			SystemManager.plannerWindow.setLocation(SystemManager.plannerWindow.getX() + getInsets().left + getInsets().right, SystemManager.plannerWindow.getY());
 			m_resized = true;
 		}
 	}

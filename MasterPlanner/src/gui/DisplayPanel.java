@@ -254,7 +254,7 @@ public class DisplayPanel extends JPanel implements MouseListener, MouseMotionLi
 		for(byte i=0;i<EditMode.displayEditModes.length;i++) {
 			if(e.getSource() == m_editModeMenuItem[i]) {
 				setEditMode(i);
-				SystemManager.debugWindow.update();
+				SystemManager.plannerWindow.update();
 				return;
 			}
 		}
