@@ -5,17 +5,35 @@ public class RobotInstruction {
 	final public static byte Null = 0;
 	final public static byte Stop = 1;
 	final public static byte MoveForward = 2;
-	final public static byte BackUp = 3;
-	final public static byte TurnLeft = 4;
-	final public static byte TurnRight = 5;
-	final public static byte ArcLeft = 6;
-	final public static byte ArcRight = 7;
-	final public static byte PickUp = 8;
-	final public static byte DropOff = 9;
-	final public static byte Done = 10;
+	final public static byte MoveForwardSlowly = 3;
+	final public static byte BackUp = 4;
+	final public static byte BackUpSlowly = 5;
+	final public static byte TurnLeft = 6;
+	final public static byte TurnRight = 7;
+	final public static byte TurnLeftSlowly = 8;
+	final public static byte TurnRightSlowly = 9;
+	final public static byte ArcLeft = 10;
+	final public static byte ArcRight = 11;
+	final public static byte PickUp = 12;
+	final public static byte DropOff = 13;
+	final public static byte Done = 14;
 	
 	final public static String[] robotInstructions = {
-		"Null", "Stop", "MoveForward", "BackUp", "TurnLeft", "TurnRight", "ArcLeft", "ArcRight", "PickUp", "DropOff", "Done"
+		"Null",
+		"Stop",
+		"MoveForward",
+		"MoveForwardSlowly",
+		"BackUp",
+		"BackUpSlowly",
+		"TurnLeft",
+		"TurnRight",
+		"TurnLeftSlowly",
+		"TurnRightSlowly",
+		"ArcLeft",
+		"ArcRight",
+		"PickUp",
+		"DropOff",
+		"Done"
 	};
 	
 	public static boolean isValid(byte instructionID) {

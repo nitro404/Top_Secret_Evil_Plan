@@ -5,12 +5,14 @@ import java.io.PrintWriter;
 public abstract class Objective {
 	
 	protected byte m_objectiveState;
+	protected byte m_objectiveType;
 	
-	private Objective() {
+	public Objective() {
+		m_objectiveType = -1;
 		m_objectiveState = ObjectiveState.New;
 	}
 	
-	abstract void execute();
+	abstract public void execute();
 	
 	public boolean isNew() { return m_objectiveState == TaskState.New; }
 	
@@ -18,6 +20,6 @@ public abstract class Objective {
 	
 	public boolean isCompleted() { return m_objectiveState == TaskState.Completed; }
 	
-	abstract boolean writeTo(PrintWriter out);
+	abstract public boolean writeTo(PrintWriter out);
 	
 }

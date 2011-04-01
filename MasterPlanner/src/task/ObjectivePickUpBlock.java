@@ -1,0 +1,40 @@
+package task;
+
+import java.util.StringTokenizer;
+import java.io.PrintWriter;
+
+public class ObjectivePickUpBlock extends Objective {
+	
+	private byte m_blockID;
+	
+	public ObjectivePickUpBlock(byte blockID) {
+		super();
+		m_objectiveType = ObjectiveType.PickUpBlock;
+		m_blockID = blockID;
+	}
+	
+	public void execute() {
+		
+	}
+
+	public static ObjectivePickUpBlock parseFrom(String data) {
+		if(data == null) { return null; }
+		StringTokenizer st = new StringTokenizer(data.trim(), " ", false);
+		if(st.countTokens() < 4) { return null; }
+		if(!st.nextToken().equalsIgnoreCase("Pick")) { return null; }
+		if(!st.nextToken().equalsIgnoreCase("Up")) { return null; }
+		if(!st.nextToken().equalsIgnoreCase("Block")) { return null; }
+		byte blockID = -1;
+		try { blockID = Byte.parseByte(st.nextToken()); }
+		catch(NumberFormatException e) { return null; }
+		if(blockID < 0) { return null; }
+		return new ObjectivePickUpBlock(blockID);
+	}
+	
+	public boolean writeTo(PrintWriter out) {
+		if(out == null) { return false; }
+		out.print("Pick Up Block " + m_blockID);
+		return true;
+	}
+
+}

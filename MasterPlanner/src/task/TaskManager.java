@@ -100,6 +100,7 @@ public class TaskManager implements Updatable {
 		Task newTask;
 		VariableSystem properties = new VariableSystem();
 		Variable newVariable;
+		byte objectiveType;
 		Objective newObjective;
 		boolean parseObjectives = false;
 		
@@ -157,24 +158,23 @@ public class TaskManager implements Updatable {
 				}
 				// parse task objectives
 				else {
-					//TODO: Finish objective parsing
-					byte objectiveType = ObjectiveType.parseFromStartOf(data);
+					objectiveType = ObjectiveType.parseFromStartOf(data);
 					newObjective = null;
 					
 					if(objectiveType == ObjectiveType.MoveToPosition) {
-						
+						newObjective = ObjectiveMoveToPosition.parseFrom(data);
 					}
 					else if(objectiveType == ObjectiveType.BackUpToPosition) {
-						
+						newObjective = ObjectiveBackUpToPosition.parseFrom(data);
 					}
 					else if(objectiveType == ObjectiveType.LookAtPosition) {
-											
+						newObjective = ObjectiveLookAtPosition.parseFrom(data);
 					}
 					else if(objectiveType == ObjectiveType.PickUpBlock) {
-						
+						newObjective = ObjectivePickUpBlock.parseFrom(data);
 					}
 					else if(objectiveType == ObjectiveType.DropOffBlock) {
-						
+						newObjective = ObjectiveDropOffBlock.parseFrom(data);
 					}
 					
 					if(newObjective != null) {
