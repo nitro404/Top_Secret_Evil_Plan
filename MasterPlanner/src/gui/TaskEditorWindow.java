@@ -17,7 +17,7 @@ import shared.*;
  * @author Corey Faibish
  * @author Kevin Scroggins
  */
-public class TaskEditorWindow extends JFrame implements ActionListener, ListSelectionListener, Updatable {
+public class TaskEditorWindow extends JFrame implements ActionListener, ListSelectionListener, MouseListener, MouseMotionListener, Updatable {
 	
 	private int m_moveToPositionIndex;
 	private String m_moveToPositionPathName;
@@ -78,6 +78,17 @@ public class TaskEditorWindow extends JFrame implements ActionListener, ListSele
     private JButton m_updateObjectiveButton;
     private JButton m_updateTaskButton;
     
+    private JPopupMenu m_taskPopupMenu;
+    private JMenuItem m_taskMoveUp;
+    private JMenuItem m_taskMoveDown;
+    private JMenuItem m_taskMoveRemove;
+    
+    private JPopupMenu m_objectivePopupMenu;
+    private JMenuItem m_objectiveMoveUp;
+    private JMenuItem m_objectiveMoveDown;
+    private JMenuItem m_objectiveMoveRemove;
+    
+    private Point m_mousePosition = new Point(0, 0);
     private boolean m_updating;
 	
     private static final long serialVersionUID = 1L;
@@ -86,7 +97,9 @@ public class TaskEditorWindow extends JFrame implements ActionListener, ListSele
 		setTitle("Task Editor Window");
 		setMinimumSize(new Dimension(320, 240));
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
+		addMouseMotionListener(this);
 		
+		initPopupMenus();
         initComponents();
         initLayout();
         
@@ -94,6 +107,30 @@ public class TaskEditorWindow extends JFrame implements ActionListener, ListSele
         clearTask();
         update();
     }
+	
+	private void initPopupMenus() {
+	    m_taskPopupMenu = new JPopupMenu();
+	    m_taskMoveUp = new JMenuItem("Move Task Up");
+	    m_taskMoveDown = new JMenuItem("Move Task Down");
+	    m_taskMoveRemove = new JMenuItem("Remove Task");
+	    m_taskMoveUp.addActionListener(this);
+	    m_taskMoveDown.addActionListener(this);
+	    m_taskMoveRemove.addActionListener(this);
+	    m_taskPopupMenu.add(m_taskMoveUp);
+	    m_taskPopupMenu.add(m_taskMoveDown);
+	    m_taskPopupMenu.add(m_taskMoveRemove);
+	    
+	    m_objectivePopupMenu = new JPopupMenu();
+	    m_objectiveMoveUp = new JMenuItem("Move Objective Up");
+	    m_objectiveMoveDown = new JMenuItem("Move Objective Down");
+	    m_objectiveMoveRemove = new JMenuItem("Remove Objective");
+	    m_objectiveMoveUp.addActionListener(this);
+	    m_objectiveMoveDown.addActionListener(this);
+	    m_objectiveMoveRemove.addActionListener(this);
+	    m_objectivePopupMenu.add(m_objectiveMoveUp);
+	    m_objectivePopupMenu.add(m_objectiveMoveDown);
+	    m_objectivePopupMenu.add(m_objectiveMoveRemove);
+	}
     
     private void initComponents() {
     	// objective components
@@ -189,6 +226,8 @@ public class TaskEditorWindow extends JFrame implements ActionListener, ListSele
         m_robotList.addListSelectionListener(this);
         m_taskList.addListSelectionListener(this);
         m_objectiveList.addListSelectionListener(this);
+        m_taskList.addMouseListener(this);
+        m_objectiveList.addMouseListener(this);
     }
     
     private void initLayout() {
@@ -610,8 +649,36 @@ public class TaskEditorWindow extends JFrame implements ActionListener, ListSele
 		}
 	}
 	
+	public void mouseClicked(MouseEvent e) { }
+	public void mouseEntered(MouseEvent e) { }
+	public void mouseExited(MouseEvent e) { }
+	public void mousePressed(MouseEvent e) { }
+	
+	public void mouseReleased(MouseEvent e) {
+		if(SystemManager.client.isConnected()) { return; }
+		
+		if(e.getButton() == MouseEvent.BUTTON3) {
+			if(e.getSource() == m_taskList && m_taskList.getSelectedIndex() >= 0) {
+				m_taskPopupMenu.show(this, m_mousePosition.x, m_mousePosition.y);
+			}
+			else if(e.getSource() == m_objectiveList && m_objectiveList.getSelectedIndex() >= 0) {
+				m_objectivePopupMenu.show(this, m_mousePosition.x, m_mousePosition.y);
+			}
+		}
+	}
+	
+	public void mouseDragged(MouseEvent e) { }
+	
+	public void mouseMoved(MouseEvent e) {
+		if(e != null) { m_mousePosition = e.getPoint(); }
+	}
+	
 	public void actionPerformed(ActionEvent e) {
 		if(m_updating) { return; }
+		
+		int robotIndex = m_robotList.getSelectedIndex();
+		int taskIndex = m_taskList.getSelectedIndex();
+		int objectiveIndex = m_objectiveList.getSelectedIndex();
 		
 		if(e.getSource() == m_moveToPositionRadioButton) { }
 		else if(e.getSource() == m_backUpToPositionRadioButton) { }
@@ -704,6 +771,90 @@ public class TaskEditorWindow extends JFrame implements ActionListener, ListSele
 		}
 		else if(e.getSource() == m_clearTaskButton) {
 			clearTask();
+			update();
+		}
+		else if(e.getSource() == m_objectiveMoveUp) {
+			if(robotIndex < 0 || robotIndex >= SystemManager.robotSystem.numberOfRobots()) { return; }
+			if(taskIndex < 0 || taskIndex >= SystemManager.taskManager.getTaskList(robotIndex).numberOfTasks()) { return; }
+			if(objectiveIndex < 0 || objectiveIndex >= SystemManager.taskManager.getTaskList(robotIndex).getTask(taskIndex).numberOfObjectives()) { return; }
+			
+			if(objectiveIndex == 0) { return; }
+			
+			Objective temp = SystemManager.taskManager.getTaskList(robotIndex).getTask(taskIndex).getObjective(objectiveIndex);
+			Objective temp2 = SystemManager.taskManager.getTaskList(robotIndex).getTask(taskIndex).getObjective(objectiveIndex - 1);
+			SystemManager.taskManager.getTaskList(robotIndex).getTask(taskIndex).setObjective(objectiveIndex, temp2);
+			SystemManager.taskManager.getTaskList(robotIndex).getTask(taskIndex).setObjective(objectiveIndex - 1, temp);
+			
+			m_objectiveList.setSelectedIndex(m_objectiveList.getSelectedIndex() - 1);
+			
+			update();
+		}
+		else if(e.getSource() == m_objectiveMoveDown) {
+			if(robotIndex < 0 || robotIndex >= SystemManager.robotSystem.numberOfRobots()) { return; }
+			if(taskIndex < 0 || taskIndex >= SystemManager.taskManager.getTaskList(robotIndex).numberOfTasks()) { return; }
+			if(objectiveIndex < 0 || objectiveIndex >= SystemManager.taskManager.getTaskList(robotIndex).getTask(taskIndex).numberOfObjectives()) { return; }
+			
+			if(objectiveIndex == SystemManager.taskManager.getTaskList(robotIndex).getTask(taskIndex).numberOfObjectives() - 1) { return; }
+			
+			Objective temp = SystemManager.taskManager.getTaskList(robotIndex).getTask(taskIndex).getObjective(objectiveIndex);
+			Objective temp2 = SystemManager.taskManager.getTaskList(robotIndex).getTask(taskIndex).getObjective(objectiveIndex + 1);
+			SystemManager.taskManager.getTaskList(robotIndex).getTask(taskIndex).setObjective(objectiveIndex, temp2);
+			SystemManager.taskManager.getTaskList(robotIndex).getTask(taskIndex).setObjective(objectiveIndex + 1, temp);
+			
+			m_objectiveList.setSelectedIndex(m_objectiveList.getSelectedIndex() + 1);
+			
+			update();
+		}
+		else if(e.getSource() == m_objectiveMoveRemove) {
+			if(robotIndex < 0 || robotIndex >= SystemManager.robotSystem.numberOfRobots()) { return; }
+			if(taskIndex < 0 || taskIndex >= SystemManager.taskManager.getTaskList(robotIndex).numberOfTasks()) { return; }
+			if(objectiveIndex < 0 || objectiveIndex >= SystemManager.taskManager.getTaskList(robotIndex).getTask(taskIndex).numberOfObjectives()) { return; }
+			
+			SystemManager.taskManager.getTaskList(robotIndex).getTask(taskIndex).removeObjective(objectiveIndex);
+			
+			m_objectiveList.clearSelection();
+			
+			update();
+		}
+		else if(e.getSource() == m_taskMoveUp) {
+			if(robotIndex < 0 || robotIndex >= SystemManager.robotSystem.numberOfRobots()) { return; }
+			if(taskIndex < 0 || taskIndex >= SystemManager.taskManager.getTaskList(robotIndex).numberOfTasks()) { return; }
+			
+			if(taskIndex == 0) { return; }
+			
+			Task temp = SystemManager.taskManager.getTaskList(robotIndex).getTask(taskIndex);
+			Task temp2 = SystemManager.taskManager.getTaskList(robotIndex).getTask(taskIndex - 1);
+			SystemManager.taskManager.getTaskList(robotIndex).setTask(taskIndex, temp2);
+			SystemManager.taskManager.getTaskList(robotIndex).setTask(taskIndex - 1, temp);
+			
+			m_taskList.setSelectedIndex(m_taskList.getSelectedIndex() - 1);
+			
+			update();
+		}
+		else if(e.getSource() == m_taskMoveDown) {
+			if(robotIndex < 0 || robotIndex >= SystemManager.robotSystem.numberOfRobots()) { return; }
+			if(taskIndex < 0 || taskIndex >= SystemManager.taskManager.getTaskList(robotIndex).numberOfTasks()) { return; }
+			
+			if(taskIndex == SystemManager.taskManager.getTaskList(robotIndex).numberOfTasks() - 1) { return; }
+			
+			Task temp = SystemManager.taskManager.getTaskList(robotIndex).getTask(taskIndex);
+			Task temp2 = SystemManager.taskManager.getTaskList(robotIndex).getTask(taskIndex + 1);
+			SystemManager.taskManager.getTaskList(robotIndex).setTask(taskIndex, temp2);
+			SystemManager.taskManager.getTaskList(robotIndex).setTask(taskIndex + 1, temp);
+			
+			m_taskList.setSelectedIndex(m_taskList.getSelectedIndex() + 1);
+			
+			update();
+		}
+		else if(e.getSource() == m_taskMoveRemove) {
+			if(robotIndex < 0 || robotIndex >= SystemManager.robotSystem.numberOfRobots()) { return; }
+			if(taskIndex < 0 || taskIndex >= SystemManager.taskManager.getTaskList(robotIndex).numberOfTasks()) { return; }
+			
+			SystemManager.taskManager.getTaskList(robotIndex).removeTask(taskIndex);
+			
+			m_objectiveList.clearSelection();
+			m_taskList.clearSelection();
+			
 			update();
 		}
 	}
@@ -807,5 +958,5 @@ public class TaskEditorWindow extends JFrame implements ActionListener, ListSele
 		
 		m_updating = false;
 	}
-    
+	
 }
