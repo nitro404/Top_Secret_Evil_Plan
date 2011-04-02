@@ -65,6 +65,7 @@ public class SystemManager {
 		plannerWindow.setLocation(displayWindow.getLocation().x + displayWindow.getWidth(), displayWindow.getLocation().y);
 		plannerWindowUpdater = new AutomaticUpdater(500);
 		plannerWindowUpdater.setTarget(plannerWindow);
+		plannerWindowUpdater.initialize();
 		displayWindow.setVisible(true);
 		plannerWindow.setVisible(true);
 		taskEditorWindow = new TaskEditorWindow();
@@ -120,7 +121,6 @@ public class SystemManager {
 		
 		taskManager.start();
 		timer.start();
-		plannerWindowUpdater.initialize();
 	}
 	
 	public static void setTrackerImage(byte trackerNumber, BufferedImage trackerImage) {

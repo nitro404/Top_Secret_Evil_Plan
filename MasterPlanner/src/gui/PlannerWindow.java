@@ -688,13 +688,11 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
         ) {
 			private static final long serialVersionUID = 1L;
 			
-			@SuppressWarnings("unchecked")
-			Class[] types = new Class [] {
+			Class<?>[] types = new Class [] {
                 java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
-
-			@SuppressWarnings("unchecked")
-            public Class getColumnClass(int columnIndex) {
+			
+            public Class<?> getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
         });
@@ -734,13 +732,11 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
         ) {
 			private static final long serialVersionUID = 1L;
 			
-			@SuppressWarnings("unchecked")
-			Class[] types = new Class [] {
+			Class<?>[] types = new Class [] {
                 java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
-			
-			@SuppressWarnings("unchecked")
-            public Class getColumnClass(int columnIndex) {
+            
+			public Class<?> getColumnClass(int columnIndex) {
                 return types[columnIndex];
             }
         });
@@ -1612,7 +1608,7 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
         if(SystemManager.blockSystem != null) {
         	int deliveredBlocks = SystemManager.blockSystem.numberOfDeliveredBlocks();
 	        int totalBlocks = SystemManager.blockSystem.numberOfBlocks();
-	        totalTasksCompleteLabel1.setText(deliveredBlocks + " / " + totalBlocks + " Blocks Delivered (" + (deliveredBlocks / totalBlocks) * 100 + "%)");
+	        totalTasksCompleteLabel1.setText(deliveredBlocks + " / " + totalBlocks + " Blocks Delivered (" + ((totalBlocks == 0) ? 0 : (deliveredBlocks / totalBlocks) * 100) + "%)");
 	        
 	        for(byte i=0;i<SystemManager.blockSystem.numberOfBlocks();i++) {
 	        	blocksTable5.setValueAt(SystemManager.blockSystem.getBlock(i).getActualPosition().toString(), i, 1);
@@ -1623,7 +1619,7 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
         if(SystemManager.potSystem != null) {
         	int deliveredPots = SystemManager.potSystem.numberOfDeliveredPots();
 	        int totalPots = SystemManager.potSystem.numberOfPots();
-        	totalTasksCompleteLabel.setText(deliveredPots + " / " + totalPots + " Pots Delivered (" + (deliveredPots / totalPots) * 100 + "%)");
+        	totalTasksCompleteLabel.setText(deliveredPots + " / " + totalPots + " Pots Delivered (" + ((totalPots == 0) ? 0 : (deliveredPots / totalPots) * 100) + "%)");
         	
         	for(byte i=0;i<SystemManager.potSystem.numberOfPots();i++) {
         		blocksTable4.setValueAt(SystemManager.potSystem.getPot(i).getActualPosition().toString(), i, 1);
@@ -1634,19 +1630,19 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
         if(SystemManager.taskManager != null && SystemManager.taskManager.numberOfTaskLists() > 0) {
 	        int completedTasks = SystemManager.taskManager.getTaskList(0).numberOfTasksCompleted();
 	        int totalTasks = SystemManager.taskManager.getTaskList(0).numberOfTasks();
-	        tasksCompleteLabel1.setText(completedTasks + " / " + totalTasks + " Tasks Complete (" + (completedTasks / totalTasks) * 100 + "%)");
+	        tasksCompleteLabel1.setText(completedTasks + " / " + totalTasks + " Tasks Complete (" + ((totalTasks == 0) ?  0 : (completedTasks / totalTasks) * 100) + "%)");
 			
 	        completedTasks = SystemManager.taskManager.getTaskList(1).numberOfTasksCompleted();
 	        totalTasks = SystemManager.taskManager.getTaskList(1).numberOfTasks();
-	        tasksCompleteLabel2.setText(completedTasks + " / " + totalTasks + " Tasks Complete (" + (completedTasks / totalTasks) * 100 + "%)");
+	        tasksCompleteLabel2.setText(completedTasks + " / " + totalTasks + " Tasks Complete (" + ((totalTasks == 0) ?  0 : (completedTasks / totalTasks) * 100) + "%)");
 	        
 	        completedTasks = SystemManager.taskManager.getTaskList(2).numberOfTasksCompleted();
 	        totalTasks = SystemManager.taskManager.getTaskList(2).numberOfTasks();
-	        tasksCompleteLabel3.setText(completedTasks + " / " + totalTasks + " Tasks Complete (" + (completedTasks / totalTasks) * 100 + "%)");
+	        tasksCompleteLabel3.setText(completedTasks + " / " + totalTasks + " Tasks Complete (" + ((totalTasks == 0) ?  0 : (completedTasks / totalTasks) * 100) + "%)");
 	        
 	        completedTasks = SystemManager.taskManager.totalNumberOfTasksCompleted();
 	        totalTasks = SystemManager.taskManager.totalNumberOfTasks();
-            totalTasksCompleteLabel2.setText(completedTasks + " / " + totalTasks + " Total Tasks Complete (" + (completedTasks / totalTasks) * 100 + "%)");
+            totalTasksCompleteLabel2.setText(completedTasks + " / " + totalTasks + " Total Tasks Complete (" + ((totalTasks == 0) ?  0 : (completedTasks / totalTasks) * 100) + "%)");
         }
         
 		try {

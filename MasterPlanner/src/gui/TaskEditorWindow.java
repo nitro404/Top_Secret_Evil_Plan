@@ -628,11 +628,16 @@ public class TaskEditorWindow extends JFrame implements ActionListener, ListSele
 		if(m_updating) { return; }
 		
 		if(e.getSource() == m_robotList) {
+			m_objectiveList.clearSelection();
+			m_taskList.clearSelection();
+			
 			update();
 		}
 		else if(e.getSource() == m_taskList) {
 			if(m_robotList.getSelectedIndex() < 0 || m_robotList.getSelectedIndex() >= SystemManager.robotSystem.numberOfRobots()) { return; }
 			if(m_taskList.getSelectedIndex() < 0 || m_taskList.getSelectedIndex() >= SystemManager.taskManager.getTaskList(m_robotList.getSelectedIndex()).numberOfTasks()) { return; }
+			
+			m_objectiveList.clearSelection();
 			
 			Task t = SystemManager.taskManager.getTaskList(m_robotList.getSelectedIndex()).getTask(m_taskList.getSelectedIndex());
 			
@@ -810,7 +815,6 @@ public class TaskEditorWindow extends JFrame implements ActionListener, ListSele
 			
 			Task newTask = createTask();
 			newTask.setObjectives(SystemManager.taskManager.getTaskList(m_robotList.getSelectedIndex()).getTask(m_taskList.getSelectedIndex()).getObjectives());
-			if(newTask == null) { return; }
 			
 			SystemManager.taskManager.getTaskList(m_robotList.getSelectedIndex()).setTask(m_taskList.getSelectedIndex(), newTask);
 			

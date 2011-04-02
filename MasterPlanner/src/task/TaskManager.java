@@ -11,7 +11,11 @@ public class TaskManager implements Updatable {
 	private Vector<TaskList> m_taskLists;
 	
 	public TaskManager() {
-		m_taskLists = new Vector<TaskList>(3);
+		m_taskLists = new Vector<TaskList>(SystemManager.robotSystem.numberOfRobots());
+		
+		for(byte i=0;i<SystemManager.robotSystem.numberOfRobots();i++) {
+			m_taskLists.add(new TaskList(i));
+		}
 	}
 	
 	public int numberOfTaskLists() { return m_taskLists.size(); }
@@ -95,7 +99,6 @@ public class TaskManager implements Updatable {
 		BufferedReader in;
 		String input, data;
 		TaskManager taskManager = new TaskManager();
-		Vector<TaskList> taskLists = new Vector<TaskList>();
 		Task newTask;
 		VariableSystem properties = new VariableSystem();
 		Variable newVariable;
@@ -106,12 +109,6 @@ public class TaskManager implements Updatable {
 		try {
 			// open the task list data file
 			in = new BufferedReader(new FileReader(fileName));
-			
-			for(byte i=0;i<SystemManager.settings.getNumberOfTrackers();i++) {
-				taskLists.add(new TaskList(i));
-			}
-			
-			taskManager.m_taskLists = taskLists;
 			
 			newTask = new Task();
 			
@@ -127,7 +124,7 @@ public class TaskManager implements Updatable {
 				if(data.charAt(0) == '[' && data.charAt(data.length() - 1) == ']') {
 					// if a task was already read, then store it
 					if(parseObjectives) {
-						if(newTask.getRobotID() >= 0 && newTask.getRobotID() < taskLists.size()) {
+						if(newTask.getRobotID() >= 0 && newTask.getRobotID() < taskManager.numberOfTaskLists()) {
 							taskManager.m_taskLists.elementAt(newTask.getRobotID()).addTask(newTask);
 						}
 						newTask = new Task();
@@ -184,7 +181,7 @@ public class TaskManager implements Updatable {
 			
 			// if the end of the file is reached while a task was being parsed, store it
 			if(parseObjectives) {
-				if(newTask.getRobotID() >= 0 && newTask.getRobotID() < taskLists.size()) {
+				if(newTask.getRobotID() >= 0 && newTask.getRobotID() < taskManager.numberOfTaskLists()) {
 					taskManager.m_taskLists.elementAt(newTask.getRobotID()).addTask(newTask);
 				}
 			}
