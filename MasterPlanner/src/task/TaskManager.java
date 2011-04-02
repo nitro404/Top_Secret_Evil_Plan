@@ -24,7 +24,7 @@ public class TaskManager implements Updatable {
 		return totalNumberOfTasksCompleted;
 	}
 	
-	public int totalNubmerOfTasks() {
+	public int totalNumberOfTasks() {
 		int totalNumberOfTasks = 0;
 		for(int i=0;i<m_taskLists.size();i++) {
 			totalNumberOfTasks += m_taskLists.elementAt(i).numberOfTasks();

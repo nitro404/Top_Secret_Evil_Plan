@@ -28,6 +28,7 @@ public class SettingsManager {
 	private int m_frameRate;
 	private InetAddress m_serverIPAddress;
 	private int m_serverPort;
+	private boolean m_ignorePingPongSignals;
 	private byte m_signalDebugLevel;
 	private boolean m_autoScrollConsoleWindow;
 	private boolean m_autoConnectOnStartup;
@@ -57,6 +58,7 @@ public class SettingsManager {
 	final public static int defaultFrameRate = 2;
 	public static InetAddress defaultServerIPAddress;
 	final public static int defaultServerPort = Client.DEFAULT_PORT;
+	final public static boolean defaultIgnorePingPongSignals = true;
 	final public static byte defaultSignalDebugLevel = SignalDebugLevel.Off;
 	final public static boolean defaultAutoScrollConsoleWindow = true;
 	final public static boolean defaultAutoConnectOnStartup = true;
@@ -88,6 +90,7 @@ public class SettingsManager {
 		}
 		m_serverIPAddress = defaultServerIPAddress;
 		m_serverPort = defaultServerPort;
+		m_ignorePingPongSignals = defaultIgnorePingPongSignals;
 		m_signalDebugLevel = defaultSignalDebugLevel;
 		m_autoScrollConsoleWindow = defaultAutoScrollConsoleWindow;
 		m_autoConnectOnStartup = defaultAutoConnectOnStartup;
@@ -176,6 +179,8 @@ public class SettingsManager {
 	public int getServerPort() {
 		return m_serverPort;
 	}
+	
+	public boolean getIgnorePingPongSignals() { return m_ignorePingPongSignals; }
 	
 	public byte getSignalDebugLevel() { return m_signalDebugLevel; }
 	
@@ -277,6 +282,22 @@ public class SettingsManager {
 	}
 	
 	public void setServerPort(int port) { if(port >= 0 && port <= 65355) { m_serverPort = port; } }
+	
+	public void setIgnorePingPongSignals(boolean ignorePingPongSignals) { m_ignorePingPongSignals = ignorePingPongSignals; }
+	
+	public boolean setIgnorePingPongSignals(String data) {
+		if(data == null) { return false; }
+		String value = data.trim();
+		if(value.equalsIgnoreCase("true")) {
+			m_ignorePingPongSignals = true;
+			return true;
+		}
+		else if(value.equalsIgnoreCase("false")) {
+			m_ignorePingPongSignals = false;
+			return true;
+		}
+		return false;
+	}
 	
 	public void setSignalDebugLevel(byte signalDebugLevel) { if(SignalDebugLevel.isValid(signalDebugLevel)) { m_signalDebugLevel = signalDebugLevel; } }
 	
@@ -603,6 +624,7 @@ public class SettingsManager {
 		try { setFrameRate(Integer.parseInt(m_settings.getValue("Framerate", "Settings"))); } catch(NumberFormatException e) { }
 		setServerIPAddress(m_settings.getValue("Server IP Address", "Settings"));
 		try { setServerPort(Integer.parseInt(m_settings.getValue("Server Port", "Settings"))); } catch(NumberFormatException e) { }
+		setIgnorePingPongSignals(m_settings.getValue("Ignore Ping Pong Signals", "Settings"));
 		setSignalDebugLevel(SignalDebugLevel.parseFrom(m_settings.getValue("Signal Debug Level", "Settings")));
 		setAutoScrollConsoleWindow(m_settings.getValue("Auto-scroll Console Window", "Settings"));
 		setAutoConnectOnStartup(m_settings.getValue("Auto-connect on Startup", "Settings"));
@@ -646,6 +668,7 @@ public class SettingsManager {
 		m_settings.setValue("Framerate", m_frameRate, "Settings");
 		m_settings.setValue("Server IP Address", m_serverIPAddress.getHostName(), "Settings");
 		m_settings.setValue("Server Port", m_serverPort, "Settings");
+		m_settings.setValue("Ignore Ping Pong Signals", m_ignorePingPongSignals, "Settings");
 		m_settings.setValue("Signal Debug Level", SignalDebugLevel.toString(m_signalDebugLevel), "Settings");
 		m_settings.setValue("Auto-scroll Console Window", m_autoScrollConsoleWindow, "Settings");
 		m_settings.setValue("Auto-connect on Startup", m_autoConnectOnStartup, "Settings");

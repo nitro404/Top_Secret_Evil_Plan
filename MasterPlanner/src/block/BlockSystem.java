@@ -71,6 +71,16 @@ public class BlockSystem implements MouseListener, MouseMotionListener {
 	
 	public int numberOfBlocks() { return m_blocks.size(); }
 	
+	public int numberOfDeliveredBlocks() {
+		int numberOfDeliveredBlocks = 0;
+		for(int i=0;i<m_blocks.size();i++) {
+			if(m_blocks.elementAt(i).getState() == BlockState.Delivered) {
+				numberOfDeliveredBlocks++;
+			}
+		}
+		return numberOfDeliveredBlocks;
+	}
+	
 	public int numberOfDropOffLocations() { return m_dropOffLocations.size(); }
 	
 	public Block getBlock(byte blockID) {

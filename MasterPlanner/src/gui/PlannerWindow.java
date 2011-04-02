@@ -5,6 +5,9 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.table.*;
 import planner.*;
+import robot.*;
+import block.*;
+import pot.*;
 import settings.*;
 import shared.*;
 
@@ -48,6 +51,7 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
 	private JMenuItem m_staticStationImageFileNameFormatMenuItem;
 	private JCheckBoxMenuItem m_settingsAutoScrollConsoleWindowMenuItem;
 	private JMenu m_settingsSignalsMenu;
+	private JCheckBoxMenuItem m_settingsSignalsIgnorePingPongMenuItem;
 	private JRadioButtonMenuItem[] m_settingsSignalsMenuItem;
 	private ButtonGroup m_settingsSignalsButtonGroup;
 	private JMenuItem m_settingsNumberOfTrackersMenuItem;
@@ -216,6 +220,7 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
     	m_staticStationImageFileNameFormatMenuItem = new JMenuItem("Static Station Image File Name Format");
         m_settingsAutoScrollConsoleWindowMenuItem = new JCheckBoxMenuItem("Auto-scroll Console Window");
         m_settingsSignalsMenu = new JMenu("Signal Debugging");
+        m_settingsSignalsIgnorePingPongMenuItem = new JCheckBoxMenuItem("Ignore Ping Pong Signals");
         m_settingsSignalsMenuItem = new JRadioButtonMenuItem[SignalDebugLevel.signalDebugLevels.length];
         for(byte i=0;i<SignalDebugLevel.signalDebugLevels.length;i++) {
         	m_settingsSignalsMenuItem[i] = new JRadioButtonMenuItem(SignalDebugLevel.signalDebugLevels[i]); 
@@ -233,6 +238,7 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
         m_useStaticStationImagesMenuItem.setSelected(SettingsManager.defaultUseStaticStationImages);
         m_settingsAutoScrollConsoleWindowMenuItem.setSelected(SettingsManager.defaultAutoScrollConsoleWindow);
         m_editModeMenuItem[0].setSelected(true);
+        m_settingsSignalsIgnorePingPongMenuItem.setSelected(SettingsManager.defaultIgnorePingPongSignals);
         m_settingsSignalsMenuItem[0].setSelected(true);
 		m_fileDisconnectMenuItem.setEnabled(false);
 		m_fileStartSimulationMenuItem.setEnabled(false);
@@ -263,6 +269,7 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
         m_useStaticStationImagesMenuItem.addActionListener(this);
     	m_staticStationImageFileNameFormatMenuItem.addActionListener(this);
         m_settingsAutoScrollConsoleWindowMenuItem.addActionListener(this);
+        m_settingsSignalsIgnorePingPongMenuItem.addActionListener(this);
         for(byte i=0;i<SignalDebugLevel.signalDebugLevels.length;i++) {
         	m_settingsSignalsMenuItem[i].addActionListener(this);
         }
@@ -306,6 +313,7 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
         m_settingsMenu.add(m_useStaticStationImagesMenuItem);
     	m_settingsMenu.add(m_staticStationImageFileNameFormatMenuItem);
         m_settingsMenu.add(m_settingsAutoScrollConsoleWindowMenuItem);
+        m_settingsSignalsMenu.add(m_settingsSignalsIgnorePingPongMenuItem);
         for(byte i=0;i<SignalDebugLevel.signalDebugLevels.length;i++) {
         	m_settingsSignalsMenu.add(m_settingsSignalsMenuItem[i]);
         }
@@ -363,7 +371,7 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
         tasksCompleteLabel1 = new JLabel();
         jSeparator8 = new JSeparator();
         jLabel1 = new JLabel();
-        jTextField1 = new JTextField();
+        jTextField1 = new JTextField(Byte.toString(RobotSystem.robotNumbers[0]));
         jLabel2 = new JLabel();
         poseTextField1 = new JTextField();
         jLabel3 = new JLabel();
@@ -387,7 +395,7 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
         tasksCompleteLabel2 = new JLabel();
         jSeparator9 = new JSeparator();
         jLabel4 = new JLabel();
-        jTextField2 = new JTextField();
+        jTextField2 = new JTextField(Byte.toString(RobotSystem.robotNumbers[1]));
         jLabel5 = new JLabel();
         poseTextField2 = new JTextField();
         jLabel6 = new JLabel();
@@ -411,7 +419,7 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
         tasksCompleteLabel3 = new JLabel();
         jSeparator10 = new JSeparator();
         jLabel7 = new JLabel();
-        jTextField3 = new JTextField();
+        jTextField3 = new JTextField(Byte.toString(RobotSystem.robotNumbers[2]));
         jLabel8 = new JLabel();
         poseTextField3 = new JTextField();
         jLabel9 = new JLabel();
@@ -487,7 +495,7 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
         stateTextField1.setEditable(false);
 
         tasksCompleteLabel1.setFont(new Font("Courier New", 0, 11));
-        tasksCompleteLabel1.setText("X / Y Tasks Complete (100%)");
+        tasksCompleteLabel1.setText("0 / 0 Tasks Complete (0%)");
 
         jLabel1.setFont(new Font("Verdana", 0, 11));
         jLabel1.setText("Robot #:");
@@ -540,7 +548,7 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
         stateTextField2.setEditable(false);
 
         tasksCompleteLabel2.setFont(new Font("Courier New", 0, 11));
-        tasksCompleteLabel2.setText("X / Y Tasks Complete (100%)");
+        tasksCompleteLabel2.setText("0 / 0 Tasks Complete (0%)");
 
         jLabel4.setFont(new Font("Verdana", 0, 11));
         jLabel4.setText("Robot #:");
@@ -593,7 +601,7 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
         stateTextField3.setEditable(false);
 
         tasksCompleteLabel3.setFont(new Font("Courier New", 0, 11));
-        tasksCompleteLabel3.setText("X / Y Tasks Complete (100%)");
+        tasksCompleteLabel3.setText("0 / 0 Tasks Complete (0%)");
 
         jLabel7.setFont(new Font("Verdana", 0, 11));
         jLabel7.setText("Robot #:");
@@ -644,26 +652,30 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
         maxTimeTextField.setFont(new Font("Verdana", 1, 11));
 
         timeRemainingTextField.setFont(new Font("Verdana", 1, 11));
-
+        
         blocksTable4.setModel(new DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+                {"0", null, null},
+                {"1", null, null},
+                {"2", null, null}
             },
             new String [] {
                 "ID", "Position", "State"
             }
         ) {
 			private static final long serialVersionUID = 1L;
+			
+			@SuppressWarnings("unchecked")
 			Class[] types = new Class [] {
                 java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
 
+			@SuppressWarnings("unchecked")
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
         });
+        
         jScrollPane12.setViewportView(blocksTable4);
 
         jLabel10.setFont(new Font("Verdana", 1, 11));
@@ -671,49 +683,61 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
 
         jLabel11.setFont(new Font("Verdana", 1, 11));
         jLabel11.setText("Blocks:");
-
+        
         blocksTable5.setModel(new DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+                {"0", null, null},
+                {"1", null, null},
+                {"2", null, null},
+                {"3", null, null},
+                {"4", null, null},
+                {"5", null, null},
+                {"6", null, null},
+                {"7", null, null},
+                {"8", null, null},
+                {"9", null, null},
+                {"10", null, null},
+                {"11", null, null},
+                {"12", null, null},
+                {"13", null, null},
+                {"14", null, null},
+                {"15", null, null},
+                {"16", null, null},
+                {"17", null, null}
             },
             new String [] {
                 "ID", "Position", "State"
             }
         ) {
 			private static final long serialVersionUID = 1L;
+			
+			@SuppressWarnings("unchecked")
 			Class[] types = new Class [] {
                 java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
-
+			
+			@SuppressWarnings("unchecked")
             public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
+                return types[columnIndex];
             }
         });
+        
         jScrollPane13.setViewportView(blocksTable5);
 
         totalTasksCompleteLabel.setFont(new Font("Courier New", 1, 12));
         totalTasksCompleteLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        totalTasksCompleteLabel.setText("X / Y Pots Delivered (100%)");
+        totalTasksCompleteLabel.setText("0 / 0 Pots Delivered (0%)");
 
         jLabel12.setFont(new Font("Verdana", 1, 12));
         jLabel12.setText("Total:");
 
         totalTasksCompleteLabel1.setFont(new Font("Courier New", 1, 12));
         totalTasksCompleteLabel1.setHorizontalAlignment(SwingConstants.CENTER);
-        totalTasksCompleteLabel1.setText("X / Y Blocks Delivered (100%)");
+        totalTasksCompleteLabel1.setText("0 / 0 Blocks Delivered (0%)");
 
         totalTasksCompleteLabel2.setFont(new Font("Courier New", 1, 12));
         totalTasksCompleteLabel2.setHorizontalAlignment(SwingConstants.CENTER);
-        totalTasksCompleteLabel2.setText("X / Y Tasks Complete (100%)");
-        
+        totalTasksCompleteLabel2.setText("0 / 0 Total Tasks Complete (0%)");
         
         currentTimeTextField.setEditable(false);
         robotIDTextField3.setEditable(false);
@@ -728,20 +752,23 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
         timeElapsedTextField.setEditable(false);
         maxTimeTextField.setEditable(false);
         timeRemainingTextField.setEditable(false);
+        
         currentTimeTextField.setText("00:00");
         maxTimeTextField.setText("00:00");
         timeElapsedTextField.setText("00:00");
         timeRemainingTextField.setText("00:00");
         
-        robotIDTextField3.setText("XX:XX:X3");
-        robotNameTextField3.setText("XX:XX:XX");
-        stateTextField3.setText("XX:XX:XX");
-        robotIDTextField2.setText("XX:XX:X2");
-        robotNameTextField2.setText("XX:XX:XX");
-        stateTextField2.setText("XX:XX:XX");
-        robotIDTextField1.setText("XX:XX:X1");
-        robotNameTextField1.setText("XX:XX:XX");
-        stateTextField1.setText("XX:XX:XX");
+        robotIDTextField1.setText("0");
+        robotNameTextField1.setText(RobotSystem.robotNames[0]);
+        stateTextField1.setText(RobotState.toString(RobotState.Idle));
+        
+        robotIDTextField2.setText("1");
+        robotNameTextField2.setText(RobotSystem.robotNames[1]);
+        stateTextField2.setText(RobotState.toString(RobotState.Idle));
+        
+        robotIDTextField3.setText("2");
+        robotNameTextField3.setText(RobotSystem.robotNames[2]);
+        stateTextField3.setText(RobotState.toString(RobotState.Idle));
     }
     
     private void initLayout() {
@@ -1340,6 +1367,7 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
 			m_fileDisconnectMenuItem.setEnabled(SystemManager.client.isConnected());
 			m_fileStartSimulationMenuItem.setEnabled(SystemManager.client.isConnected());
 			m_editModeMenu.setEnabled(!SystemManager.client.isConnected());
+			m_taskEditorMenuItem.setEnabled(!SystemManager.client.isConnected());
 		}
 		else if(e.getSource() == m_fileDisconnectMenuItem) {
 			SystemManager.client.disconnect();
@@ -1347,6 +1375,7 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
 			m_fileDisconnectMenuItem.setEnabled(false);
 			m_fileStartSimulationMenuItem.setEnabled(false);
 			m_editModeMenu.setEnabled(true);
+			m_taskEditorMenuItem.setEnabled(true);
 		}
 		else if(e.getSource() == m_fileStartSimulationMenuItem) {
 			SystemManager.start();
@@ -1411,6 +1440,9 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
 		}
 		else if(e.getSource() == m_settingsAutoScrollConsoleWindowMenuItem) {
 			SystemManager.settings.setAutoScrollConsoleWindow(m_settingsAutoScrollConsoleWindowMenuItem.isSelected());
+		}
+		else if(e.getSource() == m_settingsSignalsIgnorePingPongMenuItem) {
+			SystemManager.settings.setIgnorePingPongSignals(m_settingsSignalsIgnorePingPongMenuItem.isSelected());
 		}
 		else if(e.getSource() == m_settingsNumberOfTrackersMenuItem) {
 			String input = JOptionPane.showInputDialog(this, "Please enter the number of trackers:", SystemManager.settings.getNumberOfTrackers());
@@ -1484,6 +1516,7 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
 		m_updating = true;
 		
 		m_editModeMenuItem[SystemManager.displayWindow.getEditMode()].setSelected(true);
+		m_settingsSignalsIgnorePingPongMenuItem.setSelected(SystemManager.settings.getIgnorePingPongSignals());
 		m_settingsSignalsMenuItem[SystemManager.settings.getSignalDebugLevel()].setSelected(true);
 		m_settingsAutoConnectOnStartupMenuItem.setSelected(SystemManager.settings.getAutoConnectOnStartup());
         m_settingsTakeWebcamSnapshotOnStartupMenuItem.setSelected(SystemManager.settings.getTakeWebcamSnapshotOnStartup());
@@ -1493,12 +1526,69 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
 		m_fileDisconnectMenuItem.setEnabled(SystemManager.client.isConnected());
 		m_fileStartSimulationMenuItem.setEnabled(SystemManager.client.isConnected());
 		m_editModeMenu.setEnabled(!SystemManager.client.isConnected());
+		m_taskEditorMenuItem.setEnabled(!SystemManager.client.isConnected());
 		
         currentTimeTextField.setText("00:00");
         maxTimeTextField.setText(SystemManager.timer.getTimeLimitString());
         timeElapsedTextField.setText(SystemManager.timer.getTimeElapsedString());
         timeRemainingTextField.setText(SystemManager.timer.getTimeRemainingString());
-		
+        
+        if(SystemManager.robotSystem != null) {
+            stateTextField1.setText(RobotState.toString(SystemManager.robotSystem.getRobot((byte) 0).getState()));
+            stateTextField2.setText(RobotState.toString(SystemManager.robotSystem.getRobot((byte) 1).getState()));
+            stateTextField3.setText(RobotState.toString(SystemManager.robotSystem.getRobot((byte) 2).getState()));
+            
+            spawnPoseTextField1.setText(!RobotPosition.isValid(SystemManager.robotSystem.getRobot((byte) 0).getSpawnPosition()) ? "" : SystemManager.robotSystem.getRobot((byte) 0).getSpawnPosition().toString());
+            spawnPoseTextField2.setText(!RobotPosition.isValid(SystemManager.robotSystem.getRobot((byte) 1).getSpawnPosition()) ? "" : SystemManager.robotSystem.getRobot((byte) 1).getSpawnPosition().toString());
+            spawnPoseTextField3.setText(!RobotPosition.isValid(SystemManager.robotSystem.getRobot((byte) 2).getSpawnPosition()) ? "" : SystemManager.robotSystem.getRobot((byte) 2).getSpawnPosition().toString());
+            poseTextField1.setText(!RobotPosition.isValid(SystemManager.robotSystem.getRobot((byte) 0).getActualPosition()) ? "" : SystemManager.robotSystem.getRobot((byte) 0).getActualPosition().toString());
+            poseTextField2.setText(!RobotPosition.isValid(SystemManager.robotSystem.getRobot((byte) 1).getActualPosition()) ? "" : SystemManager.robotSystem.getRobot((byte) 1).getActualPosition().toString());
+            poseTextField3.setText(!RobotPosition.isValid(SystemManager.robotSystem.getRobot((byte) 2).getActualPosition()) ? "" : SystemManager.robotSystem.getRobot((byte) 2).getActualPosition().toString());
+            estimatedPoseTextField1.setText(!RobotPosition.isValid(SystemManager.robotSystem.getRobot((byte) 0).getEstimatedPosition()) ? "" : SystemManager.robotSystem.getRobot((byte) 0).getEstimatedPosition().toString());
+            estimatedPoseTextField2.setText(!RobotPosition.isValid(SystemManager.robotSystem.getRobot((byte) 1).getEstimatedPosition()) ? "" : SystemManager.robotSystem.getRobot((byte) 1).getEstimatedPosition().toString());
+            estimatedPoseTextField3.setText(!RobotPosition.isValid(SystemManager.robotSystem.getRobot((byte) 2).getEstimatedPosition()) ? "" : SystemManager.robotSystem.getRobot((byte) 2).getEstimatedPosition().toString());
+        }
+        
+        if(SystemManager.blockSystem != null) {
+        	int deliveredBlocks = SystemManager.blockSystem.numberOfDeliveredBlocks();
+	        int totalBlocks = SystemManager.blockSystem.numberOfBlocks();
+	        totalTasksCompleteLabel1.setText(deliveredBlocks + " / " + totalBlocks + " Blocks Delivered (" + (deliveredBlocks / totalBlocks) * 100 + "%)");
+	        
+	        for(byte i=0;i<SystemManager.blockSystem.numberOfBlocks();i++) {
+	        	blocksTable5.setValueAt(SystemManager.blockSystem.getBlock(i).getActualPosition().toString(), i, 1);
+	        	blocksTable5.setValueAt(BlockState.toString(SystemManager.blockSystem.getBlock(i).getState()), i, 2);
+        	}
+        }
+        
+        if(SystemManager.potSystem != null) {
+        	int deliveredPots = SystemManager.potSystem.numberOfDeliveredPots();
+	        int totalPots = SystemManager.potSystem.numberOfPots();
+        	totalTasksCompleteLabel.setText(deliveredPots + " / " + totalPots + " Pots Delivered (" + (deliveredPots / totalPots) * 100 + "%)");
+        	
+        	for(byte i=0;i<SystemManager.potSystem.numberOfPots();i++) {
+        		blocksTable4.setValueAt(SystemManager.potSystem.getPot(i).getActualPosition().toString(), i, 1);
+        		blocksTable4.setValueAt(PotState.toString(SystemManager.potSystem.getPot(i).getState()), i, 2);
+        	}
+        }
+        
+        if(SystemManager.taskManager != null) {
+	        int completedTasks = SystemManager.taskManager.getTaskList(0).numberOfTasksCompleted();
+	        int totalTasks = SystemManager.taskManager.getTaskList(0).numberOfTasks();
+	        tasksCompleteLabel1.setText(completedTasks + " / " + totalTasks + " Tasks Complete (" + (completedTasks / totalTasks) * 100 + "%)");
+			
+	        completedTasks = SystemManager.taskManager.getTaskList(1).numberOfTasksCompleted();
+	        totalTasks = SystemManager.taskManager.getTaskList(1).numberOfTasks();
+	        tasksCompleteLabel2.setText(completedTasks + " / " + totalTasks + " Tasks Complete (" + (completedTasks / totalTasks) * 100 + "%)");
+	        
+	        completedTasks = SystemManager.taskManager.getTaskList(2).numberOfTasksCompleted();
+	        totalTasks = SystemManager.taskManager.getTaskList(2).numberOfTasks();
+	        tasksCompleteLabel3.setText(completedTasks + " / " + totalTasks + " Tasks Complete (" + (completedTasks / totalTasks) * 100 + "%)");
+	        
+	        completedTasks = SystemManager.taskManager.totalNumberOfTasksCompleted();
+	        totalTasks = SystemManager.taskManager.totalNumberOfTasks();
+            totalTasksCompleteLabel2.setText(completedTasks + " / " + totalTasks + " Total Tasks Complete (" + (completedTasks / totalTasks) * 100 + "%)");
+        }
+        
 		try {
 			m_consoleText.setText(SystemManager.console.toString());
 			if(SystemManager.settings.getAutoScrollConsoleWindow()) {

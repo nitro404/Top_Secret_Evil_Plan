@@ -113,6 +113,7 @@ public class SystemManager {
 		m_started = true;
 		
 		taskEditorWindow.setVisible(false);
+		plannerWindow.update();
 		
 		reset();
 		

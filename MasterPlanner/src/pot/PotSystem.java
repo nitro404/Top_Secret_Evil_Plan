@@ -33,6 +33,16 @@ public class PotSystem implements MouseListener, MouseMotionListener {
 	
 	public int numberOfPots() { return m_pots.size(); }
 	
+	public int numberOfDeliveredPots() {
+		int numberOfDeliveredPots = 0;
+		for(int i=0;i<m_pots.size();i++) {
+			if(m_pots.elementAt(i).getState() == PotState.Delivered) {
+				numberOfDeliveredPots++;
+			}
+		}
+		return numberOfDeliveredPots;
+	}
+	
 	public Pot getPot(byte potID) {
 		if(potID < 0 || potID >= m_pots.size()) { return null; }
 		return m_pots.elementAt(potID);

@@ -40,7 +40,10 @@ public class ServerOutputSignalQueue extends Thread {
 				
 				if(SystemManager.settings.getSignalDebugLevel() == SignalDebugLevel.Outgoing ||
 				   SystemManager.settings.getSignalDebugLevel() == SignalDebugLevel.Both) {
-					SystemManager.console.writeLine("Sending: " + s.toString());
+					if(!SystemManager.settings.getIgnorePingPongSignals() || 
+					   !((s.getSignalType() == SignalType.Ping || s.getSignalType() == SignalType.Pong) && SystemManager.settings.getIgnorePingPongSignals())) {
+						SystemManager.console.writeLine("Sending: " + s.toString());
+					}
 				}
 				
 				if(s.getSignalType() == SignalType.Ping) {
