@@ -15,10 +15,10 @@ import java.awt.Graphics;
 public class Graph {
 	
 	/** The collection of Edges making up the Graph. */
-	private Vector<Edge> edges;
+	protected Vector<Edge> edges;
 	
 	/** A collection of all the unique Vertices in the collection of Edges. */
-	private Vector<Vertex> vertices;
+	protected Vector<Vertex> vertices;
 	
 	/**
 	 * Constructs an empty Graph object.

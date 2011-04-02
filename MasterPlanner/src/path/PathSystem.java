@@ -20,9 +20,7 @@ public class PathSystem implements MouseListener, MouseMotionListener {
 	private Vertex m_vertexToMove;
 	private boolean m_autoConnectVertices;
 	final private static long m_doubleClickSpeed = 200;
-	private long m_lastMouseDown = 0;
-	
-	final private static int DEFAULT_SELECTION_RADIUS = 6; 
+	private long m_lastMouseDown = 0; 
 	
 	public PathSystem() {
 		m_paths = new Vector<Path>();
@@ -353,7 +351,7 @@ public class PathSystem implements MouseListener, MouseMotionListener {
 			Vertex previousVertex = m_selectedVertex;
 			
 			m_selectedPoint = e.getPoint();
-			selectVertex(e.getPoint(), DEFAULT_SELECTION_RADIUS);
+			selectVertex(e.getPoint(), Path.DEFAULT_SELECTION_RADIUS);
 			m_vertexToMove = m_selectedVertex;
 			
 			m_selectedVertex = previousVertex;
@@ -368,7 +366,7 @@ public class PathSystem implements MouseListener, MouseMotionListener {
 		
 		if(e.getButton() == MouseEvent.BUTTON3) {
 			m_selectedPoint = e.getPoint();
-			selectVertex(e.getPoint(), DEFAULT_SELECTION_RADIUS);
+			selectVertex(e.getPoint(), Path.DEFAULT_SELECTION_RADIUS);
 		}
 		else if(e.getButton() == MouseEvent.BUTTON2) {
 			m_vertexToMove = null;
@@ -379,7 +377,7 @@ public class PathSystem implements MouseListener, MouseMotionListener {
 				previousVertex = m_selectedVertex; 
 			}
 			m_selectedPoint = e.getPoint();
-			selectVertex(e.getPoint(), DEFAULT_SELECTION_RADIUS);
+			selectVertex(e.getPoint(), Path.DEFAULT_SELECTION_RADIUS);
 			
 			if(previousVertex != null && m_selectedVertex != null && !previousVertex.equals(m_selectedVertex)) {
 				Edge newEdge = new Edge(previousVertex, m_selectedVertex);
@@ -410,15 +408,32 @@ public class PathSystem implements MouseListener, MouseMotionListener {
 	
 	private void selectVertex(Point p, int r) {
 		if(p == null) { return; }
-		if(r <= 0) { r = DEFAULT_SELECTION_RADIUS; }
+		if(r <= 0) { r = Path.DEFAULT_SELECTION_RADIUS; }
 		m_selectedVertex = null;
 		for(int i=0;i<m_paths.elementAt(m_activePath).numberOfVertices();i++) {
 			Vertex v = m_paths.elementAt(m_activePath).getVertex(i);
 			if(Math.sqrt( Math.pow( (m_selectedPoint.x - v.x) , 2) + Math.pow( (m_selectedPoint.y - v.y) , 2) ) <= r) {
 				m_selectedVertex = v;
 				m_lastSelectedVertex = m_selectedVertex;
+				break;
 			}
 		}
+	}
+	
+	public Path getSelectedPath(Point p) { return getSelectedPath(p, Path.DEFAULT_SELECTION_RADIUS); }
+	
+	public Path getSelectedPath(Point p, int r) {
+		if(p == null) { return null; }
+		if(r <= 0) { r = Path.DEFAULT_SELECTION_RADIUS; }
+		for(int i=0;i<m_paths.size();i++) {
+			for(int j=0;j<m_paths.elementAt(i).numberOfVertices();j++) {
+				Vertex v = m_paths.elementAt(i).getVertex(j);
+				if(Math.sqrt( Math.pow( (p.x - v.x) , 2) + Math.pow( (p.y - v.y) , 2) ) <= r) {
+					return m_paths.elementAt(i);
+				}
+			}
+		}
+		return null;
 	}
 	
 	public void clearSelection() {

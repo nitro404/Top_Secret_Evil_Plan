@@ -4,6 +4,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import javax.swing.*;
+import path.*;
+import block.*;
 import planner.*;
 import shared.*;
 
@@ -192,6 +194,29 @@ public class DisplayPanel extends JPanel implements MouseListener, MouseMotionLi
 		
 		if(e.getButton() == MouseEvent.BUTTON3) {
 			showPopupMenu(e.getX(), e.getY());
+		}
+		else if(e.getButton() == MouseEvent.BUTTON1) {
+			if(!SystemManager.taskEditorWindow.isVisible()) { return; }
+			
+			if(SystemManager.taskEditorWindow.lookingForVertex()) {
+				Path selectedPath = SystemManager.pathSystem.getSelectedPath(e.getPoint());
+				int vertexIndex = -1;
+				if(selectedPath != null) {
+					vertexIndex = selectedPath.getSelectedVertexIndex(e.getPoint());
+				}
+				
+				SystemManager.taskEditorWindow.setSelectedVertex(selectedPath, vertexIndex);
+			}
+			else if(SystemManager.taskEditorWindow.lookingForBlock()) {
+				Block selectedBlock = SystemManager.blockSystem.getSelectedBlock(e.getPoint());
+				
+				SystemManager.taskEditorWindow.setSelectedBlock(selectedBlock);
+			}
+			else if(SystemManager.taskEditorWindow.lookingForDropOffLocation()) {
+				DropOffLocation selectedDropOffLocation = SystemManager.blockSystem.getSelectedDropOffLocation(e.getPoint());
+				
+				SystemManager.taskEditorWindow.setSelectedDropOffLocation(selectedDropOffLocation);
+			}
 		}
 	}
 	

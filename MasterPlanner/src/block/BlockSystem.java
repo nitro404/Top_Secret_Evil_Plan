@@ -183,6 +183,19 @@ public class BlockSystem implements MouseListener, MouseMotionListener {
 		return false;
 	}
 	
+	public Block getSelectedBlock(Point p) {
+		if(p == null) { return null; }
+		Position position = new Position(p);
+		if(!position.isValid()) { return null; }
+		
+		for(int i=0;i<m_blocks.size();i++) {
+			if(Math.sqrt(Math.pow(m_blocks.elementAt(i).getInitialPosition().getX() - p.x, 2) + Math.pow(m_blocks.elementAt(i).getInitialPosition().getY() - p.y, 2)) <= Block.SIZE / 2) {
+				return m_blocks.elementAt(i);
+			}
+		}
+		return null;
+	}
+	
 	public boolean selectDropOffLocation(Point p) {
 		m_selectedBlock = -1;
 		m_selectedDropOffLocation = -1;
@@ -198,6 +211,19 @@ public class BlockSystem implements MouseListener, MouseMotionListener {
 			}
 		}
 		return false;
+	}
+	
+	public DropOffLocation getSelectedDropOffLocation(Point p) {
+		if(p == null) { return null; }
+		Position position = new Position(p);
+		if(!position.isValid()) { return null; }
+		
+		for(int i=0;i<m_dropOffLocations.size();i++) {
+			if(Math.sqrt(Math.pow(m_dropOffLocations.elementAt(i).getPosition().getX() - p.x, 2) + Math.pow(m_dropOffLocations.elementAt(i).getPosition().getY() - p.y, 2)) <= DropOffLocation.SIZE / 2) {
+				return m_dropOffLocations.elementAt(i);
+			}
+		}
+		return null;
 	}
 	
 	public void reset() {

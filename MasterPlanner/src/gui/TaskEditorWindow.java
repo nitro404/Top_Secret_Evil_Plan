@@ -4,8 +4,9 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
+import path.*;
+import block.*;
 import task.*;
-import path.Path;
 import planner.*;
 import shared.*;
 
@@ -107,6 +108,53 @@ public class TaskEditorWindow extends JFrame implements ActionListener, ListSele
         clearTask();
         update();
     }
+	
+	public boolean lookingForVertex() {
+		return m_moveToPositionRadioButton.isSelected() ||
+			   m_backUpToPositionRadioButton.isSelected() ||
+			   m_lookAtPositionRadioButton.isSelected();
+	}
+	
+	public boolean lookingForBlock() {
+		return m_pickUpBlockRadioButton.isSelected();
+	}
+	
+	public boolean lookingForDropOffLocation() {
+		return m_dropOffBlockAtLocationRadioButton.isSelected();
+	}
+	
+	public void setSelectedVertex(Path selectedPath, int vertexIndex) {
+		if(selectedPath == null || vertexIndex < 0 || vertexIndex >= selectedPath.numberOfVertices()) { return; }
+		
+		if(m_moveToPositionRadioButton.isSelected()) {
+			m_moveToPositionIndex = vertexIndex;
+			m_moveToPositionPathName = selectedPath.getName();
+		}
+		else if(m_backUpToPositionRadioButton.isSelected()) {
+			m_backUpToPositionIndex = vertexIndex;
+			m_backUpToPositionPathName = selectedPath.getName();
+		}
+		else if(m_lookAtPositionRadioButton.isSelected()) {
+			m_lookAtPositionIndex = vertexIndex;
+			m_lookAtPositionPathName = selectedPath.getName();
+		}
+		
+		update();
+	}
+	
+	public void setSelectedBlock(Block selectedBlock) {
+		if(selectedBlock == null) { return; }
+		m_pickUpBlockID = selectedBlock.getID();
+		
+		update();
+	}
+	
+	public void setSelectedDropOffLocation(DropOffLocation selectedDropOffLocation) {
+		if(selectedDropOffLocation == null) { return; }
+		m_dropOffBlockAtLocationID = selectedDropOffLocation.getID();
+		
+		update();
+	}
 	
 	private void initPopupMenus() {
 	    m_taskPopupMenu = new JPopupMenu();

@@ -1,10 +1,13 @@
 package path;
 
+import java.awt.Point;
 import java.io.*;
 
 public class Path extends Graph {
 	
 	private String m_name;
+	
+	final public static int DEFAULT_SELECTION_RADIUS = 6;
 	
 	public Path() {
 		this(null);
@@ -22,6 +25,20 @@ public class Path extends Graph {
 	public void setName(String name) {
 		if(name == null) { return; }
 		m_name = name;
+	}
+	
+	public int getSelectedVertexIndex(Point p) { return getSelectedVertexIndex(p, DEFAULT_SELECTION_RADIUS); }
+	
+	public int getSelectedVertexIndex(Point p, int r) {
+		if(p == null) { return -1; }
+		if(r <= 0) { r = DEFAULT_SELECTION_RADIUS; }
+		for(int i=0;i<vertices.size();i++) {
+			Vertex v = vertices.elementAt(i);
+			if(Math.sqrt( Math.pow( (p.x - v.x) , 2) + Math.pow( (p.y - v.y) , 2) ) <= r) {
+				return i;
+			}
+		}
+		return -1;
 	}
 	
 	// parse a path from a file
