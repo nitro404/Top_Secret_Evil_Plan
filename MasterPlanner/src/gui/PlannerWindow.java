@@ -5,9 +5,11 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.table.*;
 import planner.*;
+import path.*;
 import robot.*;
 import block.*;
 import pot.*;
+import task.*;
 import settings.*;
 import shared.*;
 
@@ -47,8 +49,10 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
 	private JMenu m_settingsMenu;
 	private JCheckBoxMenuItem m_settingsAutoConnectOnStartupMenuItem;
 	private JCheckBoxMenuItem m_settingsTakeWebcamSnapshotOnStartupMenuItem;
-	private JCheckBoxMenuItem m_useStaticStationImagesMenuItem;
-	private JMenuItem m_staticStationImageFileNameFormatMenuItem;
+	private JCheckBoxMenuItem m_settingsUseStaticStationImagesMenuItem;
+	private JMenuItem m_settingsStaticStationImageFileNameFormatMenuItem;
+	private JMenuItem m_settingsPathDataFileNameMenuItem;
+	private JMenuItem m_settingsTaskListFileNameMenuItem;
 	private JCheckBoxMenuItem m_settingsAutoScrollConsoleWindowMenuItem;
 	private JMenu m_settingsSignalsMenu;
 	private JCheckBoxMenuItem m_settingsSignalsIgnorePingPongMenuItem;
@@ -57,7 +61,10 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
 	private JMenuItem m_settingsNumberOfTrackersMenuItem;
 	private JMenuItem m_settingsTimeLimitMenuItem;
 	private JMenuItem m_settingsWebcamResolutionMenuItem;
-	private JMenuItem m_settingsSaveMenuItem;
+	private JCheckBoxMenuItem m_settingsAutoSaveOnExitMenuItem;
+	private JMenuItem m_settingsSavePathDataMenuItem;
+	private JMenuItem m_settingsSaveTaskListMenuItem;
+	private JMenuItem m_settingsSaveSettingsMenuItem;
 	
 	private JMenu m_helpMenu;
 	private JMenuItem m_helpAboutMenuItem;
@@ -216,8 +223,10 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
         m_settingsMenu = new JMenu("Settings");
         m_settingsAutoConnectOnStartupMenuItem = new JCheckBoxMenuItem("Auto-connect on Startup");
         m_settingsTakeWebcamSnapshotOnStartupMenuItem = new JCheckBoxMenuItem("Take Webcam Snapshot on Startup");
-        m_useStaticStationImagesMenuItem = new JCheckBoxMenuItem("Use Static Station Images");
-    	m_staticStationImageFileNameFormatMenuItem = new JMenuItem("Static Station Image File Name Format");
+        m_settingsUseStaticStationImagesMenuItem = new JCheckBoxMenuItem("Use Static Station Images");
+    	m_settingsStaticStationImageFileNameFormatMenuItem = new JMenuItem("Static Station Image File Name Format");
+    	m_settingsPathDataFileNameMenuItem = new JMenuItem("Path Data File Name");
+    	m_settingsTaskListFileNameMenuItem = new JMenuItem("Task List File Name");
         m_settingsAutoScrollConsoleWindowMenuItem = new JCheckBoxMenuItem("Auto-scroll Console Window");
         m_settingsSignalsMenu = new JMenu("Signal Debugging");
         m_settingsSignalsIgnorePingPongMenuItem = new JCheckBoxMenuItem("Ignore Ping Pong Signals");
@@ -228,18 +237,22 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
         m_settingsNumberOfTrackersMenuItem = new JMenuItem("Number of Trackers");
     	m_settingsTimeLimitMenuItem = new JMenuItem("Time Limit");
     	m_settingsWebcamResolutionMenuItem = new JMenuItem("Webcam Resolution");
-        m_settingsSaveMenuItem = new JMenuItem("Save Settings");
+    	m_settingsAutoSaveOnExitMenuItem = new JCheckBoxMenuItem("Autosave on Exit");
+    	m_settingsSavePathDataMenuItem = new JMenuItem("Save Path Data");
+    	m_settingsSaveTaskListMenuItem = new JMenuItem("Save Task List");
+        m_settingsSaveSettingsMenuItem = new JMenuItem("Save Settings");
         
         m_helpMenu = new JMenu("Help");
         m_helpAboutMenuItem = new JMenuItem("About");
         
         m_settingsAutoConnectOnStartupMenuItem.setSelected(SettingsManager.defaultAutoConnectOnStartup);
         m_settingsTakeWebcamSnapshotOnStartupMenuItem.setSelected(SettingsManager.defaultTakeWebcamSnapshotOnStartup);
-        m_useStaticStationImagesMenuItem.setSelected(SettingsManager.defaultUseStaticStationImages);
+        m_settingsUseStaticStationImagesMenuItem.setSelected(SettingsManager.defaultUseStaticStationImages);
         m_settingsAutoScrollConsoleWindowMenuItem.setSelected(SettingsManager.defaultAutoScrollConsoleWindow);
         m_editModeMenuItem[0].setSelected(true);
         m_settingsSignalsIgnorePingPongMenuItem.setSelected(SettingsManager.defaultIgnorePingPongSignals);
-        m_settingsSignalsMenuItem[0].setSelected(true);
+        m_settingsSignalsMenuItem[SettingsManager.defaultSignalDebugLevel].setSelected(true);
+        m_settingsAutoSaveOnExitMenuItem.setSelected(SettingsManager.defaultAutoSaveOnExit);
 		m_fileDisconnectMenuItem.setEnabled(false);
 		m_fileStartSimulationMenuItem.setEnabled(false);
         
@@ -266,8 +279,10 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
         m_editUpdateTrackerImageMenuItem.addActionListener(this);
         m_settingsAutoConnectOnStartupMenuItem.addActionListener(this);
         m_settingsTakeWebcamSnapshotOnStartupMenuItem.addActionListener(this);
-        m_useStaticStationImagesMenuItem.addActionListener(this);
-    	m_staticStationImageFileNameFormatMenuItem.addActionListener(this);
+        m_settingsUseStaticStationImagesMenuItem.addActionListener(this);
+    	m_settingsStaticStationImageFileNameFormatMenuItem.addActionListener(this);
+    	m_settingsPathDataFileNameMenuItem.addActionListener(this);
+    	m_settingsTaskListFileNameMenuItem.addActionListener(this);
         m_settingsAutoScrollConsoleWindowMenuItem.addActionListener(this);
         m_settingsSignalsIgnorePingPongMenuItem.addActionListener(this);
         for(byte i=0;i<SignalDebugLevel.signalDebugLevels.length;i++) {
@@ -276,7 +291,10 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
         m_settingsNumberOfTrackersMenuItem.addActionListener(this);
     	m_settingsTimeLimitMenuItem.addActionListener(this);
     	m_settingsWebcamResolutionMenuItem.addActionListener(this);
-        m_settingsSaveMenuItem.addActionListener(this);
+    	m_settingsAutoSaveOnExitMenuItem.addActionListener(this);
+    	m_settingsSavePathDataMenuItem.addActionListener(this);
+    	m_settingsSaveTaskListMenuItem.addActionListener(this);
+        m_settingsSaveSettingsMenuItem.addActionListener(this);
         m_helpAboutMenuItem.addActionListener(this);
         
         for(byte i=0;i<EditMode.displayEditModes.length;i++) {
@@ -310,8 +328,10 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
         
         m_settingsMenu.add(m_settingsAutoConnectOnStartupMenuItem);
         m_settingsMenu.add(m_settingsTakeWebcamSnapshotOnStartupMenuItem);
-        m_settingsMenu.add(m_useStaticStationImagesMenuItem);
-    	m_settingsMenu.add(m_staticStationImageFileNameFormatMenuItem);
+        m_settingsMenu.add(m_settingsUseStaticStationImagesMenuItem);
+    	m_settingsMenu.add(m_settingsStaticStationImageFileNameFormatMenuItem);
+    	m_settingsMenu.add(m_settingsPathDataFileNameMenuItem);
+    	m_settingsMenu.add(m_settingsTaskListFileNameMenuItem);
         m_settingsMenu.add(m_settingsAutoScrollConsoleWindowMenuItem);
         m_settingsSignalsMenu.add(m_settingsSignalsIgnorePingPongMenuItem);
         for(byte i=0;i<SignalDebugLevel.signalDebugLevels.length;i++) {
@@ -321,7 +341,10 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
         m_settingsMenu.add(m_settingsNumberOfTrackersMenuItem);
         m_settingsMenu.add(m_settingsTimeLimitMenuItem);
         m_settingsMenu.add(m_settingsWebcamResolutionMenuItem);
-        m_settingsMenu.add(m_settingsSaveMenuItem);
+        m_settingsMenu.add(m_settingsAutoSaveOnExitMenuItem);
+        m_settingsMenu.add(m_settingsSavePathDataMenuItem);
+        m_settingsMenu.add(m_settingsSaveTaskListMenuItem);
+        m_settingsMenu.add(m_settingsSaveSettingsMenuItem);
         
         m_helpMenu.add(m_helpAboutMenuItem);
 
@@ -1351,9 +1374,11 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
 	
 	public void windowClosing(WindowEvent e) {
 		if(e.getSource() == this) {
-			SystemManager.settings.save();
-			SystemManager.pathSystem.writeTo(SystemManager.settings.getPathDataFileName());
-			SystemManager.taskManager.writeTo(SystemManager.settings.getTaskListFileName());
+			if(SystemManager.settings.getAutoSaveOnExit()) {
+				SystemManager.pathSystem.writeTo(SystemManager.settings.getPathDataFileName());
+				SystemManager.taskManager.writeTo(SystemManager.settings.getTaskListFileName());
+				SystemManager.settings.save();
+			}
 			dispose();
 		}
 	}
@@ -1430,14 +1455,40 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
 		else if(e.getSource() == m_settingsTakeWebcamSnapshotOnStartupMenuItem) {
 			SystemManager.settings.setTakeWebcamSnapshotOnStartup(m_settingsTakeWebcamSnapshotOnStartupMenuItem.isSelected());
 		}
-		else if(e.getSource() == m_useStaticStationImagesMenuItem) {
-			SystemManager.settings.setUseStaticStationImages(m_useStaticStationImagesMenuItem.isSelected());
+		else if(e.getSource() == m_settingsUseStaticStationImagesMenuItem) {
+			SystemManager.settings.setUseStaticStationImages(m_settingsUseStaticStationImagesMenuItem.isSelected());
 		}
-		else if(e.getSource() == m_staticStationImageFileNameFormatMenuItem) {
+		else if(e.getSource() == m_settingsStaticStationImageFileNameFormatMenuItem) {
 			String input = JOptionPane.showInputDialog(this, "Enter the file name format for static tracker images (ie. \"Station.jpg\":\n(Images will be read as \"Station X.jpg\" where X is the tracker number.", SystemManager.settings.getStaticStationImageFileNameFormat());
 			if(input == null) { return; }
-			SystemManager.settings.setStaticStationImageFileNameFormat(input);
+			SystemManager.settings.setStaticStationImageFileNameFormat(input.trim());
 		}
+    	else if(e.getSource() == m_settingsPathDataFileNameMenuItem) {
+    		String input = JOptionPane.showInputDialog(this, "Enter the file name where path data is stored:", SystemManager.settings.getPathDataFileName());
+    		if(!SystemManager.settings.setPathDataFileName(input)) { return; }
+    		
+    		boolean loadFile = JOptionPane.showConfirmDialog(null, "Would you like to load this file?", "Load File", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION;
+    		if(loadFile) {
+    			PathSystem newPathSystem = PathSystem.readFrom(SystemManager.settings.getPathDataFileName()); 
+	    		if(newPathSystem != null) {
+	    			SystemManager.pathSystem = newPathSystem;
+	    			SystemManager.update();
+	    		}
+    		}
+    	}
+    	else if(e.getSource() == m_settingsTaskListFileNameMenuItem) {
+    		String input = JOptionPane.showInputDialog(this, "Enter the file name where the task list is stored:", SystemManager.settings.getTaskListFileName());
+    		if(!SystemManager.settings.setTaskListFileName(input)) { return; }
+    		
+    		boolean loadFile = JOptionPane.showConfirmDialog(null, "Would you like to load this file?", "Load File", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION;
+    		if(loadFile) {
+	    		TaskManager newTaskManager = TaskManager.readFrom(SystemManager.settings.getTaskListFileName()); 
+	    		if(newTaskManager != null) {
+	    			SystemManager.taskManager = newTaskManager;
+	    			SystemManager.update();
+	    		}
+    		}
+    	}
 		else if(e.getSource() == m_settingsAutoScrollConsoleWindowMenuItem) {
 			SystemManager.settings.setAutoScrollConsoleWindow(m_settingsAutoScrollConsoleWindowMenuItem.isSelected());
 		}
@@ -1489,7 +1540,16 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
 				JOptionPane.showMessageDialog(this, "Failed to change webcam resolution.", "Webcam Resolution Change Failed", JOptionPane.ERROR_MESSAGE);
 			}
 		}
-		else if(e.getSource() == m_settingsSaveMenuItem) {
+		else if(e.getSource() == m_settingsAutoSaveOnExitMenuItem) {
+			SystemManager.settings.setAutoSaveOnExit(m_settingsAutoSaveOnExitMenuItem.isSelected());
+		}
+        else if(e.getSource() == m_settingsSavePathDataMenuItem) {
+        	SystemManager.pathSystem.writeTo(SystemManager.settings.getPathDataFileName());
+		}
+        else if(e.getSource() == m_settingsSaveTaskListMenuItem) {
+			SystemManager.taskManager.writeTo(SystemManager.settings.getTaskListFileName());
+		}
+		else if(e.getSource() == m_settingsSaveSettingsMenuItem) {
 			SystemManager.settings.save();
 		}
 		else if(e.getSource() == m_helpAboutMenuItem) {
@@ -1520,7 +1580,7 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
 		m_settingsSignalsMenuItem[SystemManager.settings.getSignalDebugLevel()].setSelected(true);
 		m_settingsAutoConnectOnStartupMenuItem.setSelected(SystemManager.settings.getAutoConnectOnStartup());
         m_settingsTakeWebcamSnapshotOnStartupMenuItem.setSelected(SystemManager.settings.getTakeWebcamSnapshotOnStartup());
-		m_useStaticStationImagesMenuItem.setSelected(SystemManager.settings.getUseStaticStationImages());
+		m_settingsUseStaticStationImagesMenuItem.setSelected(SystemManager.settings.getUseStaticStationImages());
         m_settingsAutoScrollConsoleWindowMenuItem.setSelected(SystemManager.settings.getAutoScrollConsoleWindow());
 		m_fileConnectMenuItem.setEnabled(!SystemManager.client.isConnected());
 		m_fileDisconnectMenuItem.setEnabled(SystemManager.client.isConnected());
@@ -1538,15 +1598,15 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
             stateTextField2.setText(RobotState.toString(SystemManager.robotSystem.getRobot((byte) 1).getState()));
             stateTextField3.setText(RobotState.toString(SystemManager.robotSystem.getRobot((byte) 2).getState()));
             
-            spawnPoseTextField1.setText(!RobotPosition.isValid(SystemManager.robotSystem.getRobot((byte) 0).getSpawnPosition()) ? "" : SystemManager.robotSystem.getRobot((byte) 0).getSpawnPosition().toString());
-            spawnPoseTextField2.setText(!RobotPosition.isValid(SystemManager.robotSystem.getRobot((byte) 1).getSpawnPosition()) ? "" : SystemManager.robotSystem.getRobot((byte) 1).getSpawnPosition().toString());
-            spawnPoseTextField3.setText(!RobotPosition.isValid(SystemManager.robotSystem.getRobot((byte) 2).getSpawnPosition()) ? "" : SystemManager.robotSystem.getRobot((byte) 2).getSpawnPosition().toString());
-            poseTextField1.setText(!RobotPosition.isValid(SystemManager.robotSystem.getRobot((byte) 0).getActualPosition()) ? "" : SystemManager.robotSystem.getRobot((byte) 0).getActualPosition().toString());
-            poseTextField2.setText(!RobotPosition.isValid(SystemManager.robotSystem.getRobot((byte) 1).getActualPosition()) ? "" : SystemManager.robotSystem.getRobot((byte) 1).getActualPosition().toString());
-            poseTextField3.setText(!RobotPosition.isValid(SystemManager.robotSystem.getRobot((byte) 2).getActualPosition()) ? "" : SystemManager.robotSystem.getRobot((byte) 2).getActualPosition().toString());
-            estimatedPoseTextField1.setText(!RobotPosition.isValid(SystemManager.robotSystem.getRobot((byte) 0).getEstimatedPosition()) ? "" : SystemManager.robotSystem.getRobot((byte) 0).getEstimatedPosition().toString());
-            estimatedPoseTextField2.setText(!RobotPosition.isValid(SystemManager.robotSystem.getRobot((byte) 1).getEstimatedPosition()) ? "" : SystemManager.robotSystem.getRobot((byte) 1).getEstimatedPosition().toString());
-            estimatedPoseTextField3.setText(!RobotPosition.isValid(SystemManager.robotSystem.getRobot((byte) 2).getEstimatedPosition()) ? "" : SystemManager.robotSystem.getRobot((byte) 2).getEstimatedPosition().toString());
+            spawnPoseTextField1.setText(!RobotPosition.isValid(SystemManager.robotSystem.getRobot((byte) 0).getSpawnPosition()) ? "Unknown" : SystemManager.robotSystem.getRobot((byte) 0).getSpawnPosition().toString());
+            spawnPoseTextField2.setText(!RobotPosition.isValid(SystemManager.robotSystem.getRobot((byte) 1).getSpawnPosition()) ? "Unknown" : SystemManager.robotSystem.getRobot((byte) 1).getSpawnPosition().toString());
+            spawnPoseTextField3.setText(!RobotPosition.isValid(SystemManager.robotSystem.getRobot((byte) 2).getSpawnPosition()) ? "Unknown" : SystemManager.robotSystem.getRobot((byte) 2).getSpawnPosition().toString());
+            poseTextField1.setText(!RobotPosition.isValid(SystemManager.robotSystem.getRobot((byte) 0).getActualPosition()) ? "Unknown" : SystemManager.robotSystem.getRobot((byte) 0).getActualPosition().toString());
+            poseTextField2.setText(!RobotPosition.isValid(SystemManager.robotSystem.getRobot((byte) 1).getActualPosition()) ? "Unknown" : SystemManager.robotSystem.getRobot((byte) 1).getActualPosition().toString());
+            poseTextField3.setText(!RobotPosition.isValid(SystemManager.robotSystem.getRobot((byte) 2).getActualPosition()) ? "Unknown" : SystemManager.robotSystem.getRobot((byte) 2).getActualPosition().toString());
+            estimatedPoseTextField1.setText(!RobotPosition.isValid(SystemManager.robotSystem.getRobot((byte) 0).getEstimatedPosition()) ? "Unknown" : SystemManager.robotSystem.getRobot((byte) 0).getEstimatedPosition().toString());
+            estimatedPoseTextField2.setText(!RobotPosition.isValid(SystemManager.robotSystem.getRobot((byte) 1).getEstimatedPosition()) ? "Unknown" : SystemManager.robotSystem.getRobot((byte) 1).getEstimatedPosition().toString());
+            estimatedPoseTextField3.setText(!RobotPosition.isValid(SystemManager.robotSystem.getRobot((byte) 2).getEstimatedPosition()) ? "Unknown" : SystemManager.robotSystem.getRobot((byte) 2).getEstimatedPosition().toString());
         }
         
         if(SystemManager.blockSystem != null) {
@@ -1571,7 +1631,7 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
         	}
         }
         
-        if(SystemManager.taskManager != null) {
+        if(SystemManager.taskManager != null && SystemManager.taskManager.numberOfTaskLists() > 0) {
 	        int completedTasks = SystemManager.taskManager.getTaskList(0).numberOfTasksCompleted();
 	        int totalTasks = SystemManager.taskManager.getTaskList(0).numberOfTasks();
 	        tasksCompleteLabel1.setText(completedTasks + " / " + totalTasks + " Tasks Complete (" + (completedTasks / totalTasks) * 100 + "%)");

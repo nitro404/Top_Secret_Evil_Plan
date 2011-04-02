@@ -14,6 +14,7 @@ public class SettingsManager {
 	
 	private InetAddress m_trackerIPAddress[];
 	private int m_port;
+	private boolean m_autoSaveOnExit;
 	private boolean m_ignorePingPongSignals;
 	private byte m_signalDebugLevel;
 	private boolean m_autoScrollConsoleWindow;
@@ -23,9 +24,10 @@ public class SettingsManager {
 	final public static String defaultSettingsFileName = "server.ini";
 	public static InetAddress[] defaultTrackerIPAddress;
 	final public static int defaultPort = Server.DEFAULT_PORT;
+	final public static boolean defaultAutoSaveOnExit = true;
 	final public static boolean defaultIgnorePingPongSignals = true;
-	private byte defaultSignalDebugLevel = SignalDebugLevel.Off;
-	private boolean defaultAutoScrollConsoleWindow = true;
+	final public static byte defaultSignalDebugLevel = SignalDebugLevel.Both;
+	final public static boolean defaultAutoScrollConsoleWindow = true;
 	final public static int defaultNumberOfTrackers = 3;
 	final public static Dimension defaultWebcamResolution = new Dimension(640, 480);
 	
@@ -38,6 +40,7 @@ public class SettingsManager {
 		}
 		
 		m_port = defaultPort;
+		m_autoSaveOnExit = defaultAutoSaveOnExit;
 		m_trackerIPAddress = defaultTrackerIPAddress;
 		m_ignorePingPongSignals = defaultIgnorePingPongSignals;
 		m_signalDebugLevel = defaultSignalDebugLevel;
@@ -58,6 +61,8 @@ public class SettingsManager {
 	
 	public int getPort() { return m_port; }
 	
+	public boolean getAutoSaveOnExit() { return m_autoSaveOnExit; }
+	
 	public boolean getIgnorePingPongSignals() { return m_ignorePingPongSignals; }
 	
 	public byte getSignalDebugLevel() { return m_signalDebugLevel; }
@@ -77,6 +82,22 @@ public class SettingsManager {
 			return false;
 		}
 		return true;
+	}
+	
+	public void setAutoSaveOnExit(boolean autoSave) { m_autoSaveOnExit = autoSave; }
+	
+	public boolean setAutoSaveOnExit(String data) {
+		if(data == null) { return false; }
+		String value = data.trim();
+		if(value.equalsIgnoreCase("true")) {
+			m_autoSaveOnExit = true;
+			return true;
+		}
+		else if(value.equalsIgnoreCase("false")) {
+			m_autoSaveOnExit = false;
+			return true;
+		}
+		return false;
 	}
 	
 	public void setPort(int port) { if(port >= 0 && port <= 65355) { m_port = port; } }
@@ -173,6 +194,7 @@ public class SettingsManager {
 			setTrackerIPAddress((i + 1), m_settings.getValue("Robot Tracker " + (i + 1) + " IP", "Settings"));
 		}
 		try { setPort(Integer.parseInt(m_settings.getValue("Port", "Settings"))); } catch(NumberFormatException e) { }
+		setAutoSaveOnExit(m_settings.getValue("Autosave on Exit", "Settings"));
 		setIgnorePingPongSignals(m_settings.getValue("Ignore Ping Pong Signals", "Settings"));
 		setSignalDebugLevel(SignalDebugLevel.parseFrom(m_settings.getValue("Signal Debug Level", "Settings")));
 		setAutoScrollConsoleWindow(m_settings.getValue("Auto-scroll Console Window", "Settings"));
@@ -188,6 +210,7 @@ public class SettingsManager {
 			m_settings.setValue("Robot Tracker " + (i + 1) + " IP Address", m_trackerIPAddress[i].getHostAddress(), "Settings");
 		}
 		m_settings.setValue("Port", m_port, "Settings");
+		m_settings.setValue("Autosave on Exit", m_autoSaveOnExit, "Settings");
 		m_settings.setValue("Ignore Ping Pong Signals", m_ignorePingPongSignals, "Settings");
 		m_settings.setValue("Signal Debug Level", SignalDebugLevel.toString(m_signalDebugLevel), "Settings");
 		m_settings.setValue("Auto-scroll Console Window", m_autoScrollConsoleWindow, "Settings");

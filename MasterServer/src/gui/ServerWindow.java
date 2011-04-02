@@ -1,8 +1,9 @@
-package server;
+package gui;
 
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import server.*;
 import settings.*;
 import shared.*;
 
@@ -25,6 +26,7 @@ public class ServerWindow extends JFrame implements ActionListener, WindowListen
 	private JCheckBoxMenuItem m_settingsSignalsIgnorePingPongMenuItem;
 	private JRadioButtonMenuItem[] m_settingsSignalsMenuItem;
 	private ButtonGroup m_settingsSignalsButtonGroup;
+	private JCheckBoxMenuItem m_settingsAutoSaveOnExitMenuItem;
 	private JMenuItem m_settingsSaveMenuItem;
 	
 	private JMenu m_helpMenu;
@@ -64,14 +66,16 @@ public class ServerWindow extends JFrame implements ActionListener, WindowListen
         for(byte i=0;i<SignalDebugLevel.signalDebugLevels.length;i++) {
         	m_settingsSignalsMenuItem[i] = new JRadioButtonMenuItem(SignalDebugLevel.signalDebugLevels[i]); 
         }
+        m_settingsAutoSaveOnExitMenuItem = new JCheckBoxMenuItem("Autosave on Exit");
         m_settingsSaveMenuItem = new JMenuItem("Save Settings");
         
         m_helpMenu = new JMenu("Help");
         helpAboutMenuItem = new JMenuItem("About");
         
-        m_settingsAutoScrollConsoleMenuWindowItem.setSelected(true);
+        m_settingsAutoSaveOnExitMenuItem.setSelected(SettingsManager.defaultAutoSaveOnExit);
+        m_settingsAutoScrollConsoleMenuWindowItem.setSelected(SettingsManager.defaultAutoScrollConsoleWindow);
         m_settingsSignalsIgnorePingPongMenuItem.setSelected(SettingsManager.defaultIgnorePingPongSignals);
-        m_settingsSignalsMenuItem[0].setSelected(true);
+        m_settingsSignalsMenuItem[SettingsManager.defaultSignalDebugLevel].setSelected(true);
         
         m_settingsSignalsButtonGroup = new ButtonGroup();
         
@@ -81,6 +85,7 @@ public class ServerWindow extends JFrame implements ActionListener, WindowListen
         for(byte i=0;i<SignalDebugLevel.signalDebugLevels.length;i++) {
         	m_settingsSignalsMenuItem[i].addActionListener(this);
         }
+        m_settingsAutoSaveOnExitMenuItem.addActionListener(this);
         m_settingsSaveMenuItem.addActionListener(this);
         helpAboutMenuItem.addActionListener(this);
         
@@ -96,6 +101,7 @@ public class ServerWindow extends JFrame implements ActionListener, WindowListen
         	m_settingsSignalsMenu.add(m_settingsSignalsMenuItem[i]);
         }
         m_settingsMenu.add(m_settingsSignalsMenu);
+        m_settingsMenu.add(m_settingsAutoSaveOnExitMenuItem);
         m_settingsMenu.add(m_settingsSaveMenuItem);
         
         m_helpMenu.add(helpAboutMenuItem);
@@ -130,7 +136,9 @@ public class ServerWindow extends JFrame implements ActionListener, WindowListen
 	public void windowOpened(WindowEvent e) { }
 	
 	public void windowClosing(WindowEvent e) {
-		SystemManager.settings.save();
+		if(SystemManager.settings.getAutoSaveOnExit()) {
+			SystemManager.settings.save();
+		}
 		dispose();
 	}
 	
@@ -146,6 +154,9 @@ public class ServerWindow extends JFrame implements ActionListener, WindowListen
 		}
 		else if(e.getSource() == m_settingsSignalsIgnorePingPongMenuItem) {
 			SystemManager.settings.setIgnorePingPongSignals(m_settingsSignalsIgnorePingPongMenuItem.isSelected());
+		}
+		else if(e.getSource() == m_settingsAutoSaveOnExitMenuItem) {
+			SystemManager.settings.setAutoSaveOnExit(m_settingsAutoSaveOnExitMenuItem.isSelected());
 		}
 		else if(e.getSource() == m_settingsSaveMenuItem) {
 			SystemManager.settings.save();

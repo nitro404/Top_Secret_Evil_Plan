@@ -24,6 +24,7 @@ public class SettingsManager {
 	private String m_trackerImageFileName;
 	private String m_staticStationImageFileNameFormat;
 	private BufferedImage[] m_staticStationImage;
+	private boolean m_autoSaveOnExit;
 	private int m_frameRate;
 	private InetAddress m_serverIPAddress;
 	private int m_serverPort;
@@ -54,6 +55,7 @@ public class SettingsManager {
 	final public static String defaultTaskListFileName = "tasklist.ini";
 	final public static String defaultTrackerImageFileName = "TrackerImage.jpg";
 	final public static String defaultStaticStationImageFileNameFormat = "Station.jpg";
+	final public static boolean defaultAutoSaveOnExit = true;
 	final public static int defaultFrameRate = 2;
 	public static InetAddress defaultServerIPAddress;
 	final public static int defaultServerPort = Client.DEFAULT_PORT;
@@ -61,7 +63,7 @@ public class SettingsManager {
 	final public static byte defaultSignalDebugLevel = SignalDebugLevel.Off;
 	final public static boolean defaultAutoScrollConsoleWindow = true;
 	final public static boolean defaultAutoConnectOnStartup = true;
-	final public static boolean defaultTakeWebcamSnapshotOnStartup = true;
+	final public static boolean defaultTakeWebcamSnapshotOnStartup = false;
 	final public static boolean defaultUseStaticStationImages = true;
 	final public static Dimension defaultWebcamResolution = new Dimension(640, 480);
 	final public static int defaultTimeLimit = 15;
@@ -81,6 +83,7 @@ public class SettingsManager {
 		m_taskListFileName = defaultTaskListFileName;
 		m_trackerImageFileName = defaultTrackerImageFileName;
 		m_staticStationImageFileNameFormat = defaultStaticStationImageFileNameFormat;
+		m_autoSaveOnExit = defaultAutoSaveOnExit;
 		m_frameRate = defaultFrameRate;
 		try { defaultServerIPAddress = InetAddress.getByName(Client.DEFAULT_HOST); }
 		catch(UnknownHostException e) {
@@ -163,6 +166,8 @@ public class SettingsManager {
 		if(trackerNumber < 1 || trackerNumber > m_numberOfTrackers) { return null; }
 		return m_staticStationImage[trackerNumber - 1];
 	}
+	
+	public boolean getAutoSaveOnExit() { return m_autoSaveOnExit; }
 	
 	public int getFrameRate() { return m_frameRate; }
 	
@@ -256,6 +261,22 @@ public class SettingsManager {
 		if(data.length() == 0) { return false; }
 		m_staticStationImageFileNameFormat = data;
 		return true;
+	}
+	
+	public void setAutoSaveOnExit(boolean autoSave) { m_autoSaveOnExit = autoSave; }
+	
+	public boolean setAutoSaveOnExit(String data) {
+		if(data == null) { return false; }
+		String value = data.trim();
+		if(value.equalsIgnoreCase("true")) {
+			m_autoSaveOnExit = true;
+			return true;
+		}
+		else if(value.equalsIgnoreCase("false")) {
+			m_autoSaveOnExit = false;
+			return true;
+		}
+		return false;
 	}
 	
 	public boolean setFrameRate(int frameRate) {
@@ -620,6 +641,7 @@ public class SettingsManager {
 		setTaskListFileName(m_settings.getValue("Task List File", "Data Files"));
 		setTrackerImageFileName(m_settings.getValue("Tracker Image", "Data Files"));
 		setStaticStationImageFileNameFormat(m_settings.getValue("Static Station Image File Name Format", "Data Files"));
+		setAutoSaveOnExit(m_settings.getValue("Autosave on Exit", "Settings"));
 		try { setFrameRate(Integer.parseInt(m_settings.getValue("Framerate", "Settings"))); } catch(NumberFormatException e) { }
 		setServerIPAddress(m_settings.getValue("Server IP Address", "Settings"));
 		try { setServerPort(Integer.parseInt(m_settings.getValue("Server Port", "Settings"))); } catch(NumberFormatException e) { }
@@ -664,6 +686,7 @@ public class SettingsManager {
 		m_settings.setValue("Task List File", m_taskListFileName, "Data Files");
 		m_settings.setValue("Tracker Image", m_trackerImageFileName, "Data Files");
 		m_settings.setValue("Static Station Image File Name Format", m_staticStationImageFileNameFormat, "Data Files");
+		m_settings.setValue("Autosave on Exit", m_autoSaveOnExit, "Settings");
 		m_settings.setValue("Framerate", m_frameRate, "Settings");
 		m_settings.setValue("Server IP Address", m_serverIPAddress.getHostName(), "Settings");
 		m_settings.setValue("Server Port", m_serverPort, "Settings");

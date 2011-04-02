@@ -1,5 +1,6 @@
 package server;
 
+import gui.*;
 import settings.*;
 import shared.*;
 

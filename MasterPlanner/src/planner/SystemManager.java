@@ -95,7 +95,8 @@ public class SystemManager {
 		
 		taskManager = TaskManager.readFrom(settings.getTaskListFileName());
 		if(taskManager == null) { taskManager = new TaskManager(); }
-		taskEditorWindow.update();
+		
+		update();
 	}
 	
 	public static void showTaskEditorWindow() {
@@ -188,6 +189,12 @@ public class SystemManager {
 			console.writeLine("Failed to take snapshot from webcam.");
 			return false;
 		}
+	}
+	
+	public static void update() {
+		displayWindow.update();
+		plannerWindow.update();
+		taskEditorWindow.update();
 	}
 	
 	public static void reset() {
