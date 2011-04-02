@@ -3,6 +3,7 @@ package client;
 import java.io.*;
 import java.util.*;
 import planner.*;
+import robot.RobotSystem;
 import shared.*;
 import signal.*;
 
@@ -180,6 +181,7 @@ public class ServerInputSignalQueue extends Thread {
 					ReceiveTrackerNumberSignal s2 = (ReceiveTrackerNumberSignal) s;
 					SystemManager.trackerNumber = s2.getTrackerNumber();
 					SystemManager.robotSystem.setActiveRobotID(s2.getTrackerNumber());
+					SystemManager.plannerWindow.setRobotNumber(RobotSystem.robotNumbers[s2.getTrackerNumber() - 1]);
 					SystemManager.setTrackerImage(SystemManager.trackerNumber, SystemManager.localTrackerImage);
 					if(!SystemManager.settings.getUseStaticStationImages()) {
 						sendSignal(new BroadcastTrackerImageSignal(SystemManager.trackerNumber, SystemManager.localTrackerImage));

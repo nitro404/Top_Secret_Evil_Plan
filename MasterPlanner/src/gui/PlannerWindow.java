@@ -177,6 +177,10 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
 		initLayout();
 	}
 	
+	public void setRobotNumber(int robotNumber) {
+		titleLabel.setText("Robot #" + robotNumber + " Advanced Planner");
+	}
+	
 	private void initMenu() {
 	    m_menuBar = new JMenuBar();
         
@@ -330,6 +334,13 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
         m_consoleText.setRows(5);
         m_consoleScrollPane = new JScrollPane();
         m_consoleScrollPane.setViewportView(m_consoleText);
+        
+        titleLabel = new JLabel();
+        titleLabel.setBackground(new Color(0, 0, 0));
+        titleLabel.setFont(new Font("Bernard MT Condensed", 1, 48));
+        titleLabel.setForeground(new Color(255, 0, 0));
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        titleLabel.setText("Advanced Planner");
     	
     	robotTabs = new JTabbedPane();
         jSplitPane2 = new JSplitPane();
@@ -407,7 +418,6 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
         estimatedPoseTextField3 = new JTextField();
         spawnPoseLabel3 = new JLabel();
         spawnPoseTextField3 = new JTextField();
-        titleLabel = new JLabel();
         jSeparator2 = new JSeparator();
         consoleLabel = new JLabel();
         timePanel = new JPanel();
@@ -608,12 +618,6 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
         jSplitPane3.setRightComponent(jPanel17);
 
         robotTabs.addTab("Robot 3", jSplitPane3);
-
-        titleLabel.setBackground(new Color(0, 0, 0));
-        titleLabel.setFont(new Font("Bernard MT Condensed", 1, 48));
-        titleLabel.setForeground(new Color(255, 0, 0));
-        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        titleLabel.setText("Robot #1 Advanced Planner");
 
         jSeparator2.setForeground(new Color(51, 51, 51));
         jSeparator2.setFont(new Font("Tahoma", 0, 36));

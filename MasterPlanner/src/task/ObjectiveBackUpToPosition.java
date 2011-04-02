@@ -15,6 +15,14 @@ public class ObjectiveBackUpToPosition extends Objective {
 		m_positionIndex = positionIndex;
 	}
 	
+	public String getPathName() { return m_pathName; }
+	
+	public int getPositionIndex() { return m_positionIndex; }
+	
+	public void setPathName(String pathName) { m_pathName = pathName; }
+	
+	public void setPositionIndex(int positionIndex) { m_positionIndex = positionIndex; }
+	
 	public void execute() {
 		
 	}

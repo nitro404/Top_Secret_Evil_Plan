@@ -13,6 +13,10 @@ public class ObjectiveDropOffBlock extends Objective {
 		m_dropOffLocationID = dropOffLocationID;
 	}
 	
+	public byte getDropOffLocationID() { return m_dropOffLocationID; }
+	
+	public void setDropOffLocationID(byte dropOffLocationID) { m_dropOffLocationID = dropOffLocationID; }
+	
 	public void execute() {
 		
 	}

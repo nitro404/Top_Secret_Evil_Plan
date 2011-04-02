@@ -5,6 +5,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import task.*;
+import path.Path;
 import planner.*;
 import shared.*;
 
@@ -441,6 +442,56 @@ public class TaskEditorWindow extends JFrame implements ActionListener, ListSele
         pack();
     }
     
+    private Objective createObjective() {
+    	Objective newObjective = null;
+    	
+    	if(m_moveToPositionRadioButton.isSelected()) {
+    		Path p = SystemManager.pathSystem.getPath(m_moveToPositionPathName);
+    		if(p == null || m_moveToPositionIndex < 0 || m_moveToPositionIndex >= p.numberOfVertices()) {
+    			JOptionPane.showMessageDialog(this, "Please select position to move to.", "No Position Selected", JOptionPane.ERROR_MESSAGE);
+    			return null;
+    		}
+    		
+    		newObjective = new ObjectiveMoveToPosition(m_moveToPositionPathName, m_moveToPositionIndex);
+    	}
+    	else if(m_backUpToPositionRadioButton.isSelected()) {
+    		Path p = SystemManager.pathSystem.getPath(m_backUpToPositionPathName);
+    		if(p == null || m_backUpToPositionIndex < 0 || m_backUpToPositionIndex >= p.numberOfVertices()) {
+    			JOptionPane.showMessageDialog(this, "Please select position to back up to.", "No Position Selected", JOptionPane.ERROR_MESSAGE);
+    			return null;
+    		}
+    		
+    		newObjective = new ObjectiveBackUpToPosition(m_backUpToPositionPathName, m_backUpToPositionIndex);
+    	}
+    	else if(m_lookAtPositionRadioButton.isSelected()) {
+    		Path p = SystemManager.pathSystem.getPath(m_lookAtPositionPathName);
+    		if(p == null || m_lookAtPositionIndex < 0 || m_lookAtPositionIndex >= p.numberOfVertices()) {
+    			JOptionPane.showMessageDialog(this, "Please select position to look at.", "No Position Selected", JOptionPane.ERROR_MESSAGE);
+    			return null;
+    		}
+    		
+    		newObjective = new ObjectiveLookAtPosition(m_lookAtPositionPathName, m_lookAtPositionIndex);
+    	}
+    	else if(m_pickUpBlockRadioButton.isSelected()) {
+    		if(m_pickUpBlockID < 0 || m_pickUpBlockID >= SystemManager.blockSystem.numberOfBlocks()) {
+    			JOptionPane.showMessageDialog(this, "Please select a block to pick up.", "No Block Selected", JOptionPane.ERROR_MESSAGE);
+    			return null;
+    		}
+    		
+    		newObjective = new ObjectivePickUpBlock(m_pickUpBlockID);
+    	}
+    	else if(m_dropOffBlockAtLocationRadioButton.isSelected()) {
+    		if(m_dropOffBlockAtLocationID < 0 || m_dropOffBlockAtLocationID >= SystemManager.blockSystem.numberOfDropOffLocations()) {
+    			JOptionPane.showMessageDialog(this, "Please select a drop off location.", "No Drop Off Location Selected", JOptionPane.ERROR_MESSAGE);
+    			return null;
+    		}
+    		
+    		newObjective = new ObjectiveDropOffBlock(m_dropOffBlockAtLocationID);
+    	}
+    	
+    	return newObjective;
+    }
+    
     private Task createTask() {
     	Task newTask = null;
     	
@@ -519,6 +570,42 @@ public class TaskEditorWindow extends JFrame implements ActionListener, ListSele
 			update();
 		}
 		else if(e.getSource() == m_objectiveList) {
+			if(m_robotList.getSelectedIndex() < 0 || m_robotList.getSelectedIndex() >= SystemManager.robotSystem.numberOfRobots()) { return; }
+			if(m_taskList.getSelectedIndex() < 0 || m_taskList.getSelectedIndex() >= SystemManager.taskManager.getTaskList(m_robotList.getSelectedIndex()).numberOfTasks()) { return; }
+			if(m_objectiveList.getSelectedIndex() < 0 || m_objectiveList.getSelectedIndex() >= SystemManager.taskManager.getTaskList(m_robotList.getSelectedIndex()).getTask(m_taskList.getSelectedIndex()).numberOfObjectives()) { return; }
+			
+			clearObjective();
+			
+			Objective o = SystemManager.taskManager.getTaskList(m_robotList.getSelectedIndex()).getTask(m_taskList.getSelectedIndex()).getObjective(m_objectiveList.getSelectedIndex());
+			if(o instanceof ObjectiveMoveToPosition) {
+				ObjectiveMoveToPosition o2 = (ObjectiveMoveToPosition) o;
+				m_moveToPositionRadioButton.setSelected(true);
+				m_moveToPositionIndex = o2.getPositionIndex();
+				m_moveToPositionPathName = o2.getPathName();
+			}
+			else if(o instanceof ObjectiveBackUpToPosition) {
+				ObjectiveBackUpToPosition o2 = (ObjectiveBackUpToPosition) o;
+				m_backUpToPositionRadioButton.setSelected(true);
+				m_backUpToPositionIndex = o2.getPositionIndex();
+				m_backUpToPositionPathName = o2.getPathName();
+			}
+			else if(o instanceof ObjectiveLookAtPosition) {
+				ObjectiveLookAtPosition o2 = (ObjectiveLookAtPosition) o;
+				m_lookAtPositionRadioButton.setSelected(true);
+				m_lookAtPositionIndex = o2.getPositionIndex();
+				m_lookAtPositionPathName = o2.getPathName();
+			}
+			else if(o instanceof ObjectivePickUpBlock) {
+				ObjectivePickUpBlock o2 = (ObjectivePickUpBlock) o;
+				m_pickUpBlockRadioButton.setSelected(true);
+				m_pickUpBlockID = o2.getBlockID();
+			}
+			else if(o instanceof ObjectiveDropOffBlock) {
+				ObjectiveDropOffBlock o2 = (ObjectiveDropOffBlock) o;
+				m_dropOffBlockAtLocationRadioButton.setSelected(true);
+				m_dropOffBlockAtLocationID = o2.getDropOffLocationID();
+			}
+			
 			update();
 		}
 	}
@@ -526,46 +613,61 @@ public class TaskEditorWindow extends JFrame implements ActionListener, ListSele
 	public void actionPerformed(ActionEvent e) {
 		if(m_updating) { return; }
 		
-		if(e.getSource() == m_moveToPositionRadioButton) {
-			
-		}
-		else if(e.getSource() == m_backUpToPositionRadioButton) {
-			
-		}
-		else if(e.getSource() == m_lookAtPositionRadioButton) {
-			
-		}
-		else if(e.getSource() == m_pickUpBlockRadioButton) {
-			
-		}
-		else if(e.getSource() == m_dropOffBlockAtLocationRadioButton) {
-			
-		}
+		if(e.getSource() == m_moveToPositionRadioButton) { }
+		else if(e.getSource() == m_backUpToPositionRadioButton) { }
+		else if(e.getSource() == m_lookAtPositionRadioButton) { }
+		else if(e.getSource() == m_pickUpBlockRadioButton) { }
+		else if(e.getSource() == m_dropOffBlockAtLocationRadioButton) { }
 		else if(e.getSource() == m_addObjectiveButton) {
-			/*
-			clearTask();
+			if(m_robotList.getSelectedIndex() < 0 || m_robotList.getSelectedIndex() >= SystemManager.robotSystem.numberOfRobots()) {
+				JOptionPane.showMessageDialog(this, "Please select a robot first.", "No Robot Selected", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			
+			if(m_taskList.getSelectedIndex() < 0 || m_taskList.getSelectedIndex() >= SystemManager.taskManager.getTaskList(m_robotList.getSelectedIndex()).numberOfTasks()) {
+				JOptionPane.showMessageDialog(this, "Please select a task first.", "No Task Selected", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			
+			Objective newObjective = createObjective();
+			if(newObjective == null) { return; }
+			
+			SystemManager.taskManager.getTaskList(m_robotList.getSelectedIndex()).getTask(m_taskList.getSelectedIndex()).addObjective(newObjective);
+			
+			clearObjective();
 			update();
-			*/
 		}
 		else if(e.getSource() == m_updateObjectiveButton) {
-			/*
-			clearTask();
+			if(m_robotList.getSelectedIndex() < 0 || m_robotList.getSelectedIndex() >= SystemManager.robotSystem.numberOfRobots()) {
+				JOptionPane.showMessageDialog(this, "Please select a robot first.", "No Robot Selected", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			
+			if(m_taskList.getSelectedIndex() < 0 || m_taskList.getSelectedIndex() >= SystemManager.taskManager.getTaskList(m_robotList.getSelectedIndex()).numberOfTasks()) {
+				JOptionPane.showMessageDialog(this, "Please select a task first.", "No Task Selected", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			
+			if(m_objectiveList.getSelectedIndex() < 0 || m_objectiveList.getSelectedIndex() >= SystemManager.taskManager.getTaskList(m_robotList.getSelectedIndex()).getTask(m_taskList.getSelectedIndex()).numberOfObjectives()) {
+				JOptionPane.showMessageDialog(this, "Please select an objective first.", "No Objective Selected", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			
+			Objective newObjective = createObjective();
+			if(newObjective == null) { return; }
+			
+			SystemManager.taskManager.getTaskList(m_robotList.getSelectedIndex()).getTask(m_taskList.getSelectedIndex()).setObjective(m_objectiveList.getSelectedIndex(), newObjective);
+			
+			clearObjective();
 			update();
-			*/
 		}
 		else if(e.getSource() == m_clearObjectiveButton) {
 			clearObjective();
 			update();
 		}
-		else if(e.getSource() == m_lastTaskRadioButton) {
-			
-		}
-		else if(e.getSource() == m_nextTaskRadioButton) {
-			
-		}
-		else if(e.getSource() == m_choiceTaskRadioButton) {
-			
-		}
+		else if(e.getSource() == m_lastTaskRadioButton) { }
+		else if(e.getSource() == m_nextTaskRadioButton) { }
+		else if(e.getSource() == m_choiceTaskRadioButton) { }
 		else if(e.getSource() == m_addTaskButton) {
 			if(m_robotList.getSelectedIndex() < 0 || m_robotList.getSelectedIndex() >= SystemManager.robotSystem.numberOfRobots()) {
 				JOptionPane.showMessageDialog(this, "Please select a robot first.", "No Robot Selected", JOptionPane.ERROR_MESSAGE);

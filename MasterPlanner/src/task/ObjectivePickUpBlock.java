@@ -13,6 +13,10 @@ public class ObjectivePickUpBlock extends Objective {
 		m_blockID = blockID;
 	}
 	
+	public byte getBlockID() { return m_blockID; }
+	
+	public void setBlockID(byte blockID) { m_blockID = blockID; }
+	
 	public void execute() {
 		
 	}
