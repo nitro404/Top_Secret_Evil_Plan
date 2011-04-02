@@ -3,6 +3,7 @@ package server;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import settings.*;
 import shared.*;
 
 public class ServerWindow extends JFrame implements ActionListener, WindowListener, Updatable {
@@ -21,6 +22,7 @@ public class ServerWindow extends JFrame implements ActionListener, WindowListen
 	private JMenu m_settingsMenu;
 	private JCheckBoxMenuItem m_settingsAutoScrollConsoleMenuWindowItem;
 	private JMenu m_settingsSignalsMenu;
+	private JCheckBoxMenuItem m_settingsSignalsIgnorePingPongMenuItem;
 	private JRadioButtonMenuItem[] m_settingsSignalsMenuItem;
 	private ButtonGroup m_settingsSignalsButtonGroup;
 	private JMenuItem m_settingsSaveMenuItem;
@@ -57,6 +59,7 @@ public class ServerWindow extends JFrame implements ActionListener, WindowListen
         m_settingsMenu = new JMenu("Settings");
         m_settingsAutoScrollConsoleMenuWindowItem = new JCheckBoxMenuItem("Auto-scroll Console Window");
         m_settingsSignalsMenu = new JMenu("Signal Debugging");
+        m_settingsSignalsIgnorePingPongMenuItem = new JCheckBoxMenuItem("Ignore Ping Pong Signals");
         m_settingsSignalsMenuItem = new JRadioButtonMenuItem[SignalDebugLevel.signalDebugLevels.length];
         for(byte i=0;i<SignalDebugLevel.signalDebugLevels.length;i++) {
         	m_settingsSignalsMenuItem[i] = new JRadioButtonMenuItem(SignalDebugLevel.signalDebugLevels[i]); 
@@ -67,12 +70,14 @@ public class ServerWindow extends JFrame implements ActionListener, WindowListen
         helpAboutMenuItem = new JMenuItem("About");
         
         m_settingsAutoScrollConsoleMenuWindowItem.setSelected(true);
+        m_settingsSignalsIgnorePingPongMenuItem.setSelected(SettingsManager.defaultIgnorePingPongSignals);
         m_settingsSignalsMenuItem[0].setSelected(true);
         
         m_settingsSignalsButtonGroup = new ButtonGroup();
         
         m_fileExitMenuItem.addActionListener(this);
         m_settingsAutoScrollConsoleMenuWindowItem.addActionListener(this);
+        m_settingsSignalsIgnorePingPongMenuItem.addActionListener(this);
         for(byte i=0;i<SignalDebugLevel.signalDebugLevels.length;i++) {
         	m_settingsSignalsMenuItem[i].addActionListener(this);
         }
@@ -86,6 +91,7 @@ public class ServerWindow extends JFrame implements ActionListener, WindowListen
         m_fileMenu.add(m_fileExitMenuItem);
         
         m_settingsMenu.add(m_settingsAutoScrollConsoleMenuWindowItem);
+        m_settingsSignalsMenu.add(m_settingsSignalsIgnorePingPongMenuItem);
         for(byte i=0;i<SignalDebugLevel.signalDebugLevels.length;i++) {
         	m_settingsSignalsMenu.add(m_settingsSignalsMenuItem[i]);
         }
@@ -138,6 +144,9 @@ public class ServerWindow extends JFrame implements ActionListener, WindowListen
 		else if(e.getSource() == m_settingsAutoScrollConsoleMenuWindowItem) {
 			SystemManager.settings.setAutoScrollConsoleWindow(m_settingsAutoScrollConsoleMenuWindowItem.isSelected());
 		}
+		else if(e.getSource() == m_settingsSignalsIgnorePingPongMenuItem) {
+			SystemManager.settings.setIgnorePingPongSignals(m_settingsSignalsIgnorePingPongMenuItem.isSelected());
+		}
 		else if(e.getSource() == m_settingsSaveMenuItem) {
 			SystemManager.settings.save();
 		}
@@ -156,6 +165,7 @@ public class ServerWindow extends JFrame implements ActionListener, WindowListen
 	public void update() {
 		m_updating = true;
 		
+		m_settingsSignalsIgnorePingPongMenuItem.setSelected(SystemManager.settings.getIgnorePingPongSignals());
 		m_settingsSignalsMenuItem[SystemManager.settings.getSignalDebugLevel()].setSelected(true);
 		m_settingsAutoScrollConsoleMenuWindowItem.setSelected(SystemManager.settings.getAutoScrollConsoleWindow());
 		

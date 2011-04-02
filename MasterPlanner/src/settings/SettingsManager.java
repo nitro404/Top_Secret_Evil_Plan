@@ -11,7 +11,6 @@ import javax.imageio.ImageIO;
 import block.*;
 import robot.*;
 import pot.*;
-import imaging.*;
 import client.*;
 import planner.*;
 import shared.*;
@@ -64,7 +63,7 @@ public class SettingsManager {
 	final public static boolean defaultAutoConnectOnStartup = true;
 	final public static boolean defaultTakeWebcamSnapshotOnStartup = true;
 	final public static boolean defaultUseStaticStationImages = true;
-	final public static Dimension defaultWebcamResolution = Webcam.DEFAULT_RESOLUTION;
+	final public static Dimension defaultWebcamResolution = new Dimension(640, 480);
 	final public static int defaultTimeLimit = 15;
 	final public static int defaultNumberOfTrackers = 3;
 	final public static Color defaultSelectedColour = Color.RED;

@@ -111,7 +111,10 @@ public class ClientInputSignalQueue extends Thread {
 				
 				if(SystemManager.settings.getSignalDebugLevel() == SignalDebugLevel.Incoming ||
 				   SystemManager.settings.getSignalDebugLevel() == SignalDebugLevel.Both) {
-					SystemManager.console.writeLine("Received from " + m_client.getName() + ": " + s.toString());
+					if(!SystemManager.settings.getIgnorePingPongSignals() || 
+					   !((s.getSignalType() == SignalType.Ping || s.getSignalType() == SignalType.Pong) && SystemManager.settings.getIgnorePingPongSignals())) {
+						SystemManager.console.writeLine("Received from " + m_client.getName() + ": " + s.toString());
+					}
 				}
 				
 				if(s.getSignalType() == SignalType.Ping) {

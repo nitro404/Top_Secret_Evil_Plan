@@ -1,11 +1,9 @@
 package shared;
 
 import java.awt.Point;
+import server.*;
 
 public class Position extends Point {
-	
-	final public static int MAX_X = 640;
-	final public static int MAX_Y = 480 * 3;
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -22,7 +20,7 @@ public class Position extends Point {
 	}
 	
 	public boolean isValid() {
-		return x >= 0 && y >= 0 && x < MAX_X && y < MAX_Y; 
+		return x >= 0 && y >= 0 && x < getMaxX() && y < getMaxY(); 
 	}
 	
 	public static boolean isValid(Position p) {
@@ -30,9 +28,17 @@ public class Position extends Point {
 	}
 	
 	public static boolean isValid(Point p) {
-		return p != null && p.x >= 0 && p.y >= 0 && p.x < MAX_X && p.y < MAX_Y;
+		return p != null && p.x >= 0 && p.y >= 0 && p.x < getMaxX() && p.y < getMaxY();
 	}
-
+	
+	public static int getMaxX() {
+		return SystemManager.settings.getWebcamResolution().width;
+	}
+	
+	public static int getMaxY() {
+		return SystemManager.settings.getWebcamResolution().height * SystemManager.settings.getNumberOfTrackers();
+	}
+	
 	public String toString() {
 		return "(" + x + ", " +  y + ")";
 	}

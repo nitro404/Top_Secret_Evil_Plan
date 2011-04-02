@@ -38,7 +38,10 @@ public class ClientOutputSignalQueue extends Thread {
 				
 				if(SystemManager.settings.getSignalDebugLevel() == SignalDebugLevel.Outgoing ||
 				   SystemManager.settings.getSignalDebugLevel() == SignalDebugLevel.Both) {
-					SystemManager.console.writeLine("Sending to " + m_client.getName() + ": " + s.toString());
+					if(!SystemManager.settings.getIgnorePingPongSignals() || 
+					   !((s.getSignalType() == SignalType.Ping || s.getSignalType() == SignalType.Pong) && SystemManager.settings.getIgnorePingPongSignals())) {
+						SystemManager.console.writeLine("Sending to " + m_client.getName() + ": " + s.toString());
+					}
 				}
 				
 				if(SignalType.isValid(s.getSignalType())) {

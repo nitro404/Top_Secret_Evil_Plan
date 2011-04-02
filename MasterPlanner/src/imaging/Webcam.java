@@ -16,6 +16,7 @@ import javax.media.StartEvent;
 import javax.media.control.FrameGrabbingControl;
 import javax.media.format.VideoFormat;
 import javax.media.util.BufferToImage;
+import settings.*;
 
 public class Webcam implements ControllerListener {
 	
@@ -28,9 +29,7 @@ public class Webcam implements ControllerListener {
 	private Object m_waitSync;
 	private boolean m_transition;
 	
-	final public static int DEFAULT_WIDTH = 640;
-	final public static int DEFAULT_HEIGHT = 480;
-	final public static Dimension DEFAULT_RESOLUTION = new Dimension(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+	final public static Dimension DEFAULT_RESOLUTION = SettingsManager.defaultWebcamResolution;
 	
 	public Webcam(int width, int height) {
 		this(new Dimension(width, height));

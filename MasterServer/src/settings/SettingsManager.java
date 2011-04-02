@@ -1,7 +1,10 @@
 package settings;
 
+import java.awt.Dimension;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.StringTokenizer;
+
 import server.*;
 import shared.*;
 
@@ -11,14 +14,20 @@ public class SettingsManager {
 	
 	private InetAddress m_trackerIPAddress[];
 	private int m_port;
+	private boolean m_ignorePingPongSignals;
 	private byte m_signalDebugLevel;
 	private boolean m_autoScrollConsoleWindow;
+	private int m_numberOfTrackers;
+	private Dimension m_webcamResolution;
 	
 	final public static String defaultSettingsFileName = "server.ini";
 	public static InetAddress[] defaultTrackerIPAddress;
 	final public static int defaultPort = Server.DEFAULT_PORT;
+	final public static boolean defaultIgnorePingPongSignals = true;
 	private byte defaultSignalDebugLevel = SignalDebugLevel.Off;
 	private boolean defaultAutoScrollConsoleWindow = true;
+	final public static int defaultNumberOfTrackers = 3;
+	final public static Dimension defaultWebcamResolution = new Dimension(640, 480);
 	
 	public SettingsManager() {
 		m_settings = new VariableSystem();
@@ -30,8 +39,11 @@ public class SettingsManager {
 		
 		m_port = defaultPort;
 		m_trackerIPAddress = defaultTrackerIPAddress;
+		m_ignorePingPongSignals = defaultIgnorePingPongSignals;
 		m_signalDebugLevel = defaultSignalDebugLevel;
 		m_autoScrollConsoleWindow = defaultAutoScrollConsoleWindow;
+		m_numberOfTrackers = defaultNumberOfTrackers;
+		m_webcamResolution = defaultWebcamResolution;
 	}
 
 	public InetAddress getTrackerIPAddress(int trackerNumber) {
@@ -46,9 +58,15 @@ public class SettingsManager {
 	
 	public int getPort() { return m_port; }
 	
+	public boolean getIgnorePingPongSignals() { return m_ignorePingPongSignals; }
+	
 	public byte getSignalDebugLevel() { return m_signalDebugLevel; }
 	
 	public boolean getAutoScrollConsoleWindow() { return m_autoScrollConsoleWindow; }
+	
+	public int getNumberOfTrackers() { return m_numberOfTrackers; }
+	
+	public Dimension getWebcamResolution() { return m_webcamResolution; }
 	
 	public boolean setTrackerIPAddress(int trackerNumber, String hostAddress) {
 		if(hostAddress == null || trackerNumber < 1 || trackerNumber > m_trackerIPAddress.length) { return false; }
@@ -62,6 +80,22 @@ public class SettingsManager {
 	}
 	
 	public void setPort(int port) { if(port >= 0 && port <= 65355) { m_port = port; } }
+
+	public void setIgnorePingPongSignals(boolean ignorePingPongSignals) { m_ignorePingPongSignals = ignorePingPongSignals; }
+	
+	public boolean setIgnorePingPongSignals(String data) {
+		if(data == null) { return false; }
+		String value = data.trim();
+		if(value.equalsIgnoreCase("true")) {
+			m_ignorePingPongSignals = true;
+			return true;
+		}
+		else if(value.equalsIgnoreCase("false")) {
+			m_ignorePingPongSignals = false;
+			return true;
+		}
+		return false;
+	}
 	
 	public void setSignalDebugLevel(byte signalDebugLevel) { if(SignalDebugLevel.isValid(signalDebugLevel)) { m_signalDebugLevel = signalDebugLevel; } }
 
@@ -79,6 +113,46 @@ public class SettingsManager {
 			return true;
 		}
 		return false;
+	}
+	
+	public boolean setNumberOfTrackers(int numberOfTrackers) {
+		if(numberOfTrackers < 1) { return false; }
+		m_numberOfTrackers = numberOfTrackers;
+		return true;
+	}
+	
+	public boolean setWebcamResolution(int x, int y) {
+		return setWebcamResolution(new Dimension(x, y));
+	}
+	
+	public boolean setWebcamResolution(Dimension resolution) {
+		if(resolution == null) { return false; }
+		if(resolution.width < 16 || resolution.height < 16 || resolution.height > 4096 || resolution.width > 4096) { return false; }
+		m_webcamResolution = resolution;
+		return true;
+	}
+	
+	public boolean setWebcamResolution(String data) {
+		if(data == null) { return false; }
+		String value = data.trim();
+		if(value == null) { return false; }
+		
+		StringTokenizer st = new StringTokenizer(value, ",x ", false);
+		if(st.countTokens() != 2) { return false; }
+		
+		int x, y;
+		try {
+			x = Integer.parseInt(st.nextToken());
+			y = Integer.parseInt(st.nextToken());
+		}
+		catch(NumberFormatException e) {
+			return false;
+		}
+		
+		if(x < 16 || y < 16 || x > 4096 || y > 4096) { return false; }
+		
+		m_webcamResolution = new Dimension(x, y);
+		return true;
 	}
 	
 	public boolean load() { return loadFrom(defaultSettingsFileName); }
@@ -99,8 +173,11 @@ public class SettingsManager {
 			setTrackerIPAddress((i + 1), m_settings.getValue("Robot Tracker " + (i + 1) + " IP", "Settings"));
 		}
 		try { setPort(Integer.parseInt(m_settings.getValue("Port", "Settings"))); } catch(NumberFormatException e) { }
+		setIgnorePingPongSignals(m_settings.getValue("Ignore Ping Pong Signals", "Settings"));
 		setSignalDebugLevel(SignalDebugLevel.parseFrom(m_settings.getValue("Signal Debug Level", "Settings")));
 		setAutoScrollConsoleWindow(m_settings.getValue("Auto-scroll Console Window", "Settings"));
+		try { setNumberOfTrackers(Integer.parseInt(m_settings.getValue("Number of Trackers", "Settings"))); } catch(NumberFormatException e) { }
+		setWebcamResolution(m_settings.getValue("Webcam Resolution", "Settings"));
 		
 		return true;
 	}
@@ -111,8 +188,11 @@ public class SettingsManager {
 			m_settings.setValue("Robot Tracker " + (i + 1) + " IP Address", m_trackerIPAddress[i].getHostAddress(), "Settings");
 		}
 		m_settings.setValue("Port", m_port, "Settings");
+		m_settings.setValue("Ignore Ping Pong Signals", m_ignorePingPongSignals, "Settings");
 		m_settings.setValue("Signal Debug Level", SignalDebugLevel.toString(m_signalDebugLevel), "Settings");
 		m_settings.setValue("Auto-scroll Console Window", m_autoScrollConsoleWindow, "Settings");
+		m_settings.setValue("Number of Trackers", m_numberOfTrackers, "Settings");
+		m_settings.setValue("Webcam Resolution", m_webcamResolution.width + ", " + m_webcamResolution.height, "Settings");
 		
 		// group the settings by categories
 		m_settings.sort();
