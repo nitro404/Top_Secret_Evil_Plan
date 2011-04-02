@@ -728,7 +728,11 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
         timeElapsedTextField.setEditable(false);
         maxTimeTextField.setEditable(false);
         timeRemainingTextField.setEditable(false);
-        currentTimeTextField.setText("XX:XX:XX");
+        currentTimeTextField.setText("00:00");
+        maxTimeTextField.setText("00:00");
+        timeElapsedTextField.setText("00:00");
+        timeRemainingTextField.setText("00:00");
+        
         robotIDTextField3.setText("XX:XX:X3");
         robotNameTextField3.setText("XX:XX:XX");
         stateTextField3.setText("XX:XX:XX");
@@ -738,9 +742,6 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
         robotIDTextField1.setText("XX:XX:X1");
         robotNameTextField1.setText("XX:XX:XX");
         stateTextField1.setText("XX:XX:XX");
-        timeElapsedTextField.setText("XX:XX:XX");
-        maxTimeTextField.setText("XX:XX:XX");
-        timeRemainingTextField.setText("XX:XX:XX");
     }
     
     private void initLayout() {
@@ -1492,6 +1493,11 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
 		m_fileDisconnectMenuItem.setEnabled(SystemManager.client.isConnected());
 		m_fileStartSimulationMenuItem.setEnabled(SystemManager.client.isConnected());
 		m_editModeMenu.setEnabled(!SystemManager.client.isConnected());
+		
+        currentTimeTextField.setText("00:00");
+        maxTimeTextField.setText(SystemManager.timer.getTimeLimitString());
+        timeElapsedTextField.setText(SystemManager.timer.getTimeElapsedString());
+        timeRemainingTextField.setText(SystemManager.timer.getTimeRemainingString());
 		
 		try {
 			m_consoleText.setText(SystemManager.console.toString());
