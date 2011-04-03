@@ -712,10 +712,10 @@ public class TaskEditorWindow extends JFrame implements ActionListener, ListSele
 		
 		if(e.getButton() == MouseEvent.BUTTON3) {
 			if(e.getSource() == m_taskList && m_taskList.getSelectedIndex() >= 0) {
-				m_taskPopupMenu.show(this, m_mousePosition.x, m_mousePosition.y);
+				m_taskPopupMenu.show(m_taskList, e.getX(), e.getY());
 			}
 			else if(e.getSource() == m_objectiveList && m_objectiveList.getSelectedIndex() >= 0) {
-				m_objectivePopupMenu.show(this, m_mousePosition.x, m_mousePosition.y);
+				m_objectivePopupMenu.show(m_objectiveList, e.getX(), e.getY());
 			}
 		}
 	}
