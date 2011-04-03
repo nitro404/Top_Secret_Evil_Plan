@@ -2,16 +2,23 @@ package task;
 
 import java.util.StringTokenizer;
 import java.io.PrintWriter;
+import robot.*;
+import block.*;
+import planner.*;
 import settings.*;
 
 public class ObjectivePickUpBlock extends Objective {
 	
 	private byte m_blockID;
+	private Block m_block;
+	private boolean m_pickingUpBlock;
 	
 	public ObjectivePickUpBlock(byte blockID) {
 		super();
 		m_objectiveType = ObjectiveType.PickUpBlock;
 		m_blockID = blockID;
+		m_block = null;
+		m_pickingUpBlock = false;
 	}
 	
 	public byte getBlockID() { return m_blockID; }
@@ -19,7 +26,20 @@ public class ObjectivePickUpBlock extends Objective {
 	public void setBlockID(byte blockID) { m_blockID = blockID; }
 	
 	public void execute() {
+		if(m_objectiveState == ObjectiveState.New) {
+			m_objectiveState = ObjectiveState.Started;
+		}
 		
+		if(m_block == null) {
+			m_block = SystemManager.blockSystem.getBlock(m_blockID);
+		}
+		
+		if(!m_pickingUpBlock) {
+			SystemManager.sendInstructionToRobot(RobotInstruction.PickUp);
+		}
+		else {
+			SystemManager.sendInstructionToRobot(RobotInstruction.Null);
+		}
 	}
 
 	public static ObjectivePickUpBlock parseFrom(String data) {

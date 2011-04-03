@@ -7,32 +7,32 @@ import planner.*;
 
 public class ObjectiveChoiceBlock extends Objective {
 	
-	private int m_hasBlockObjectiveIndex;
-	private int m_noBlockObjectiveIndex;
+	private int m_hasBlockObjectiveID;
+	private int m_noBlockObjectiveID;
 	
 	public ObjectiveChoiceBlock(int hasBlockObjectiveIndex, int noBlockObjectiveIndex) {
 		super();
 		m_objectiveType = ObjectiveType.ChoiceBlock;
-		m_hasBlockObjectiveIndex = hasBlockObjectiveIndex;
-		m_noBlockObjectiveIndex = noBlockObjectiveIndex;
+		m_hasBlockObjectiveID = hasBlockObjectiveIndex;
+		m_noBlockObjectiveID = noBlockObjectiveIndex;
 	}
 	
-	public int getHasBlockObjectiveIndex() { return m_hasBlockObjectiveIndex; }
+	public int getHasBlockObjectiveID() { return m_hasBlockObjectiveID; }
 	
-	public int getNoBlockObjectiveIndex() { return m_noBlockObjectiveIndex; }
+	public int getNoBlockObjectiveID() { return m_noBlockObjectiveID; }
 	
-	public void setHasBlockObjectiveIndex(int hasBlockObjectiveIndex) { m_hasBlockObjectiveIndex = hasBlockObjectiveIndex; }
+	public void setHasBlockObjectiveID(int hasBlockObjectiveIndex) { m_hasBlockObjectiveID = hasBlockObjectiveIndex; }
 	
-	public void setNoBlockObjectiveIndex(int noBlockObjectiveIndex) { m_noBlockObjectiveIndex = noBlockObjectiveIndex; }
+	public void setNoBlockObjectiveID(int noBlockObjectiveIndex) { m_noBlockObjectiveID = noBlockObjectiveIndex; }
 	
 	public void execute() {
 		m_objectiveState = ObjectiveState.Completed;
 		
 		if(SystemManager.robotSystem.getActiveRobot().hasActiveBlock()) {
-			SystemManager.taskManager.getTaskList(SystemManager.robotSystem.getActiveRobotID()).getCurrentTask().setCurrentObjectiveNumber(m_hasBlockObjectiveIndex);
+			SystemManager.taskManager.getTaskList(SystemManager.robotSystem.getActiveRobotID()).getCurrentTask().setCurrentObjectiveByID(m_hasBlockObjectiveID);
 		}
 		else {
-			SystemManager.taskManager.getTaskList(SystemManager.robotSystem.getActiveRobotID()).getCurrentTask().setCurrentObjectiveNumber(m_noBlockObjectiveIndex);
+			SystemManager.taskManager.getTaskList(SystemManager.robotSystem.getActiveRobotID()).getCurrentTask().setCurrentObjectiveByID(m_noBlockObjectiveID);
 		}
 	}
 
@@ -66,12 +66,12 @@ public class ObjectiveChoiceBlock extends Objective {
 	
 	public boolean writeTo(PrintWriter out) {
 		if(out == null) { return false; }
-		out.print("Objective " + m_objectiveID + Variable.SEPARATOR_CHAR + " Choice Block Objective - Has Block " + m_hasBlockObjectiveIndex + " - No Block " + m_noBlockObjectiveIndex);
+		out.print("Objective " + m_objectiveID + Variable.SEPARATOR_CHAR + " Choice Block Objective - Has Block " + m_hasBlockObjectiveID + " - No Block " + m_noBlockObjectiveID);
 		return true;
 	}
 	
 	public String toString() {
-		return "Objective " + m_objectiveID + Variable.SEPARATOR_CHAR + " Choice Block Objective - Has Block " + m_hasBlockObjectiveIndex + " - No Block " + m_noBlockObjectiveIndex;
+		return "Objective " + m_objectiveID + Variable.SEPARATOR_CHAR + " Choice Block Objective - Has Block " + m_hasBlockObjectiveID + " - No Block " + m_noBlockObjectiveID;
 	}
 	
 }

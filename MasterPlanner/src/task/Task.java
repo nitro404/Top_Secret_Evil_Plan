@@ -15,7 +15,7 @@ public class Task implements Updatable{
 	private String m_nextTaskName;
 	private String m_altTaskName;
 	private Vector<Objective> m_objectives;
-	private int m_currentObjective;
+	private int m_currentObjectiveIndex;
 	
 	public Task() {
 		m_taskID = -1;
@@ -26,7 +26,7 @@ public class Task implements Updatable{
 		m_nextTaskName = null;
 		m_altTaskName = null;
 		m_objectives = new Vector<Objective>();
-		m_currentObjective = 0;
+		m_currentObjectiveIndex = 0;
 	}
 	
 	public Task(String taskName) {
@@ -38,7 +38,7 @@ public class Task implements Updatable{
 		m_nextTaskName = null;
 		m_altTaskName = null;
 		m_objectives = new Vector<Objective>();
-		m_currentObjective = 0;
+		m_currentObjectiveIndex = 0;
 	}
 	
 	public Task(String taskName, String nextTaskName) {
@@ -50,7 +50,7 @@ public class Task implements Updatable{
 		m_nextTaskName = nextTaskName;
 		m_altTaskName = null;
 		m_objectives = new Vector<Objective>();
-		m_currentObjective = 0;
+		m_currentObjectiveIndex = 0;
 	}
 	
 	public Task(String taskName, String nextTaskName, String altTaskName) {
@@ -62,7 +62,7 @@ public class Task implements Updatable{
 		m_nextTaskName = nextTaskName;
 		m_altTaskName = altTaskName;
 		m_objectives = new Vector<Objective>();
-		m_currentObjective = 0;
+		m_currentObjectiveIndex = 0;
 	}
 	
 	public byte getTaskID() { return m_taskID; }
@@ -79,10 +79,15 @@ public class Task implements Updatable{
 	
 	public byte getTaskState() { return m_taskState; }
 	
-	public int getCurrentObjectiveNumber() { return m_currentObjective; }
+	public int getCurrentObjectiveIndex() { return m_currentObjectiveIndex; }
+	
+	public int getCurrentObjectiveID() {
+		if(m_currentObjectiveIndex < 0 || m_currentObjectiveIndex >= m_objectives.size()) { return -1; }
+		return m_objectives.elementAt(m_currentObjectiveIndex).getID();
+	}
 	
 	public Objective getCurrentObjective() {
-		return (m_currentObjective < 0 || m_currentObjective >= m_objectives.size()) ? null : m_objectives.elementAt(m_currentObjective);
+		return (m_currentObjectiveIndex < 0 || m_currentObjectiveIndex >= m_objectives.size()) ? null : m_objectives.elementAt(m_currentObjectiveIndex);
 	}
 	
 	public int numberOfObjectives() { return m_objectives.size(); }
@@ -145,10 +150,20 @@ public class Task implements Updatable{
 		return false;
 	}
 	
-	public boolean setCurrentObjectiveNumber(int objectiveNumber) {
-		if(objectiveNumber < 0 || objectiveNumber >= m_objectives.size()) { return false; }
-		m_currentObjective = objectiveNumber;
+	public boolean setCurrentObjectiveByIndex(int objectiveIndex) {
+		if(objectiveIndex < 0 || objectiveIndex >= m_objectives.size()) { return false; }
+		m_currentObjectiveIndex = objectiveIndex;
 		return true;
+	}
+	
+	public boolean setCurrentObjectiveByID(int objectiveID) {
+		for(int i=0;i<m_objectives.size();i++) {
+			if(objectiveID == m_objectives.elementAt(i).getID()) {
+				m_currentObjectiveIndex = i;
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public boolean start() {
@@ -174,20 +189,20 @@ public class Task implements Updatable{
 		}
 		
 		if(m_taskState != TaskState.Started) {
-			if(m_currentObjective == 0 && m_objectives.size() > 0 || m_objectives.elementAt(0).isNew()) {
+			if(m_currentObjectiveIndex == 0 && m_objectives.size() > 0 || m_objectives.elementAt(0).isNew()) {
 				m_taskState = TaskState.Started;
 			}
 		}
 		
 		if(m_taskState != TaskState.Completed) {
-			if(m_currentObjective >= m_objectives.size() - 1 && m_objectives.elementAt(m_objectives.size() - 1).isCompleted()) {
+			if(m_currentObjectiveIndex >= m_objectives.size() - 1 && m_objectives.elementAt(m_objectives.size() - 1).isCompleted()) {
 				m_taskState = TaskState.Completed;
 			}
 		}
 		
 		if(m_taskState == TaskState.Started) {
-			if(m_currentObjective < 0 || m_currentObjective >= m_objectives.size()) { return; }
-			m_objectives.elementAt(m_currentObjective).execute();
+			if(m_currentObjectiveIndex < 0 || m_currentObjectiveIndex >= m_objectives.size()) { return; }
+			m_objectives.elementAt(m_currentObjectiveIndex).execute();
 		}
 	}
 	

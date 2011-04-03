@@ -12,6 +12,7 @@ public class Robot {
 	private String m_name;
 	private RobotPosition m_actualPosition;
 	private RobotPosition m_lastValidActualPosition;
+	private long m_timeReceivedLastValidActualPosition;
 	private RobotPosition m_estimatedPosition;
 	private RobotPosition m_initialPosition;
 	private RobotPosition m_spawnPosition;
@@ -43,6 +44,7 @@ public class Robot {
 		m_initialPosition = position;
 		m_state = RobotState.Idle;
 		m_activeBlockID = -1;
+		m_timeReceivedLastValidActualPosition = -1;
 	}
 	
 	public byte getID() {
@@ -63,6 +65,10 @@ public class Robot {
 	
 	public RobotPosition getLastValidActualPosition() {
 		return m_lastValidActualPosition;
+	}
+	
+	public long getTimeReceivedLastValidActualPosition() {
+		return m_timeReceivedLastValidActualPosition;
 	}
 	
 	public RobotPosition getEstimatedPosition() {
@@ -108,6 +114,7 @@ public class Robot {
 			m_lastValidActualPosition = m_actualPosition;
 			if(!m_spawnPosition.isValid()) {
 				m_spawnPosition = m_actualPosition;
+				m_timeReceivedLastValidActualPosition = System.currentTimeMillis();
 			}
 		}
 		return true;

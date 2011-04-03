@@ -154,7 +154,7 @@ public class TaskList implements Updatable {
 		t.setRobotID(m_robotID);
 		t.setTaskID((byte) m_tasks.size());
 		t.setTaskState(TaskState.New);
-		t.setCurrentObjectiveNumber(0);
+		t.setCurrentObjectiveByIndex(0);
 		m_tasks.add(t);
 		return true;
 	}

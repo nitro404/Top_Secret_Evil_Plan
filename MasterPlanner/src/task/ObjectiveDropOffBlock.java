@@ -2,16 +2,23 @@ package task;
 
 import java.util.StringTokenizer;
 import java.io.PrintWriter;
+import robot.*;
+import block.*;
+import planner.*;
 import settings.*;
 
 public class ObjectiveDropOffBlock extends Objective {
 	
 	private byte m_dropOffLocationID;
+	private DropOffLocation m_dropOffLocation;
+	private boolean m_droppingOffBlock;
 	
 	public ObjectiveDropOffBlock(byte dropOffLocationID) {
 		super();
 		m_objectiveType = ObjectiveType.DropOffBlock;
 		m_dropOffLocationID = dropOffLocationID;
+		m_dropOffLocation = null;
+		m_droppingOffBlock = false;
 	}
 	
 	public byte getDropOffLocationID() { return m_dropOffLocationID; }
@@ -19,7 +26,20 @@ public class ObjectiveDropOffBlock extends Objective {
 	public void setDropOffLocationID(byte dropOffLocationID) { m_dropOffLocationID = dropOffLocationID; }
 	
 	public void execute() {
+		if(m_objectiveState == ObjectiveState.New) {
+			m_objectiveState = ObjectiveState.Started;
+		}
 		
+		if(m_dropOffLocation == null) {
+			m_dropOffLocation = SystemManager.blockSystem.getDropOffLocation(m_dropOffLocationID);
+		}
+		
+		if(!m_droppingOffBlock) {
+			SystemManager.sendInstructionToRobot(RobotInstruction.DropOff);
+		}
+		else {
+			SystemManager.sendInstructionToRobot(RobotInstruction.Null);
+		}
 	}
 
 	public static ObjectiveDropOffBlock parseFrom(String data) {

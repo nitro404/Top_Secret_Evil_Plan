@@ -16,7 +16,7 @@ public class RobotInstruction {
 	final public static byte ArcRight = 11;
 	final public static byte PickUp = 12;
 	final public static byte DropOff = 13;
-	final public static byte Done = 14;
+	final public static byte Finished = 14;
 	
 	final public static String[] robotInstructions = {
 		"Null",
@@ -33,7 +33,7 @@ public class RobotInstruction {
 		"ArcRight",
 		"PickUp",
 		"DropOff",
-		"Done"
+		"Finished"
 	};
 	
 	public static boolean isValid(byte instructionID) {

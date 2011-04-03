@@ -15,6 +15,12 @@ public class RobotSystem implements MouseListener, MouseMotionListener {
 	private int m_selectedRobot;
 	private int m_robotToMove;
 	
+	final public static float distanceAccuracy = 15; // +- 15 pixels (5 cm) (total 10 cm)
+	final public static float angleAccuracy = (float) Math.toRadians(10.0f); // +- 10 degrees (total 20 degrees)
+	final public static float slowDownAngleDifference = (float) Math.toRadians(45.0f); // slow down if distance left to turn is under 45 degrees
+	final public static long slowDownTimeDelay = (long) (2.5f * 1000L); // amount of time to wait before slowing down if no valid pose is received (seconds * millisecond scaling)
+	final public static long intialBackUpTimeDuration = (long) (1.0f * 1000L); // amount of time to wait before slowing down if no valid pose is received (seconds * millisecond scaling)
+	
 	final public static RobotPosition[] defaultRobotPositions = {
 		new RobotPosition(361, 208, 90),
 		new RobotPosition(357, 709, 90),
