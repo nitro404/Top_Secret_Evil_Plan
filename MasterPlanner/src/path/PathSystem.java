@@ -7,6 +7,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import planner.*;
+import settings.Variable;
 import shared.*;
 
 public class PathSystem implements MouseListener, MouseMotionListener {
@@ -254,6 +255,9 @@ public class PathSystem implements MouseListener, MouseMotionListener {
 		String input, data;
 		Path newPath;
 		PathSystem newPathSystem = new PathSystem();
+		Variable v;
+		int numberOfVertices = 0;
+		int numberOfEdges = 0;
 		
 		try {
 			// open the path data file
@@ -276,16 +280,43 @@ public class PathSystem implements MouseListener, MouseMotionListener {
 					if(newPath.numberOfEdges() > 0) {
 						newPathSystem.addPath(newPath);
 						newPath = new Path();
+						numberOfVertices = 0;
+						numberOfEdges = 0;
 					}
 					
 					//set the name for the new path
 					newPath.setName(data.substring(1, data.length() - 1).trim());
-				}
-				// parse an edge and store it in the current path
-				else {
-					Edge e = Edge.parseFrom(data);
-					if(e != null) {
-						newPath.addEdge(e);
+					
+					// get the vertex list header and parse it
+					v = Variable.parseFrom(input = in.readLine());
+					if(v == null) { return newPathSystem; }
+					
+					// verify the vertex list header
+					if(!v.getID().equalsIgnoreCase("Vertices")) { return newPathSystem; }
+					
+					// parse and verify the number of vertices
+					try { numberOfVertices = Integer.parseInt(v.getValue()); }
+					catch(NumberFormatException e) { return newPathSystem; }
+					
+					// parse the vertices
+					for(int i=0;i<numberOfVertices;i++) {
+						newPath.addVertex(Vertex.parseFrom(input = in.readLine()));
+					}
+					
+					// get the edge list header and parse it
+					v = Variable.parseFrom(input = in.readLine());
+					if(v == null) { return newPathSystem; }
+					
+					// verify the edge list header
+					if(!v.getID().equalsIgnoreCase("Edges")) { return newPathSystem; }
+					
+					// parse and verify the number of vertices
+					try { numberOfEdges = Integer.parseInt(v.getValue()); }
+					catch(NumberFormatException e) { return newPathSystem; }
+					
+					// parse an edge and store it in the current path
+					for(int i=0;i<numberOfEdges;i++) {
+						newPath.addEdge(Edge.parseFrom(input = in.readLine()));
 					}
 				}
 			}
@@ -314,7 +345,15 @@ public class PathSystem implements MouseListener, MouseMotionListener {
 			
 			for(int i=0;i<m_paths.size();i++) {
 				out.println("[" + m_paths.elementAt(i).getName() + "]");
+				out.println("Vertices: " + m_paths.elementAt(i).numberOfVertices());
+				for(int j=0;j<m_paths.elementAt(i).numberOfVertices();j++) {
+					out.print("\t");
+					m_paths.elementAt(i).getVertex(j).writeTo(out);
+					out.println();
+				}
+				out.println("Edges: " + m_paths.elementAt(i).numberOfEdges());
 				for(int j=0;j<m_paths.elementAt(i).numberOfEdges();j++) {
+					out.print("\t");
 					m_paths.elementAt(i).getEdge(j).writeTo(out);
 					out.println();
 				}
