@@ -80,16 +80,18 @@ public class TaskEditorWindow extends JFrame implements ActionListener, ListSele
     private JButton m_updateTaskButton;
     
     private JPopupMenu m_taskPopupMenu;
-    private JMenuItem m_taskMoveUp;
-    private JMenuItem m_taskMoveDown;
-    private JMenuItem m_taskMoveRemove;
+    private JMenuItem m_taskMoveUpMenuItem;
+    private JMenuItem m_taskMoveDownMenuItem;
+    private JMenuItem m_taskMoveRemoveMenuItem;
     
     private JPopupMenu m_objectivePopupMenu;
-    private JMenuItem m_objectiveMoveUp;
-    private JMenuItem m_objectiveMoveDown;
-    private JMenuItem m_objectiveMoveRemove;
-    private JMenuItem m_objectiveSetID;
-    private JMenuItem m_objectiveSetNext;
+    private JMenuItem m_objectiveMoveUpMenuItem;
+    private JMenuItem m_objectiveMoveDownMenuItem;
+    private JMenuItem m_objectiveMoveRemoveMenuItem;
+    private JMenuItem m_objectiveSetIDMenuItem;
+    private JMenuItem m_objectiveAddSkipToMenuItem;
+    private JMenuItem m_objectiveAddChoiceBlockMenuItem;
+    private JMenuItem m_objectiveAddLastMenuItem;
     
     private boolean m_updating;
 	
@@ -97,6 +99,7 @@ public class TaskEditorWindow extends JFrame implements ActionListener, ListSele
 	
 	public TaskEditorWindow() {
 		setTitle("Task Editor Window");
+		setPreferredSize(new Dimension(1080, 598)); // 857, 598
 		setMinimumSize(new Dimension(320, 240));
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 		addMouseMotionListener(this);
@@ -159,32 +162,38 @@ public class TaskEditorWindow extends JFrame implements ActionListener, ListSele
 	
 	private void initPopupMenus() {
 	    m_taskPopupMenu = new JPopupMenu();
-	    m_taskMoveUp = new JMenuItem("Move Task Up");
-	    m_taskMoveDown = new JMenuItem("Move Task Down");
-	    m_taskMoveRemove = new JMenuItem("Remove Task");
-	    m_taskMoveUp.addActionListener(this);
-	    m_taskMoveDown.addActionListener(this);
-	    m_taskMoveRemove.addActionListener(this);
-	    m_taskPopupMenu.add(m_taskMoveUp);
-	    m_taskPopupMenu.add(m_taskMoveDown);
-	    m_taskPopupMenu.add(m_taskMoveRemove);
+	    m_taskMoveUpMenuItem = new JMenuItem("Move Task Up");
+	    m_taskMoveDownMenuItem = new JMenuItem("Move Task Down");
+	    m_taskMoveRemoveMenuItem = new JMenuItem("Remove Task");
+	    m_taskMoveUpMenuItem.addActionListener(this);
+	    m_taskMoveDownMenuItem.addActionListener(this);
+	    m_taskMoveRemoveMenuItem.addActionListener(this);
+	    m_taskPopupMenu.add(m_taskMoveUpMenuItem);
+	    m_taskPopupMenu.add(m_taskMoveDownMenuItem);
+	    m_taskPopupMenu.add(m_taskMoveRemoveMenuItem);
 	    
 	    m_objectivePopupMenu = new JPopupMenu();
-	    m_objectiveMoveUp = new JMenuItem("Move Objective Up");
-	    m_objectiveMoveDown = new JMenuItem("Move Objective Down");
-	    m_objectiveMoveRemove = new JMenuItem("Remove Objective");
-	    m_objectiveSetID = new JMenuItem("Set Task ID");
-	    m_objectiveSetNext = new JMenuItem("Set Next Objective");
-	    m_objectiveMoveUp.addActionListener(this);
-	    m_objectiveMoveDown.addActionListener(this);
-	    m_objectiveMoveRemove.addActionListener(this);
-	    m_objectiveSetID.addActionListener(this);
-	    m_objectiveSetNext.addActionListener(this);
-	    m_objectivePopupMenu.add(m_objectiveMoveUp);
-	    m_objectivePopupMenu.add(m_objectiveMoveDown);
-	    m_objectivePopupMenu.add(m_objectiveMoveRemove);
-	    m_objectivePopupMenu.add(m_objectiveSetID);
-	    m_objectivePopupMenu.add(m_objectiveSetNext);
+	    m_objectiveMoveUpMenuItem = new JMenuItem("Move Objective Up");
+	    m_objectiveMoveDownMenuItem = new JMenuItem("Move Objective Down");
+	    m_objectiveMoveRemoveMenuItem = new JMenuItem("Remove Objective");
+	    m_objectiveSetIDMenuItem = new JMenuItem("Set Task ID");
+	    m_objectiveAddSkipToMenuItem = new JMenuItem("Add Skip to Objective");
+	    m_objectiveAddChoiceBlockMenuItem = new JMenuItem("Add Choice Block Objective");
+	    m_objectiveAddLastMenuItem = new JMenuItem("Add Last Objective");
+	    m_objectiveMoveUpMenuItem.addActionListener(this);
+	    m_objectiveMoveDownMenuItem.addActionListener(this);
+	    m_objectiveMoveRemoveMenuItem.addActionListener(this);
+	    m_objectiveSetIDMenuItem.addActionListener(this);
+	    m_objectiveAddSkipToMenuItem.addActionListener(this);
+	    m_objectiveAddChoiceBlockMenuItem.addActionListener(this);
+	    m_objectiveAddLastMenuItem.addActionListener(this);
+	    m_objectivePopupMenu.add(m_objectiveMoveUpMenuItem);
+	    m_objectivePopupMenu.add(m_objectiveMoveDownMenuItem);
+	    m_objectivePopupMenu.add(m_objectiveMoveRemoveMenuItem);
+	    m_objectivePopupMenu.add(m_objectiveSetIDMenuItem);
+	    m_objectivePopupMenu.add(m_objectiveAddSkipToMenuItem);
+	    m_objectivePopupMenu.add(m_objectiveAddChoiceBlockMenuItem);
+	    m_objectivePopupMenu.add(m_objectiveAddLastMenuItem);
 	}
     
     private void initComponents() {
@@ -720,10 +729,19 @@ public class TaskEditorWindow extends JFrame implements ActionListener, ListSele
 		if(SystemManager.client.isConnected()) { return; }
 		
 		if(e.getButton() == MouseEvent.BUTTON3) {
-			if(e.getSource() == m_taskList && m_taskList.getSelectedIndex() >= 0) {
+			if(e.getSource() == m_taskList) {
+			    m_taskMoveUpMenuItem.setEnabled(m_taskList.getSelectedIndex() >= 0);
+			    m_taskMoveDownMenuItem.setEnabled(m_taskList.getSelectedIndex() >= 0);
+			    m_taskMoveRemoveMenuItem.setEnabled(m_taskList.getSelectedIndex() >= 0);
+			    
 				m_taskPopupMenu.show(m_taskList, e.getX(), e.getY());
 			}
-			else if(e.getSource() == m_objectiveList && m_objectiveList.getSelectedIndex() >= 0) {
+			else if(e.getSource() == m_objectiveList) {
+			    m_objectiveMoveUpMenuItem.setEnabled(m_objectiveList.getSelectedIndex() >= 0);
+			    m_objectiveMoveDownMenuItem.setEnabled(m_objectiveList.getSelectedIndex() >= 0);
+			    m_objectiveMoveRemoveMenuItem.setEnabled(m_objectiveList.getSelectedIndex() >= 0);
+			    m_objectiveSetIDMenuItem.setEnabled(m_objectiveList.getSelectedIndex() >= 0);
+				
 				m_objectivePopupMenu.show(m_objectiveList, e.getX(), e.getY());
 			}
 		}
@@ -832,7 +850,7 @@ public class TaskEditorWindow extends JFrame implements ActionListener, ListSele
 			clearTask();
 			update();
 		}
-		else if(e.getSource() == m_objectiveMoveUp) {
+		else if(e.getSource() == m_objectiveMoveUpMenuItem) {
 			if(robotIndex < 0 || robotIndex >= SystemManager.robotSystem.numberOfRobots()) { return; }
 			if(taskIndex < 0 || taskIndex >= SystemManager.taskManager.getTaskList(robotIndex).numberOfTasks()) { return; }
 			if(objectiveIndex < 0 || objectiveIndex >= SystemManager.taskManager.getTaskList(robotIndex).getTask(taskIndex).numberOfObjectives()) { return; }
@@ -848,7 +866,7 @@ public class TaskEditorWindow extends JFrame implements ActionListener, ListSele
 			
 			update();
 		}
-		else if(e.getSource() == m_objectiveMoveDown) {
+		else if(e.getSource() == m_objectiveMoveDownMenuItem) {
 			if(robotIndex < 0 || robotIndex >= SystemManager.robotSystem.numberOfRobots()) { return; }
 			if(taskIndex < 0 || taskIndex >= SystemManager.taskManager.getTaskList(robotIndex).numberOfTasks()) { return; }
 			if(objectiveIndex < 0 || objectiveIndex >= SystemManager.taskManager.getTaskList(robotIndex).getTask(taskIndex).numberOfObjectives()) { return; }
@@ -864,7 +882,7 @@ public class TaskEditorWindow extends JFrame implements ActionListener, ListSele
 			
 			update();
 		}
-		else if(e.getSource() == m_objectiveMoveRemove) {
+		else if(e.getSource() == m_objectiveMoveRemoveMenuItem) {
 			if(robotIndex < 0 || robotIndex >= SystemManager.robotSystem.numberOfRobots()) { return; }
 			if(taskIndex < 0 || taskIndex >= SystemManager.taskManager.getTaskList(robotIndex).numberOfTasks()) { return; }
 			if(objectiveIndex < 0 || objectiveIndex >= SystemManager.taskManager.getTaskList(robotIndex).getTask(taskIndex).numberOfObjectives()) { return; }
@@ -875,7 +893,7 @@ public class TaskEditorWindow extends JFrame implements ActionListener, ListSele
 			
 			update();
 		}
-		else if(e.getSource() == m_objectiveSetID) {
+		else if(e.getSource() == m_objectiveSetIDMenuItem) {
 			if(robotIndex < 0 || robotIndex >= SystemManager.robotSystem.numberOfRobots()) { return; }
 			if(taskIndex < 0 || taskIndex >= SystemManager.taskManager.getTaskList(robotIndex).numberOfTasks()) { return; }
 			if(objectiveIndex < 0 || objectiveIndex >= SystemManager.taskManager.getTaskList(robotIndex).getTask(taskIndex).numberOfObjectives()) { return; }
@@ -904,7 +922,72 @@ public class TaskEditorWindow extends JFrame implements ActionListener, ListSele
 			
 			update();
 		}
-		else if(e.getSource() == m_taskMoveUp) {
+		else if(e.getSource() == m_objectiveAddSkipToMenuItem) {
+			if(robotIndex < 0 || robotIndex >= SystemManager.robotSystem.numberOfRobots()) { return; }
+			if(taskIndex < 0 || taskIndex >= SystemManager.taskManager.getTaskList(robotIndex).numberOfTasks()) { return; }
+			
+			if(SystemManager.taskManager.getTaskList(robotIndex).getTask(taskIndex).numberOfObjectives() < 1) {
+				// error
+				return;
+			}
+			
+			Object[] choices = new Object[SystemManager.taskManager.getTaskList(robotIndex).getTask(taskIndex).numberOfObjectives()];
+			for(int i=0;i<SystemManager.taskManager.getTaskList(robotIndex).getTask(taskIndex).numberOfObjectives();i++) {
+				choices[i] = SystemManager.taskManager.getTaskList(robotIndex).getTask(taskIndex).getObjective(i);
+			}
+			
+			Object input = JOptionPane.showInputDialog(this, "Please choose an objective to skip to:", "Skip to Objective", JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
+			
+			if(input == null) { return; }
+			
+			Objective newObjective = new ObjectiveSkipTo(((Objective) input).getID());
+			newObjective.setID(Objective.getNextObjectiveID());
+			
+			SystemManager.taskManager.getTaskList(robotIndex).getTask(taskIndex).addObjective(newObjective);
+			
+			update();
+		}
+		else if(e.getSource() == this.m_objectiveAddChoiceBlockMenuItem) {
+			if(robotIndex < 0 || robotIndex >= SystemManager.robotSystem.numberOfRobots()) { return; }
+			if(taskIndex < 0 || taskIndex >= SystemManager.taskManager.getTaskList(robotIndex).numberOfTasks()) { return; }
+			
+			if(SystemManager.taskManager.getTaskList(robotIndex).getTask(taskIndex).numberOfObjectives() < 2) {
+				// error
+				return;
+			}
+			
+			Object[] choices = new Object[SystemManager.taskManager.getTaskList(robotIndex).getTask(taskIndex).numberOfObjectives()];
+			for(int i=0;i<SystemManager.taskManager.getTaskList(robotIndex).getTask(taskIndex).numberOfObjectives();i++) {
+				choices[i] = SystemManager.taskManager.getTaskList(robotIndex).getTask(taskIndex).getObjective(i);
+			}
+			
+			Object inputHasBlock = JOptionPane.showInputDialog(this, "Please choose an objective to skip to if the robot has a block:", "Has Block Objective", JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
+			
+			if(inputHasBlock == null) { return; }
+			
+			Object inputNoBLock = JOptionPane.showInputDialog(this, "Please choose an objective to skip to if the robot has no block:", "No Block Objective", JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
+			
+			if(inputNoBLock == null) { return; }
+			
+			Objective newObjective = new ObjectiveChoiceBlock(((Objective) inputHasBlock).getID(), ((Objective) inputNoBLock).getID());
+			newObjective.setID(Objective.getNextObjectiveID());
+			
+			SystemManager.taskManager.getTaskList(robotIndex).getTask(taskIndex).addObjective(newObjective);
+			
+			update();
+		}
+		else if(e.getSource() == this.m_objectiveAddLastMenuItem) {
+			if(robotIndex < 0 || robotIndex >= SystemManager.robotSystem.numberOfRobots()) { return; }
+			if(taskIndex < 0 || taskIndex >= SystemManager.taskManager.getTaskList(robotIndex).numberOfTasks()) { return; }
+			
+			Objective newObjective = new ObjectiveLast();
+			newObjective.setID(Objective.getNextObjectiveID());
+			
+			SystemManager.taskManager.getTaskList(robotIndex).getTask(taskIndex).addObjective(newObjective);
+			
+			update();
+		}
+		else if(e.getSource() == m_taskMoveUpMenuItem) {
 			if(robotIndex < 0 || robotIndex >= SystemManager.robotSystem.numberOfRobots()) { return; }
 			if(taskIndex < 0 || taskIndex >= SystemManager.taskManager.getTaskList(robotIndex).numberOfTasks()) { return; }
 			
@@ -919,7 +1002,7 @@ public class TaskEditorWindow extends JFrame implements ActionListener, ListSele
 			
 			update();
 		}
-		else if(e.getSource() == m_taskMoveDown) {
+		else if(e.getSource() == m_taskMoveDownMenuItem) {
 			if(robotIndex < 0 || robotIndex >= SystemManager.robotSystem.numberOfRobots()) { return; }
 			if(taskIndex < 0 || taskIndex >= SystemManager.taskManager.getTaskList(robotIndex).numberOfTasks()) { return; }
 			
@@ -934,7 +1017,7 @@ public class TaskEditorWindow extends JFrame implements ActionListener, ListSele
 			
 			update();
 		}
-		else if(e.getSource() == m_taskMoveRemove) {
+		else if(e.getSource() == m_taskMoveRemoveMenuItem) {
 			if(robotIndex < 0 || robotIndex >= SystemManager.robotSystem.numberOfRobots()) { return; }
 			if(taskIndex < 0 || taskIndex >= SystemManager.taskManager.getTaskList(robotIndex).numberOfTasks()) { return; }
 			

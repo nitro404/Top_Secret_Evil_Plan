@@ -192,6 +192,15 @@ public class TaskManager implements Updatable {
 							else if(objectiveType == ObjectiveType.DropOffBlock) {
 								newObjective = ObjectiveDropOffBlock.parseFrom(newVariable.getValue());
 							}
+							else if(objectiveType == ObjectiveType.SkipTo) {
+								newObjective = ObjectiveSkipTo.parseFrom(newVariable.getValue());
+							}
+							else if(objectiveType == ObjectiveType.ChoiceBlock) {
+								newObjective = ObjectiveChoiceBlock.parseFrom(newVariable.getValue());
+							}
+							else if(objectiveType == ObjectiveType.Last) {
+								newObjective = ObjectiveLast.parseFrom(newVariable.getValue());
+							}
 							
 							if(newObjective != null) {
 								newObjective.setID(objectiveID);
