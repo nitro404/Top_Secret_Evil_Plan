@@ -34,7 +34,8 @@ public class ObjectiveMoveToPosition extends Objective {
 		}
 		
 		RobotPosition p = SystemManager.robotSystem.getActiveRobot().getActualPosition();
-		boolean atPoint = Math.sqrt(Math.pow(p.getX() - m_destinationVertex.x, 2) + Math.pow(p.getY() - m_destinationVertex.y, 2)) < RobotSystem.distanceAccuracy;
+		float distanceFromPoint = (float) Math.sqrt(Math.pow(p.getX() - m_destinationVertex.x, 2) + Math.pow(p.getY() - m_destinationVertex.y, 2));
+		boolean atPoint = distanceFromPoint < RobotSystem.distanceAccuracy;
 		
 		if(atPoint) {
 			m_objectiveState = ObjectiveState.Completed;
@@ -58,6 +59,9 @@ public class ObjectiveMoveToPosition extends Objective {
 			angleDifference = p.getAngleRadians() - angle;
 		}
 		
+		boolean shouldArc = m_initiallyLookingAtDestination || angleDifference <= RobotSystem.maxArcAngleDifference || distanceFromPoint > RobotSystem.slowDownDistance;
+		boolean shouldTurnSlowly = angleDifference <= RobotSystem.slowDownAngleDifference;
+		
 		// instruct the robot to continue forwards (if the angle difference is within a certain accuracy)
 		if(Math.abs(angleDifference) < RobotSystem.angleAccuracy) {
 			SystemManager.sendInstructionToRobot(RobotInstruction.MoveForward);
@@ -66,23 +70,19 @@ public class ObjectiveMoveToPosition extends Objective {
 		// otherwise instruct the robot to turn left (as long as the turn distance is shorter than turning right)
 		else if(angle > p.getAngleRadians()) {
 			if(Math.abs(angleDifference) <= Math.PI) {
-//				SystemManager.sendInstructionToRobot(m_initiallyLookingAtDestination ? RobotInstruction.ArcLeft : RobotInstruction.TurnLeft);
-				SystemManager.sendInstructionToRobot(RobotInstruction.TurnLeft);
+				SystemManager.sendInstructionToRobot(shouldArc ? RobotInstruction.ArcLeft : (shouldTurnSlowly ? RobotInstruction.TurnLeftSlowly : RobotInstruction.TurnLeft));
 			}
 			else {
-//				SystemManager.sendInstructionToRobot(m_initiallyLookingAtDestination ? RobotInstruction.ArcRight : RobotInstruction.TurnRight);
-				SystemManager.sendInstructionToRobot(RobotInstruction.TurnRight);
+				SystemManager.sendInstructionToRobot(shouldArc ? RobotInstruction.ArcRight : (shouldTurnSlowly ? RobotInstruction.TurnRightSlowly : RobotInstruction.TurnRight));
 			}
 		}
 		// otherwise instruct the robot to turn right (as long as the turn distance is shorter than turning left)
 		else {
 			if(Math.abs(angleDifference) <= Math.PI) {
-//				SystemManager.sendInstructionToRobot(m_initiallyLookingAtDestination ? RobotInstruction.ArcRight : RobotInstruction.TurnRight);
-				SystemManager.sendInstructionToRobot(RobotInstruction.TurnRight);
+				SystemManager.sendInstructionToRobot(shouldArc ? RobotInstruction.ArcRight : (shouldTurnSlowly ? RobotInstruction.TurnRightSlowly : RobotInstruction.TurnRight));
 			}
 			else {
-//				SystemManager.sendInstructionToRobot(m_initiallyLookingAtDestination ? RobotInstruction.ArcLeft : RobotInstruction.TurnLeft);
-				SystemManager.sendInstructionToRobot(RobotInstruction.TurnLeft);
+				SystemManager.sendInstructionToRobot(shouldArc ? RobotInstruction.ArcLeft : (shouldTurnSlowly ? RobotInstruction.TurnLeftSlowly : RobotInstruction.TurnLeft));
 			}
 		}
 	}

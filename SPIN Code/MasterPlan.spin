@@ -155,27 +155,27 @@ PRI HandleInput
       RBC.DebugStrCr(STRING("Backing Up Slowly"))
     
     elseif(dataIn[1] == TURN_LEFT)
-      Servos.SetPreferredSpeeds(-8, 8)
+      Servos.SetPreferredSpeeds(-7, 7)
       RBC.DebugStrCr(STRING("Turning Left"))
     
     elseif(dataIn[1] == TURN_RIGHT)
-      Servos.SetPreferredSpeeds(8, -8)
+      Servos.SetPreferredSpeeds(7, -7)
       RBC.DebugStrCr(STRING("Turning Right"))
     
     elseif(dataIn[1] == TURN_LEFT_SLOWLY)
-      Servos.SetPreferredSpeeds(-7, 7)
+      Servos.SetPreferredSpeeds(-6, 6)
       RBC.DebugStrCr(STRING("Turning Left Slowly"))
     
     elseif(dataIn[1] == TURN_RIGHT_SLOWLY)
-      Servos.SetPreferredSpeeds(7, -7)
+      Servos.SetPreferredSpeeds(6, -6)
       RBC.DebugStrCr(STRING("Turning Right Slowly"))
     
     elseif(dataIn[1] == ARC_LEFT)
-      Servos.SetPreferredSpeeds(speed / 2, speed)
+      Servos.SetPreferredSpeeds(speed - 4, speed)
       RBC.DebugStrCr(STRING("Arcing Left"))
     
     elseif(dataIn[1] == ARC_RIGHT)
-      Servos.SetPreferredSpeeds(speed, speed)
+      Servos.SetPreferredSpeeds(speed, speed - 4)
       RBC.DebugStrCr(STRING("Arcing Left"))
     
     elseif(dataIn[1] == PICK_UP)
