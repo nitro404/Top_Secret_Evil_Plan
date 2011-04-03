@@ -184,6 +184,16 @@ public class Task implements Updatable{
 			return;
 		}
 		
+		if(m_currentObjectiveIndex >= 0 && m_currentObjectiveIndex < m_objectives.size() &&
+		   m_objectives.elementAt(m_currentObjectiveIndex).getState() == ObjectiveState.Completed) {
+			byte objectiveType = m_objectives.elementAt(m_currentObjectiveIndex).getType();
+			if(!(objectiveType == ObjectiveType.SkipTo || objectiveType == ObjectiveType.ChoiceBlock || objectiveType == ObjectiveType.Last)) {
+				if(m_currentObjectiveIndex < m_objectives.size() - 1) { 
+					m_currentObjectiveIndex++;
+				}
+			}
+		}
+		
 		if(m_taskState != TaskState.Started) {
 			if(m_currentObjectiveIndex == 0 && m_objectives.size() > 0 || m_objectives.elementAt(0).isNew()) {
 				m_taskState = TaskState.Started;

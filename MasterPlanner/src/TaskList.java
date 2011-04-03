@@ -174,6 +174,10 @@ public class TaskList implements Updatable {
 	public void update() {
 		if(m_currentTask < 0 || m_currentTask >= m_tasks.size()) { return; }
 		
+		if(!m_tasks.elementAt(m_currentTask).isStarted()) {
+			m_tasks.elementAt(m_currentTask).start();
+		}
+		
 		if(!m_tasks.elementAt(m_currentTask).isCompleted()) {
 			if(m_currentTask < 0 || m_currentTask >= m_tasks.size()) { return; }
 			m_tasks.elementAt(m_currentTask).update();
@@ -195,7 +199,6 @@ public class TaskList implements Updatable {
 				}
 				
 				m_currentTask = nextTaskIndex;
-				m_tasks.elementAt(m_currentTask).start();
 			}
 			else if(m_tasks.elementAt(m_currentTask).getNextTaskType() == NextTaskType.Choice) {
 				String nextTaskName;
@@ -219,7 +222,6 @@ public class TaskList implements Updatable {
 				}
 				
 				m_currentTask = nextTaskIndex;
-				m_tasks.elementAt(m_currentTask).start();
 			}
 			else if(m_tasks.elementAt(m_currentTask).getNextTaskType() == NextTaskType.Last) {
 				return;

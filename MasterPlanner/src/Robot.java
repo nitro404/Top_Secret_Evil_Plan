@@ -107,7 +107,7 @@ public class Robot {
 		m_actualPosition = actualPosition;
 		if(m_actualPosition.isValid()) {
 			m_lastValidActualPosition = m_actualPosition;
-			if(!m_spawnPosition.isValid()) {
+			if(!RobotPosition.isValid(m_spawnPosition)) {
 				m_spawnPosition = m_actualPosition;
 				m_timeReceivedLastValidActualPosition = System.currentTimeMillis();
 			}

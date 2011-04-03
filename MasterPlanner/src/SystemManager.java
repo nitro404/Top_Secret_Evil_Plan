@@ -192,8 +192,12 @@ public class SystemManager {
 	public static void handlePose(Position position, int angle) {
 		if(trackerNumber < 1 || !robotSystem.hasActiveRobot()) { return; }
 		
-		robotSystem.setActualPosition(robotSystem.getActiveRobotID(), new RobotPosition(position, angle));
-		client.sendSignal(new UpdateActualRobotPositionSignal(trackerNumber, robotSystem.getActiveRobot().getActualPosition()));
+		if(isStarted() && isIdentified()) {
+			robotSystem.setActualPosition(robotSystem.getActiveRobotID(), new RobotPosition(position, angle));
+			client.sendSignal(new UpdateActualRobotPositionSignal(robotSystem.getActiveRobotID(), robotSystem.getActiveRobot().getActualPosition()));
+		
+			taskManager.update();
+		}
 	}
 	
 	public static void handleRobotData(byte[] data) {

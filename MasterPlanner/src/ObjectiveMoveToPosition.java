@@ -66,19 +66,23 @@ public class ObjectiveMoveToPosition extends Objective {
 		// otherwise instruct the robot to turn left (as long as the turn distance is shorter than turning right)
 		else if(angle > p.getAngleRadians()) {
 			if(Math.abs(angleDifference) <= Math.PI) {
-				SystemManager.sendInstructionToRobot(m_initiallyLookingAtDestination ? RobotInstruction.ArcLeft : RobotInstruction.TurnLeft);
+//				SystemManager.sendInstructionToRobot(m_initiallyLookingAtDestination ? RobotInstruction.ArcLeft : RobotInstruction.TurnLeft);
+				SystemManager.sendInstructionToRobot(RobotInstruction.TurnLeft);
 			}
 			else {
-				SystemManager.sendInstructionToRobot(m_initiallyLookingAtDestination ? RobotInstruction.ArcRight : RobotInstruction.TurnRight);
+//				SystemManager.sendInstructionToRobot(m_initiallyLookingAtDestination ? RobotInstruction.ArcRight : RobotInstruction.TurnRight);
+				SystemManager.sendInstructionToRobot(RobotInstruction.TurnRight);
 			}
 		}
 		// otherwise instruct the robot to turn right (as long as the turn distance is shorter than turning left)
 		else {
 			if(Math.abs(angleDifference) <= Math.PI) {
-				SystemManager.sendInstructionToRobot(m_initiallyLookingAtDestination ? RobotInstruction.ArcRight : RobotInstruction.TurnRight);
+//				SystemManager.sendInstructionToRobot(m_initiallyLookingAtDestination ? RobotInstruction.ArcRight : RobotInstruction.TurnRight);
+				SystemManager.sendInstructionToRobot(RobotInstruction.TurnRight);
 			}
 			else {
-				SystemManager.sendInstructionToRobot(m_initiallyLookingAtDestination ? RobotInstruction.ArcLeft : RobotInstruction.TurnLeft);
+//				SystemManager.sendInstructionToRobot(m_initiallyLookingAtDestination ? RobotInstruction.ArcLeft : RobotInstruction.TurnLeft);
+				SystemManager.sendInstructionToRobot(RobotInstruction.TurnLeft);
 			}
 		}
 	}

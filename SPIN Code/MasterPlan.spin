@@ -89,7 +89,7 @@ PRI Init
 
   ' initialize local variables
   seed := 42
-  speed := 30
+  speed := 20
   blockFound := 0
   blockGrabbed := 0
   gripperState := GRIPPERS_CLOSED
@@ -155,19 +155,19 @@ PRI HandleInput
       RBC.DebugStrCr(STRING("Backing Up Slowly"))
     
     elseif(dataIn[1] == TURN_LEFT)
-      Servos.SetPreferredSpeeds(-(speed / 2), speed / 2)
+      Servos.SetPreferredSpeeds(-8, 8)
       RBC.DebugStrCr(STRING("Turning Left"))
     
     elseif(dataIn[1] == TURN_RIGHT)
-      Servos.SetPreferredSpeeds(speed / 2, -(speed / 2))
+      Servos.SetPreferredSpeeds(8, -8)
       RBC.DebugStrCr(STRING("Turning Right"))
     
     elseif(dataIn[1] == TURN_LEFT_SLOWLY)
-      Servos.SetPreferredSpeeds(-(speed / 4), speed / 4)
+      Servos.SetPreferredSpeeds(-7, 7)
       RBC.DebugStrCr(STRING("Turning Left Slowly"))
     
     elseif(dataIn[1] == TURN_RIGHT_SLOWLY)
-      Servos.SetPreferredSpeeds(speed / 4, -(speed / 4))
+      Servos.SetPreferredSpeeds(7, -7)
       RBC.DebugStrCr(STRING("Turning Right Slowly"))
     
     elseif(dataIn[1] == ARC_LEFT)
