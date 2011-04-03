@@ -67,6 +67,20 @@ public class TaskManager implements Updatable {
 		return true;
 	}
 	
+	public boolean isObjectiveIDTaken(int objectiveID) {
+		if(objectiveID < 0) { return false; }
+		for(int i=0;i<m_taskLists.size();i++) {
+			for(int j=0;j<m_taskLists.elementAt(i).numberOfTasks();j++) {
+				for(int k=0;k<m_taskLists.elementAt(i).getTask(j).numberOfObjectives();k++) {
+					if(m_taskLists.elementAt(i).getTask(j).getObjective(k).getID() == objectiveID) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
 	public void update() {
 		if(SystemManager.robotSystem.hasActiveRobot()) {
 			m_taskLists.elementAt(SystemManager.robotSystem.getActiveRobotID()).update();
@@ -104,6 +118,7 @@ public class TaskManager implements Updatable {
 		Variable newVariable;
 		byte objectiveType;
 		Objective newObjective;
+		int objectiveID;
 		boolean parseObjectives = false;
 		
 		try {
@@ -154,27 +169,35 @@ public class TaskManager implements Updatable {
 				}
 				// parse task objectives
 				else {
-					objectiveType = ObjectiveType.parseFromStartOf(data);
 					newObjective = null;
+					newVariable = Variable.parseFrom(data);
 					
-					if(objectiveType == ObjectiveType.MoveToPosition) {
-						newObjective = ObjectiveMoveToPosition.parseFrom(data);
-					}
-					else if(objectiveType == ObjectiveType.BackUpToPosition) {
-						newObjective = ObjectiveBackUpToPosition.parseFrom(data);
-					}
-					else if(objectiveType == ObjectiveType.LookAtPosition) {
-						newObjective = ObjectiveLookAtPosition.parseFrom(data);
-					}
-					else if(objectiveType == ObjectiveType.PickUpBlock) {
-						newObjective = ObjectivePickUpBlock.parseFrom(data);
-					}
-					else if(objectiveType == ObjectiveType.DropOffBlock) {
-						newObjective = ObjectiveDropOffBlock.parseFrom(data);
-					}
-					
-					if(newObjective != null) {
-						newTask.addObjective(newObjective);
+					if(newVariable != null) {
+						objectiveID = Objective.parseObjectiveID(newVariable.getID());
+						objectiveType = ObjectiveType.parseFromStartOf(newVariable.getValue());
+						
+						if(objectiveID >= 0) {
+							if(objectiveType == ObjectiveType.MoveToPosition) {
+								newObjective = ObjectiveMoveToPosition.parseFrom(newVariable.getValue());
+							}
+							else if(objectiveType == ObjectiveType.BackUpToPosition) {
+								newObjective = ObjectiveBackUpToPosition.parseFrom(newVariable.getValue());
+							}
+							else if(objectiveType == ObjectiveType.LookAtPosition) {
+								newObjective = ObjectiveLookAtPosition.parseFrom(newVariable.getValue());
+							}
+							else if(objectiveType == ObjectiveType.PickUpBlock) {
+								newObjective = ObjectivePickUpBlock.parseFrom(newVariable.getValue());
+							}
+							else if(objectiveType == ObjectiveType.DropOffBlock) {
+								newObjective = ObjectiveDropOffBlock.parseFrom(newVariable.getValue());
+							}
+							
+							if(newObjective != null) {
+								newObjective.setID(objectiveID);
+								newTask.addObjective(newObjective);
+							}
+						}
 					}
 				}
 			}
@@ -185,6 +208,21 @@ public class TaskManager implements Updatable {
 					taskManager.m_taskLists.elementAt(newTask.getRobotID()).addTask(newTask);
 				}
 			}
+			
+			Objective o;
+			int largestObjectiveID = 0;
+			for(int i=0;i<taskManager.numberOfTaskLists();i++) {
+				for(int j=0;j<taskManager.getTaskList(i).numberOfTasks();j++) {
+					for(int k=0;k<taskManager.getTaskList(i).getTask(j).numberOfObjectives();k++) {
+						o = taskManager.getTaskList(i).getTask(j).getObjective(k);
+						if(o.getID() > largestObjectiveID) {
+							largestObjectiveID = o.getID();
+						}
+					}
+				}
+			}
+			
+			Objective.nextObjectiveID = largestObjectiveID + 1;
 			
 			in.close();
 		}

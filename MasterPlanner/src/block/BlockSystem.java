@@ -8,7 +8,6 @@ import shared.*;
 
 public class BlockSystem implements MouseListener, MouseMotionListener {
 	
-	private byte m_activeBlockID;
 	private Vector<Block> m_blocks;
 	private Vector<DropOffLocation> m_dropOffLocations;
 	
@@ -62,7 +61,6 @@ public class BlockSystem implements MouseListener, MouseMotionListener {
 		for(byte i=0;i<defaultDropOffLocations.length;i++) {
 			m_dropOffLocations.add(new DropOffLocation(i, SystemManager.settings.getDropOffLocation(i)));
 		}
-		m_activeBlockID = -1;
 		m_selectedBlock = -1;
 		m_blockToMove = -1;
 		m_selectedDropOffLocation = -1;
@@ -86,22 +84,6 @@ public class BlockSystem implements MouseListener, MouseMotionListener {
 	public Block getBlock(byte blockID) {
 		if(blockID < 0 || blockID >= m_blocks.size()) { return null; }
 		return m_blocks.elementAt(blockID);
-	}
-	
-	public Block getActiveBlock() {
-		return (m_activeBlockID < 0 || m_activeBlockID >= m_blocks.size()) ? null : m_blocks.elementAt(m_activeBlockID);
-	}
-	
-	public byte getActiveBlockID() {
-		return m_activeBlockID;
-	}
-	
-	public boolean hasActiveBlock() {
-		return m_activeBlockID >= 0 && m_activeBlockID < m_blocks.size();
-	}
-	
-	public void setActiveBlockID(byte blockID) {
-		m_activeBlockID = (blockID < -1) ? -1 : blockID;
 	}
 	
 	public DropOffLocation getDropOffLocation(byte dropOffLocationID) {

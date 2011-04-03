@@ -2,6 +2,7 @@ package task;
 
 import java.util.StringTokenizer;
 import java.io.PrintWriter;
+import settings.*;
 
 public class ObjectiveBackUpToPosition extends Objective {
 	
@@ -51,12 +52,12 @@ public class ObjectiveBackUpToPosition extends Objective {
 	
 	public boolean writeTo(PrintWriter out) {
 		if(out == null) { return false; }
-		out.print("Back Up to Position " + m_positionIndex + " of Path " + m_pathName);
+		out.print("Objective " + m_objectiveID + Variable.SEPARATOR_CHAR + " Back Up to Position " + m_positionIndex + " of Path " + m_pathName);
 		return true;
 	}
 	
 	public String toString() {
-		return "Back Up to Position " + m_positionIndex + " of Path " + m_pathName;
+		return "Objective " + m_objectiveID + Variable.SEPARATOR_CHAR + " Back Up to Position " + m_positionIndex + " of Path " + m_pathName;
 	}
 	
 }

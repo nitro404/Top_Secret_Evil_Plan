@@ -2,6 +2,7 @@ package task;
 
 import java.util.StringTokenizer;
 import java.io.PrintWriter;
+import settings.*;
 
 public class ObjectiveLookAtPosition extends Objective {
 	
@@ -50,12 +51,12 @@ public class ObjectiveLookAtPosition extends Objective {
 	
 	public boolean writeTo(PrintWriter out) {
 		if(out == null) { return false; }
-		out.print("Look at Position " + m_positionIndex + " of Path " + m_pathName);
+		out.print("Objective " + m_objectiveID + Variable.SEPARATOR_CHAR + " Look at Position " + m_positionIndex + " of Path " + m_pathName);
 		return true;
 	}
 	
 	public String toString() {
-		return "Look at Position " + m_positionIndex + " of Path " + m_pathName;
+		return "Objective " + m_objectiveID + Variable.SEPARATOR_CHAR + " Look at Position " + m_positionIndex + " of Path " + m_pathName;
 	}
 
 }

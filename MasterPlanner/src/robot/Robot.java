@@ -16,6 +16,7 @@ public class Robot {
 	private RobotPosition m_initialPosition;
 	private RobotPosition m_spawnPosition;
 	private byte m_state;
+	private byte m_activeBlockID;
 	
 	final public static int SIZE = (int) (10 * 3); // size in cm * pixel scaling
 	final public static int DISTANCE_TO_FRONT = (int) (3.55 * 3); // length in cm * pixel scaling
@@ -41,6 +42,7 @@ public class Robot {
 		m_estimatedPosition = new RobotPosition(-1, -1, -1);
 		m_initialPosition = position;
 		m_state = RobotState.Idle;
+		m_activeBlockID = -1;
 	}
 	
 	public byte getID() {
@@ -77,6 +79,18 @@ public class Robot {
 
 	public byte getState() {
 		return m_state;
+	}
+	
+	public Block getActiveBlock() {
+		return (m_activeBlockID < 0 || m_activeBlockID >= SystemManager.blockSystem.numberOfBlocks()) ? null : SystemManager.blockSystem.getBlock(m_activeBlockID);
+	}
+	
+	public byte getActiveBlockID() {
+		return m_activeBlockID;
+	}
+	
+	public boolean hasActiveBlock() {
+		return m_activeBlockID >= 0 && m_activeBlockID < SystemManager.blockSystem.numberOfBlocks();
 	}
 	
 	public void setID(byte id) {
@@ -121,6 +135,10 @@ public class Robot {
 		if(!RobotState.isValid(state)) { return false; }
 		m_state = state;
 		return true;
+	}
+
+	public void setActiveBlockID(byte blockID) {
+		m_activeBlockID = (blockID < -1) ? -1 : blockID;
 	}
 	
 	public void reset() {

@@ -2,6 +2,7 @@ package task;
 
 import java.util.StringTokenizer;
 import java.io.PrintWriter;
+import settings.*;
 
 public class ObjectivePickUpBlock extends Objective {
 	
@@ -37,12 +38,12 @@ public class ObjectivePickUpBlock extends Objective {
 	
 	public boolean writeTo(PrintWriter out) {
 		if(out == null) { return false; }
-		out.print("Pick Up Block " + m_blockID);
+		out.print("Objective " + m_objectiveID + Variable.SEPARATOR_CHAR + " Pick Up Block " + m_blockID);
 		return true;
 	}
 	
 	public String toString() {
-		return "Pick Up Block " + m_blockID;
+		return "Objective " + m_objectiveID + Variable.SEPARATOR_CHAR + " Pick Up Block " + m_blockID;
 	}
 
 }

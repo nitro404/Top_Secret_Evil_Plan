@@ -7,9 +7,19 @@ public class ObjectiveType {
 	final public static byte LookAtPosition = 2;
 	final public static byte PickUpBlock = 3;
 	final public static byte DropOffBlock = 4;
+	final public static byte SkipTo = 5;
+	final public static byte ChoiceBlock = 6;
+	final public static byte Last = 7;
 	
 	final public static String[] objectiveTypes = {
-		"Move to Position", "Back Up to Position", "Look at Position", "Pick Up Block", "Drop Off Block"
+		"Move to Position",
+		"Back Up to Position",
+		"Look at Position",
+		"Pick Up Block",
+		"Drop Off Block",
+		"Skip to Objective",
+		"Choice Block Objective",
+		"Last Objective"
 	};
 	
 	public static boolean isValid(byte objectiveType) {

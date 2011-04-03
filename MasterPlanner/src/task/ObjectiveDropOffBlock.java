@@ -2,6 +2,7 @@ package task;
 
 import java.util.StringTokenizer;
 import java.io.PrintWriter;
+import settings.*;
 
 public class ObjectiveDropOffBlock extends Objective {
 	
@@ -39,12 +40,12 @@ public class ObjectiveDropOffBlock extends Objective {
 	
 	public boolean writeTo(PrintWriter out) {
 		if(out == null) { return false; }
-		out.print("Drop Off Block at Location " + m_dropOffLocationID);
+		out.print("Objective " + m_objectiveID + Variable.SEPARATOR_CHAR + " Drop Off Block at Location " + m_dropOffLocationID);
 		return true;
 	}
 	
 	public String toString() {
-		return "Drop Off Block at Location " + m_dropOffLocationID;
+		return "Objective " + m_objectiveID + Variable.SEPARATOR_CHAR + " Drop Off Block at Location " + m_dropOffLocationID;
 	}
 
 }

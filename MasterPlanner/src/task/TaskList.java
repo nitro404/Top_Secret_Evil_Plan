@@ -34,6 +34,68 @@ public class TaskList implements Updatable {
 		return m_tasks.elementAt(index);
 	}
 	
+	public boolean hasTask(String taskName) {
+		if(taskName == null) { return false; }
+		String temp = taskName.trim();
+		if(temp.length() == 0) { return false; }
+		
+		for(int i=0;i<m_tasks.size();i++) {
+			if(temp.equalsIgnoreCase(m_tasks.elementAt(i).getTaskName())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public int getTaskIndex(String taskName) {
+		if(taskName == null) { return -1; }
+		String temp = taskName.trim();
+		if(temp.length() == 0) { return -1; }
+		
+		for(int i=0;i<m_tasks.size();i++) {
+			if(temp.equalsIgnoreCase(m_tasks.elementAt(i).getTaskName())) {
+				return i;
+			}
+		}
+		return -1;
+	}
+	
+	public Task getTask(String taskName) {
+		if(taskName == null) { return null; }
+		String temp = taskName.trim();
+		if(temp.length() == 0) { return null; }
+		
+		for(int i=0;i<m_tasks.size();i++) {
+			if(temp.equalsIgnoreCase(m_tasks.elementAt(i).getTaskName())) {
+				return m_tasks.elementAt(i);
+			}
+		}
+		return null;
+	}
+	
+	public int getCurrentTaskIndex() {
+		return m_currentTask;
+	}
+	
+	public Task getCurrentTask() {
+		if(m_currentTask < 0 || m_currentTask >= m_tasks.size()) { return null; }
+		return m_tasks.elementAt(m_currentTask);
+	}
+	
+	public boolean setCurrentTaskIndex(int taskIndex) {
+		if(m_currentTask < 0 || m_currentTask >= m_tasks.size()) { return false; }
+		m_currentTask = taskIndex;
+		return true;
+	}
+	
+	public boolean setCurrentTask(String taskName) {
+		int taskIndex = getTaskIndex(taskName);
+		if(taskIndex < 0) { return false; }
+		
+		m_currentTask = taskIndex;
+		return true;
+	}
+	
 	public int indexOfTask(String taskName) {
 		if(taskName == null) { return -1; }
 		String temp = taskName.trim();
@@ -47,7 +109,7 @@ public class TaskList implements Updatable {
 		return -1;
 	}
 	
-	public Task nextTask() {
+	public Task moveToNextTask() {
 		if(hasMoreTasks()) {
 			return m_tasks.elementAt(m_currentTask++);
 		}
@@ -71,15 +133,15 @@ public class TaskList implements Updatable {
 		return m_tasks.elementAt(taskID).setTaskState(TaskState.Completed);
 	}
 	
-	public boolean currentTaskNew() {
+	public boolean isCurrentTaskNew() {
 		return m_tasks.elementAt(m_currentTask).isNew();
 	}
 	
-	public boolean currentTaskStarted() {
+	public boolean isCurrentTaskStarted() {
 		return m_tasks.elementAt(m_currentTask).isStarted();
 	}
 	
-	public boolean currentTaskCompleted() {
+	public boolean isCurrentTaskCompleted() {
 		return m_tasks.elementAt(m_currentTask).isCompleted();
 	}
 	
@@ -110,7 +172,7 @@ public class TaskList implements Updatable {
 	}
 	
 	public boolean allTasksCompleted() {
-		return !hasMoreTasks() && currentTaskCompleted();
+		return !hasMoreTasks() && isCurrentTaskCompleted();
 	}
 	
 	public void update() {
@@ -141,7 +203,7 @@ public class TaskList implements Updatable {
 			}
 			else if(m_tasks.elementAt(m_currentTask).getNextTaskType() == NextTaskType.Choice) {
 				String nextTaskName;
-				if(SystemManager.blockSystem.hasActiveBlock()) {
+				if(SystemManager.robotSystem.getActiveRobot().hasActiveBlock()) {
 					nextTaskName = m_tasks.elementAt(m_currentTask).getNextTaskName();
 				}
 				else {

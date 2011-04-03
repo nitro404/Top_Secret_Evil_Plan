@@ -88,8 +88,9 @@ public class TaskEditorWindow extends JFrame implements ActionListener, ListSele
     private JMenuItem m_objectiveMoveUp;
     private JMenuItem m_objectiveMoveDown;
     private JMenuItem m_objectiveMoveRemove;
+    private JMenuItem m_objectiveSetID;
+    private JMenuItem m_objectiveSetNext;
     
-    private Point m_mousePosition = new Point(0, 0);
     private boolean m_updating;
 	
     private static final long serialVersionUID = 1L;
@@ -172,12 +173,18 @@ public class TaskEditorWindow extends JFrame implements ActionListener, ListSele
 	    m_objectiveMoveUp = new JMenuItem("Move Objective Up");
 	    m_objectiveMoveDown = new JMenuItem("Move Objective Down");
 	    m_objectiveMoveRemove = new JMenuItem("Remove Objective");
+	    m_objectiveSetID = new JMenuItem("Set Task ID");
+	    m_objectiveSetNext = new JMenuItem("Set Next Objective");
 	    m_objectiveMoveUp.addActionListener(this);
 	    m_objectiveMoveDown.addActionListener(this);
 	    m_objectiveMoveRemove.addActionListener(this);
+	    m_objectiveSetID.addActionListener(this);
+	    m_objectiveSetNext.addActionListener(this);
 	    m_objectivePopupMenu.add(m_objectiveMoveUp);
 	    m_objectivePopupMenu.add(m_objectiveMoveDown);
 	    m_objectivePopupMenu.add(m_objectiveMoveRemove);
+	    m_objectivePopupMenu.add(m_objectiveSetID);
+	    m_objectivePopupMenu.add(m_objectiveSetNext);
 	}
     
     private void initComponents() {
@@ -576,6 +583,8 @@ public class TaskEditorWindow extends JFrame implements ActionListener, ListSele
     		newObjective = new ObjectiveDropOffBlock(m_dropOffBlockAtLocationID);
     	}
     	
+    	newObjective.setID(Objective.getNextObjectiveID());
+    	
     	return newObjective;
     }
     
@@ -722,9 +731,7 @@ public class TaskEditorWindow extends JFrame implements ActionListener, ListSele
 	
 	public void mouseDragged(MouseEvent e) { }
 	
-	public void mouseMoved(MouseEvent e) {
-		if(e != null) { m_mousePosition = e.getPoint(); }
-	}
+	public void mouseMoved(MouseEvent e) { }
 	
 	public void actionPerformed(ActionEvent e) {
 		if(m_updating) { return; }
@@ -865,6 +872,35 @@ public class TaskEditorWindow extends JFrame implements ActionListener, ListSele
 			SystemManager.taskManager.getTaskList(robotIndex).getTask(taskIndex).removeObjective(objectiveIndex);
 			
 			m_objectiveList.clearSelection();
+			
+			update();
+		}
+		else if(e.getSource() == m_objectiveSetID) {
+			if(robotIndex < 0 || robotIndex >= SystemManager.robotSystem.numberOfRobots()) { return; }
+			if(taskIndex < 0 || taskIndex >= SystemManager.taskManager.getTaskList(robotIndex).numberOfTasks()) { return; }
+			if(objectiveIndex < 0 || objectiveIndex >= SystemManager.taskManager.getTaskList(robotIndex).getTask(taskIndex).numberOfObjectives()) { return; }
+			
+			String value = JOptionPane.showInputDialog(this, "Enter a new objective id:\nCurrent new objective id counter: " + Objective.nextObjectiveID + ".", Integer.toString(SystemManager.taskManager.getTaskList(robotIndex).getTask(taskIndex).getObjective(objectiveIndex).getID()));
+			
+			if(value == null) { return; }
+			
+			int newObjectiveID = -1;
+			try { newObjectiveID = Integer.parseInt(value); }
+			catch(NumberFormatException e2) { }
+			
+			if(newObjectiveID < 0) {
+				JOptionPane.showMessageDialog(this, "Invalid Objective ID please choose another.", "Objective ID Invalid", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			
+			boolean idTaken = SystemManager.taskManager.isObjectiveIDTaken(newObjectiveID);
+			
+			if(idTaken) {
+				JOptionPane.showMessageDialog(this, "Objective ID is taken, please choose another.", "Objective ID Taken", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			
+			SystemManager.taskManager.getTaskList(robotIndex).getTask(taskIndex).getObjective(objectiveIndex).setID(newObjectiveID);
 			
 			update();
 		}
