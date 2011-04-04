@@ -4,6 +4,8 @@ import java.io.*;
 public class TaskManager implements Updatable {
 	
 	private Vector<TaskList> m_taskLists;
+	private ObjectiveMoveToPosition m_returnToSpawnPosition;
+	private boolean m_isFinished;
 	
 	public TaskManager() {
 		m_taskLists = new Vector<TaskList>(SystemManager.robotSystem.numberOfRobots());
@@ -11,6 +13,9 @@ public class TaskManager implements Updatable {
 		for(byte i=0;i<SystemManager.robotSystem.numberOfRobots();i++) {
 			m_taskLists.add(new TaskList(i));
 		}
+		
+		m_returnToSpawnPosition = null;
+		m_isFinished = false;
 	}
 	
 	public int numberOfTaskLists() { return m_taskLists.size(); }
@@ -78,7 +83,26 @@ public class TaskManager implements Updatable {
 	
 	public void update() {
 		if(SystemManager.robotSystem.hasActiveRobot()) {
-			m_taskLists.elementAt(SystemManager.robotSystem.getActiveRobotID()).update();
+			if(!m_taskLists.elementAt(SystemManager.robotSystem.getActiveRobotID()).allTasksCompleted()) {
+				m_taskLists.elementAt(SystemManager.robotSystem.getActiveRobotID()).update();
+			}
+			else {
+				if(m_returnToSpawnPosition == null) {
+					m_returnToSpawnPosition = new ObjectiveMoveToPosition(null, -1);
+					m_returnToSpawnPosition.setDestinationVertex(SystemManager.robotSystem.getActiveRobot().getActualPosition().getX(), SystemManager.robotSystem.getActiveRobot().getActualPosition().getY());
+					m_returnToSpawnPosition.setID(Objective.getNextObjectiveID());
+				}
+				
+				if(!m_returnToSpawnPosition.isCompleted()) {
+					m_returnToSpawnPosition.execute();
+				}
+				else {
+					if(!m_isFinished) {
+						SystemManager.sendInstructionToRobot(RobotInstruction.Finished);
+						m_isFinished = true;
+					}
+				}
+			}
 		}
 	}
 	

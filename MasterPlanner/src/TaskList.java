@@ -252,8 +252,8 @@ public class TaskList implements Updatable {
 			else if(m_tasks.elementAt(m_currentTask).getNextTaskType() == NextTaskType.Last) {
 				if(m_tasks.elementAt(m_currentTask).isCompleted()) {
 					if(!m_isFinished) {
-						SystemManager.sendInstructionToRobot(RobotInstruction.Finished);
-						m_isFinished = true;
+						//SystemManager.sendInstructionToRobot(RobotInstruction.Finished);
+						//m_isFinished = true;
 					}
 				}
 			}

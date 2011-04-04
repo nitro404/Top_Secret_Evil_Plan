@@ -97,6 +97,19 @@ public class BlockSystem implements MouseListener, MouseMotionListener {
 		return m_blocks.elementAt(blockID).setActualPosition(actualBlockPosition);
 	}
 	
+	public boolean allBlocksInZoneDelivered(int trackerNumber) {
+		int numberOfBlocksInZoneDelivered = 0;
+		for(int i=0;i<6;i++) {
+			if(m_blocks.elementAt(i + (6 * (trackerNumber - 1))).getState() == BlockState.Delivered) {
+				numberOfBlocksInZoneDelivered++;
+				if(numberOfBlocksInZoneDelivered >= 3) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 	public byte closestBlock(Position p) {
 		double distance, shortestDistance = Math.sqrt(Math.pow(m_blocks.elementAt(0).getActualPosition().getX() - p.x, 2) + Math.pow(m_blocks.elementAt(0).getActualPosition().getY() - p.y, 2));
 		byte shortestIndex = 0;

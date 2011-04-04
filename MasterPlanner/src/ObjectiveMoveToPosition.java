@@ -24,6 +24,10 @@ public class ObjectiveMoveToPosition extends Objective {
 	
 	public void setPositionIndex(int positionIndex) { m_positionIndex = positionIndex; }
 	
+	public void setDestinationVertex(int x, int y) {
+		m_destinationVertex = new Vertex(x, y);
+	}
+	
 	public void execute() {
 		if(m_objectiveState == ObjectiveState.New) {
 			m_objectiveState = ObjectiveState.Started;
