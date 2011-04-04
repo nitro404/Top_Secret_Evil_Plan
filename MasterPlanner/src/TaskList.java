@@ -150,7 +150,8 @@ public class TaskList implements Updatable {
 	}
 	
 	public boolean hasMoreTasks() {
-		return !(m_tasks.elementAt(m_currentTask).getNextTaskType() == NextTaskType.Last);
+		return m_currentTask < m_tasks.size() &&
+			   !(m_tasks.elementAt(m_currentTask).getNextTaskType() == NextTaskType.Last);
 	}
 	
 	public boolean addTask(Task t) {

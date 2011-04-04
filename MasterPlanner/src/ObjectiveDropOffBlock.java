@@ -30,6 +30,7 @@ public class ObjectiveDropOffBlock extends Objective {
 		
 		if(!m_droppingOffBlock) {
 			SystemManager.sendInstructionToRobot(RobotInstruction.DropOff);
+			m_droppingOffBlock = true;
 		}
 		else {
 			SystemManager.sendInstructionToRobot(RobotInstruction.Null);

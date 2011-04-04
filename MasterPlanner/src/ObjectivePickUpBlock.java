@@ -34,6 +34,8 @@ public class ObjectivePickUpBlock extends Objective {
 			SystemManager.robotSystem.getActiveRobot().setActiveBlockID(m_blockID);
 			
 			SystemManager.client.sendSignal(new RobotStateChangeSignal(SystemManager.robotSystem.getActiveRobotID(), SystemManager.robotSystem.getActiveRobot().getState()));
+			
+			m_pickingUpBlock = true;
 		}
 		else {
 			SystemManager.sendInstructionToRobot(RobotInstruction.Null);

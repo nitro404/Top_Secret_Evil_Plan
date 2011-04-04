@@ -197,8 +197,8 @@ public class SystemManager {
 			client.sendSignal(new UpdateActualRobotPositionSignal(robotSystem.getActiveRobotID(), robotSystem.getActiveRobot().getActualPosition()));
 			
 			if(robotSystem.getActiveRobot().hasActiveBlock()) {
-				int x = (int) (robotSystem.getActiveRobot().getActualPosition().getX() - (Math.cos(robotSystem.getActiveRobot().getActualPosition().getAngleRadians()) * (Robot.DISTANCE_TO_FRONT + (Block.SIZE / 2))));
-				int y = (int) (robotSystem.getActiveRobot().getActualPosition().getY() - (Math.sin(robotSystem.getActiveRobot().getActualPosition().getAngleRadians()) * (Robot.DISTANCE_TO_FRONT + (Block.SIZE / 2))));
+				int x = (int) (robotSystem.getActiveRobot().getActualPosition().getX() - (Math.cos(Math.PI - robotSystem.getActiveRobot().getActualPosition().getAngleRadians()) * (Robot.DISTANCE_TO_FRONT + (Block.SIZE / 2))));
+				int y = (int) (robotSystem.getActiveRobot().getActualPosition().getY() - (Math.sin(Math.PI - robotSystem.getActiveRobot().getActualPosition().getAngleRadians()) * (Robot.DISTANCE_TO_FRONT + (Block.SIZE / 2))));
 				robotSystem.getActiveRobot().getActiveBlock().setActualPosition(new Position(x, y));
 				client.sendSignal(new UpdateBlockPositionSignal(robotSystem.getActiveRobot().getActiveBlockID(), x, y));
 			}
