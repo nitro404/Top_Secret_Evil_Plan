@@ -203,6 +203,7 @@ public class Task implements Updatable{
 		if(m_taskState != TaskState.Completed) {
 			if(m_currentObjectiveIndex >= m_objectives.size() - 1 && m_objectives.elementAt(m_objectives.size() - 1).isCompleted()) {
 				m_taskState = TaskState.Completed;
+				SystemManager.sendInstructionToRobot(RobotInstruction.Stop);
 			}
 		}
 		

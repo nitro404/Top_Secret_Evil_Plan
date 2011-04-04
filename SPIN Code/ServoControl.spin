@@ -301,13 +301,13 @@ PRI MoveGrippers
 
 PRI UpdateSpeeds
   ' ramp left servo
-  if(preferredLeftSpeed < 0)
+  if(preferredLeftSpeed =< 0)
     ' ramp down
     if(leftSpeed > preferredLeftSpeed)
       leftSpeed -= acceleration
     else
       leftSpeed := preferredLeftSpeed      
-  elseif(preferredLeftSpeed > 0)
+  elseif(preferredLeftSpeed => 0)
     ' ramp up
     if(leftSpeed < preferredLeftSpeed)
       leftSpeed += acceleration
@@ -315,13 +315,13 @@ PRI UpdateSpeeds
       leftSpeed := preferredLeftSpeed
    
   ' ramp right servo 
-  if(preferredRightSpeed < 0)
+  if(preferredRightSpeed =< 0)
     ' ramp down
     if(rightSpeed > preferredRightSpeed)
       rightSpeed -= acceleration
     else
       rightSpeed := preferredRightSpeed
-  elseif(preferredRightSpeed > 0)
+  elseif(preferredRightSpeed => 0)
     ' ramp up
     if(rightSpeed < preferredRightSpeed)
       rightSpeed += acceleration

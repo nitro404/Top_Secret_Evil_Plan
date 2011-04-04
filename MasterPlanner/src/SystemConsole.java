@@ -4,7 +4,7 @@ public class SystemConsole {
 
     private Vector<SystemConsoleEntry> m_consoleEntries;
     private Updatable m_target;
-
+	
     public SystemConsole() {
     	m_consoleEntries = new Vector<SystemConsoleEntry>();
     }
@@ -37,10 +37,7 @@ public class SystemConsole {
     public String toString() {
     	String data = "";
 		for(int i=0;i<m_consoleEntries.size();i++) {
-			data += m_consoleEntries.elementAt(i).getText();
-			if(i < m_consoleEntries.size() - 1) {
-				data += "\n";
-			}
+			data += m_consoleEntries.elementAt(i).getText() + "\n";
 		}
 		return data;
     }

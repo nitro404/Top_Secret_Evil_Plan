@@ -59,12 +59,13 @@ public class ObjectiveMoveToPosition extends Objective {
 			angleDifference = p.getAngleRadians() - angle;
 		}
 		
-		boolean shouldArc = m_initiallyLookingAtDestination || angleDifference <= RobotSystem.maxArcAngleDifference || distanceFromPoint > RobotSystem.slowDownDistance;
+		boolean shouldArc = m_initiallyLookingAtDestination && Math.abs(angleDifference) <= RobotSystem.maxArcAngleDifference && distanceFromPoint > RobotSystem.slowDownDistance;
 		boolean shouldTurnSlowly = angleDifference <= RobotSystem.slowDownAngleDifference;
+		boolean shouldMoveSlowly = distanceFromPoint <= RobotSystem.slowDownDistance;
 		
 		// instruct the robot to continue forwards (if the angle difference is within a certain accuracy)
 		if(Math.abs(angleDifference) < RobotSystem.angleAccuracy) {
-			SystemManager.sendInstructionToRobot(RobotInstruction.MoveForward);
+			SystemManager.sendInstructionToRobot(shouldMoveSlowly ? RobotInstruction.MoveForwardSlowly : RobotInstruction.MoveForward);
 			m_initiallyLookingAtDestination = true;
 		}
 		// otherwise instruct the robot to turn left (as long as the turn distance is shorter than turning right)

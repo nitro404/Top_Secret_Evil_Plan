@@ -48,7 +48,7 @@ public class SettingsManager {
 	final public static String defaultTrackerImageFileName = "TrackerImage.jpg";
 	final public static String defaultStaticStationImageFileNameFormat = "Station.jpg";
 	final public static boolean defaultAutoSaveOnExit = true;
-	final public static int defaultFrameRate = 2;
+	final public static int defaultFrameRate = 1;
 	public static InetAddress defaultServerIPAddress;
 	final public static int defaultServerPort = Client.DEFAULT_PORT;
 	final public static boolean defaultIgnorePingPongSignals = true;

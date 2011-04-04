@@ -34,6 +34,21 @@ CON
   YAW_LEFT_1 = 65
   YAW_RIGHT_1 = 233
   
+  LEFT_WHEEL_STOP_5 = 744
+  RIGHT_WHEEL_STOP_5 = 745
+  LEFT_GRIPPER_OPEN_5 = 128
+  LEFT_GRIPPER_STRAIGHT_5 = 172
+  LEFT_GRIPPER_CLOSED_5 = 205
+  RIGHT_GRIPPER_OPEN_5 = 174
+  RIGHT_GRIPPER_STRAIGHT_5 = 140
+  RIGHT_GRIPPER_CLOSED_5 = 207
+  PITCH_HORIZONTAL_5 = 136
+  PITCH_UP_5 = 163
+  PITCH_DOWN_5 = 103
+  YAW_STRAIGHT_5 = 147
+  YAW_LEFT_5 = 65
+  YAW_RIGHT_5 = 233
+  
   RED = 189
   GREEN = 21
   BLUE = 16
@@ -82,6 +97,8 @@ PUB Main
   repeat while(NOT(finished)) 
     HandleInput
 
+  Servos.Stop
+
 PRI Init
   ' startup
   RBC.Init
@@ -109,6 +126,10 @@ PRI Init
     Servos.Start(LEFT_WHEEL_STOP_1, RIGHT_WHEEL_STOP_1, true, true, true, true)
     Servos.InitGrippers(LEFT_GRIPPER_OPEN_1, LEFT_GRIPPER_STRAIGHT_1, LEFT_GRIPPER_CLOSED_1, RIGHT_GRIPPER_OPEN_1, RIGHT_GRIPPER_STRAIGHT_1, RIGHT_GRIPPER_CLOSED_1)
     Servos.InitHead(PITCH_HORIZONTAL_1, PITCH_UP_1, PITCH_DOWN_1, YAW_STRAIGHT_1, YAW_LEFT_1, YAW_RIGHT_1)
+  elseif(ROBOT_NUMBER == 5)
+    Servos.Start(LEFT_WHEEL_STOP_5, RIGHT_WHEEL_STOP_5, true, true, true, true)
+    Servos.InitGrippers(LEFT_GRIPPER_OPEN_5, LEFT_GRIPPER_STRAIGHT_5, LEFT_GRIPPER_CLOSED_5, RIGHT_GRIPPER_OPEN_5, RIGHT_GRIPPER_STRAIGHT_5, RIGHT_GRIPPER_CLOSED_5)
+    Servos.InitHead(PITCH_HORIZONTAL_5, PITCH_UP_5, PITCH_DOWN_5, YAW_STRAIGHT_5, YAW_LEFT_5, YAW_RIGHT_5)
   else
     RBC.DebugStr(STRING("Missing Calibration Values for Robot #"))
     RBC.DebugLongCr(ROBOT_NUMBER)
@@ -155,11 +176,11 @@ PRI HandleInput
       RBC.DebugStrCr(STRING("Backing Up Slowly"))
     
     elseif(dataIn[1] == TURN_LEFT)
-      Servos.SetPreferredSpeeds(-7, 7)
+      Servos.SetPreferredSpeeds(-8, 8)
       RBC.DebugStrCr(STRING("Turning Left"))
     
     elseif(dataIn[1] == TURN_RIGHT)
-      Servos.SetPreferredSpeeds(7, -7)
+      Servos.SetPreferredSpeeds(8, -8)
       RBC.DebugStrCr(STRING("Turning Right"))
     
     elseif(dataIn[1] == TURN_LEFT_SLOWLY)
@@ -171,11 +192,11 @@ PRI HandleInput
       RBC.DebugStrCr(STRING("Turning Right Slowly"))
     
     elseif(dataIn[1] == ARC_LEFT)
-      Servos.SetPreferredSpeeds(speed - 4, speed)
+      Servos.SetPreferredSpeeds(speed - 2, speed)
       RBC.DebugStrCr(STRING("Arcing Left"))
     
     elseif(dataIn[1] == ARC_RIGHT)
-      Servos.SetPreferredSpeeds(speed, speed - 4)
+      Servos.SetPreferredSpeeds(speed, speed - 2)
       RBC.DebugStrCr(STRING("Arcing Left"))
     
     elseif(dataIn[1] == PICK_UP)

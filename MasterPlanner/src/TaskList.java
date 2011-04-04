@@ -6,11 +6,13 @@ public class TaskList implements Updatable {
 	private byte m_robotID;
 	private int m_currentTask;
 	private Vector<Task> m_tasks;
+	boolean m_isFinished;
 	
 	public TaskList(byte robotID) {
 		m_robotID = robotID;
 		m_tasks = new Vector<Task>();
 		m_currentTask = 0;
+		m_isFinished = false;
 	}
 	
 	public int numberOfTasks() { return m_tasks.size(); }
@@ -106,6 +108,8 @@ public class TaskList implements Updatable {
 	}
 	
 	public Task moveToNextTask() {
+		if(m_currentTask + 1 >= m_tasks.size()) { return null; }
+		
 		if(hasMoreTasks()) {
 			return m_tasks.elementAt(m_currentTask++);
 		}
@@ -113,6 +117,8 @@ public class TaskList implements Updatable {
 	}
 	
 	public boolean startCurrentTask() {
+		if(m_currentTask < 0 || m_currentTask >= m_tasks.size()) { return false; }
+		
 		if(m_tasks.elementAt(m_currentTask).isNew()) {
 			return m_tasks.elementAt(m_currentTask).start();
 		}
@@ -224,6 +230,12 @@ public class TaskList implements Updatable {
 				m_currentTask = nextTaskIndex;
 			}
 			else if(m_tasks.elementAt(m_currentTask).getNextTaskType() == NextTaskType.Last) {
+				if(m_tasks.elementAt(m_currentTask).isCompleted()) {
+					if(!m_isFinished) {
+						SystemManager.sendInstructionToRobot(RobotInstruction.Finished);
+						m_isFinished = true;
+					}
+				}
 				return;
 			}
 		}
