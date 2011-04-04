@@ -107,6 +107,9 @@ public class RobotSystem implements MouseListener, MouseMotionListener {
 			SystemManager.robotSystem.getActiveRobot().getActiveBlock().setState(BlockState.Moving);
 			
 			SystemManager.client.sendSignal(new RobotStateChangeSignal(SystemManager.robotSystem.getActiveRobot().getActiveBlockID(), SystemManager.robotSystem.getActiveRobot().getActiveBlock().getState()));
+			
+			SystemManager.taskManager.getTaskList(SystemManager.robotSystem.getActiveRobotID()).getCurrentTask().setTaskState(TaskState.Completed);
+			
 			return true;
 		}
 		else if(responseID == RobotResponse.BlockNotFound) {
@@ -116,6 +119,8 @@ public class RobotSystem implements MouseListener, MouseMotionListener {
 			
 			SystemManager.client.sendSignal(new RobotStateChangeSignal(SystemManager.robotSystem.getActiveRobotID(), SystemManager.robotSystem.getActiveRobot().getState()));
 			SystemManager.client.sendSignal(new RobotStateChangeSignal(SystemManager.robotSystem.getActiveRobot().getActiveBlockID(), SystemManager.robotSystem.getActiveRobot().getActiveBlock().getState()));
+			
+			SystemManager.taskManager.getTaskList(SystemManager.robotSystem.getActiveRobotID()).getCurrentTask().setTaskState(TaskState.Completed);
 			return true;
 		}
 		else if(responseID == RobotResponse.DroppedOffBlock) {
@@ -125,6 +130,8 @@ public class RobotSystem implements MouseListener, MouseMotionListener {
 			
 			SystemManager.client.sendSignal(new RobotStateChangeSignal(SystemManager.robotSystem.getActiveRobotID(), SystemManager.robotSystem.getActiveRobot().getState()));
 			SystemManager.client.sendSignal(new RobotStateChangeSignal(SystemManager.robotSystem.getActiveRobot().getActiveBlockID(), SystemManager.robotSystem.getActiveRobot().getActiveBlock().getState()));
+			
+			SystemManager.taskManager.getTaskList(SystemManager.robotSystem.getActiveRobotID()).getCurrentTask().setTaskState(TaskState.Completed);
 			return true;
 		}
 		return false;

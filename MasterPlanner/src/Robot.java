@@ -159,7 +159,11 @@ public class Robot {
 		
 		RobotPosition position = !RobotPosition.isValid(m_actualPosition) ? m_initialPosition : (RobotPosition.isValid(m_actualPosition) ? m_actualPosition : m_lastValidActualPosition);
 		
+		int x = (int) (position.getX() - (Math.sin(position.getAngleRadians()) * (Robot.SIZE / 2)));
+		int y = (int) (position.getY() - (Math.cos(position.getAngleRadians()) * (Robot.SIZE / 2)));
+		
 		g.drawOval(position.getX() - (SIZE/2), position.getY() - (SIZE/2), SIZE, SIZE);
+		g.drawLine(position.getX(), position.getY(), x, y);
 	}
 	
 	public boolean equals(Object o) {
