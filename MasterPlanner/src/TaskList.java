@@ -6,6 +6,7 @@ public class TaskList implements Updatable {
 	private byte m_robotID;
 	private int m_currentTask;
 	private Vector<Task> m_tasks;
+	boolean m_waitForOtherRobots;
 	boolean m_isFinished;
 	
 	public TaskList(byte robotID) {
@@ -13,6 +14,7 @@ public class TaskList implements Updatable {
 		m_tasks = new Vector<Task>();
 		m_currentTask = 0;
 		m_isFinished = false;
+		m_waitForOtherRobots = false;
 	}
 	
 	public int numberOfTasks() { return m_tasks.size(); }
@@ -190,6 +192,23 @@ public class TaskList implements Updatable {
 			m_tasks.elementAt(m_currentTask).update();
 		}
 		else {
+			// wait for other robots to complete their current task.
+			TaskList t;
+			for(int i=0;i<SystemManager.taskManager.numberOfTaskLists();i++) {
+				t = SystemManager.taskManager.getTaskList(i);
+				if(!t.isCurrentTaskCompleted() && t != this) {
+					if(!m_waitForOtherRobots) {
+						SystemManager.sendInstructionToRobot(RobotInstruction.Stop);
+						SystemManager.robotSystem.getActiveRobot().setState(RobotState.Idle);
+						SystemManager.client.sendSignal(new RobotStateChangeSignal(SystemManager.robotSystem.getActiveRobotID(), SystemManager.robotSystem.getActiveRobot().getState()));
+						m_waitForOtherRobots = true;
+					}
+					return;
+				}
+			}
+			
+			m_waitForOtherRobots = false;
+			
 			if(m_tasks.elementAt(m_currentTask).getNextTaskType() == NextTaskType.Normal) {
 				String nextTaskName = m_tasks.elementAt(m_currentTask).getNextTaskName();
 				
@@ -237,7 +256,6 @@ public class TaskList implements Updatable {
 						m_isFinished = true;
 					}
 				}
-				return;
 			}
 		}
 	}

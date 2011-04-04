@@ -95,7 +95,6 @@ public class RobotSystem implements MouseListener, MouseMotionListener {
 			return false;
 		}
 		
-		// TODO: Inform current task of status
 		if(responseID == RobotResponse.FoundBlock) {
 			SystemManager.robotSystem.getActiveRobot().setState(RobotState.DeliveringBlock);
 			SystemManager.robotSystem.getActiveRobot().getActiveBlock().setState(BlockState.Located);
