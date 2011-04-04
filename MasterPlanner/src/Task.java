@@ -197,6 +197,7 @@ public class Task implements Updatable{
 		if(m_taskState != TaskState.Started) {
 			if(m_currentObjectiveIndex == 0 && m_objectives.size() > 0 || m_objectives.elementAt(0).isNew()) {
 				m_taskState = TaskState.Started;
+				SystemManager.client.sendSignal(new TaskStartedSignal(SystemManager.robotSystem.getActiveRobotID(), m_taskID));
 			}
 		}
 		
@@ -204,6 +205,7 @@ public class Task implements Updatable{
 			if(m_currentObjectiveIndex >= m_objectives.size() - 1 && m_objectives.elementAt(m_objectives.size() - 1).isCompleted()) {
 				m_taskState = TaskState.Completed;
 				SystemManager.sendInstructionToRobot(RobotInstruction.Stop);
+				SystemManager.client.sendSignal(new TaskCompletedSignal(SystemManager.robotSystem.getActiveRobotID(), m_taskID));
 			}
 		}
 		

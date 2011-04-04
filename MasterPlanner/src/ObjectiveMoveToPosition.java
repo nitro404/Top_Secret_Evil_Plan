@@ -27,6 +27,10 @@ public class ObjectiveMoveToPosition extends Objective {
 	public void execute() {
 		if(m_objectiveState == ObjectiveState.New) {
 			m_objectiveState = ObjectiveState.Started;
+			
+			SystemManager.robotSystem.getActiveRobot().setState(RobotState.Moving);
+			
+			SystemManager.client.sendSignal(new RobotStateChangeSignal(SystemManager.robotSystem.getActiveRobotID(), SystemManager.robotSystem.getActiveRobot().getState()));
 		}
 		
 		if(m_destinationVertex == null) {
@@ -60,7 +64,7 @@ public class ObjectiveMoveToPosition extends Objective {
 		}
 		
 		boolean shouldArc = m_initiallyLookingAtDestination && Math.abs(angleDifference) <= RobotSystem.maxArcAngleDifference && distanceFromPoint > RobotSystem.slowDownDistance;
-		boolean shouldTurnSlowly = angleDifference <= RobotSystem.slowDownAngleDifference;
+		boolean shouldTurnSlowly = Math.abs(angleDifference) <= RobotSystem.slowDownAngleDifference;
 		boolean shouldMoveSlowly = distanceFromPoint <= RobotSystem.slowDownDistance;
 		
 		// instruct the robot to continue forwards (if the angle difference is within a certain accuracy)

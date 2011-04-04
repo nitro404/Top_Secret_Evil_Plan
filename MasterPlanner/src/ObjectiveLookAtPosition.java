@@ -26,6 +26,10 @@ public class ObjectiveLookAtPosition extends Objective {
 	public void execute() {
 		if(m_objectiveState == ObjectiveState.New) {
 			m_objectiveState = ObjectiveState.Started;
+			
+			SystemManager.robotSystem.getActiveRobot().setState(RobotState.Moving);
+			
+			SystemManager.client.sendSignal(new RobotStateChangeSignal(SystemManager.robotSystem.getActiveRobotID(), SystemManager.robotSystem.getActiveRobot().getState()));
 		}
 		
 		if(m_lookAtVertex == null) {

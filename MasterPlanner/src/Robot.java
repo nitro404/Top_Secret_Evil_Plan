@@ -12,10 +12,11 @@ public class Robot {
 	private RobotPosition m_initialPosition;
 	private RobotPosition m_spawnPosition;
 	private byte m_state;
+	
 	private byte m_activeBlockID;
 	
 	final public static int SIZE = (int) (10 * 3); // size in cm * pixel scaling
-	final public static int DISTANCE_TO_FRONT = (int) (3.55 * 3); // length in cm * pixel scaling
+	final public static int DISTANCE_TO_FRONT = (int) (4.318 * 3); // length in cm * pixel scaling
 	
 	public Robot(byte id, byte robotNumber, int x, int y, int angle) {
 		this(id, robotNumber, null, new RobotPosition(x, y, angle));

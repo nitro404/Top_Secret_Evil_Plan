@@ -182,6 +182,7 @@ public class TaskList implements Updatable {
 		
 		if(!m_tasks.elementAt(m_currentTask).isStarted()) {
 			m_tasks.elementAt(m_currentTask).start();
+			SystemManager.client.sendSignal(new TaskStartedSignal(SystemManager.robotSystem.getActiveRobotID(), m_tasks.elementAt(m_currentTask).getTaskID()));
 		}
 		
 		if(!m_tasks.elementAt(m_currentTask).isCompleted()) {

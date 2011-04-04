@@ -97,15 +97,35 @@ public class RobotSystem implements MouseListener, MouseMotionListener {
 		
 		// TODO: Inform current task of status
 		if(responseID == RobotResponse.FoundBlock) {
+			SystemManager.robotSystem.getActiveRobot().setState(RobotState.DeliveringBlock);
+			SystemManager.robotSystem.getActiveRobot().getActiveBlock().setState(BlockState.Located);
+			
+			SystemManager.client.sendSignal(new RobotStateChangeSignal(SystemManager.robotSystem.getActiveRobotID(), SystemManager.robotSystem.getActiveRobot().getState()));
+			SystemManager.client.sendSignal(new RobotStateChangeSignal(SystemManager.robotSystem.getActiveRobot().getActiveBlockID(), SystemManager.robotSystem.getActiveRobot().getActiveBlock().getState()));
 			return true;
 		}
 		else if(responseID == RobotResponse.GrabbedBlock) {
+			SystemManager.robotSystem.getActiveRobot().getActiveBlock().setState(BlockState.Moving);
+			
+			SystemManager.client.sendSignal(new RobotStateChangeSignal(SystemManager.robotSystem.getActiveRobot().getActiveBlockID(), SystemManager.robotSystem.getActiveRobot().getActiveBlock().getState()));
 			return true;
 		}
 		else if(responseID == RobotResponse.BlockNotFound) {
+			SystemManager.robotSystem.getActiveRobot().setState(RobotState.Idle);
+			SystemManager.robotSystem.getActiveRobot().getActiveBlock().setState(BlockState.Missing);
+			SystemManager.robotSystem.getActiveRobot().setActiveBlockID((byte) -1);
+			
+			SystemManager.client.sendSignal(new RobotStateChangeSignal(SystemManager.robotSystem.getActiveRobotID(), SystemManager.robotSystem.getActiveRobot().getState()));
+			SystemManager.client.sendSignal(new RobotStateChangeSignal(SystemManager.robotSystem.getActiveRobot().getActiveBlockID(), SystemManager.robotSystem.getActiveRobot().getActiveBlock().getState()));
 			return true;
 		}
 		else if(responseID == RobotResponse.DroppedOffBlock) {
+			SystemManager.robotSystem.getActiveRobot().setState(RobotState.Idle);
+			SystemManager.robotSystem.getActiveRobot().getActiveBlock().setState(BlockState.Delivered);
+			SystemManager.robotSystem.getActiveRobot().setActiveBlockID((byte) -1);
+			
+			SystemManager.client.sendSignal(new RobotStateChangeSignal(SystemManager.robotSystem.getActiveRobotID(), SystemManager.robotSystem.getActiveRobot().getState()));
+			SystemManager.client.sendSignal(new RobotStateChangeSignal(SystemManager.robotSystem.getActiveRobot().getActiveBlockID(), SystemManager.robotSystem.getActiveRobot().getActiveBlock().getState()));
 			return true;
 		}
 		return false;
