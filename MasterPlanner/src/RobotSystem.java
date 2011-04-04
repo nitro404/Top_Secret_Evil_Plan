@@ -25,7 +25,7 @@ public class RobotSystem implements MouseListener, MouseMotionListener {
 		new RobotPosition(356, 1189, 90),
 	};
 	
-	final public static byte[] robotNumbers = { 0, 5, 7 };
+	final public static byte[] robotNumbers = { 0, 7, 5 };
 	
 	final public static String[] robotNames = { "Pac-man", "Star Warrior", "Walter Chan" };
 	
