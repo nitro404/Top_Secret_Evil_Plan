@@ -184,7 +184,9 @@ public class Task implements Updatable{
 			return;
 		}
 		
-		if(SystemManager.blockSystem.allBlocksInZoneDelivered(SystemManager.trackerNumber)) {
+		if(SystemManager.blockSystem.allBlocksInZoneDelivered(SystemManager.trackerNumber) &&
+		   m_objectives.elementAt(m_currentObjectiveIndex).getType() == ObjectiveType.Last ||
+		   m_currentObjectiveIndex == m_objectives.size() - 1) {
 			m_taskState = TaskState.Completed;
 			
 			SystemManager.sendInstructionToRobot(RobotInstruction.Stop);
