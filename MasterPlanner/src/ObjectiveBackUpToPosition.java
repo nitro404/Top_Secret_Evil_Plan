@@ -35,7 +35,8 @@ public class ObjectiveBackUpToPosition extends Objective {
 		}
 		
 		RobotPosition p = SystemManager.robotSystem.getActiveRobot().getActualPosition();
-		boolean atPoint = Math.sqrt(Math.pow(p.getX() - m_destinationVertex.x, 2) + Math.pow(p.getY() - m_destinationVertex.y, 2)) < RobotSystem.distanceAccuracy;
+		float distanceFromPoint = (float) Math.sqrt(Math.pow(p.getX() - m_destinationVertex.x, 2) + Math.pow(p.getY() - m_destinationVertex.y, 2));
+		boolean atPoint = distanceFromPoint < RobotSystem.distanceAccuracy;
 		
 		if(atPoint) {
 			m_objectiveState = ObjectiveState.Completed;
@@ -59,26 +60,29 @@ public class ObjectiveBackUpToPosition extends Objective {
 			angleDifference = p.getAngleRadians() - angle;
 		}
 		
+		boolean minimumBackupTimeElapsed = m_backingUpStartTime + RobotSystem.intialBackUpTimeDuration > System.currentTimeMillis();
+		boolean shouldBackUpSlowly = distanceFromPoint <= RobotSystem.slowDownDistance;
+		
 		// instruct the robot to continue forwards (if the angle difference is within a certain accuracy)
 		if(Math.abs(angleDifference) < RobotSystem.angleAccuracy) {
-			SystemManager.sendInstructionToRobot(RobotInstruction.BackUp);
+			SystemManager.sendInstructionToRobot(shouldBackUpSlowly ? RobotInstruction.BackUpSlowly : RobotInstruction.BackUp);
 		}
 		// otherwise instruct the robot to turn left (as long as the turn distance is shorter than turning right)
 		else if(angle > p.getAngleRadians()) {
 			if(Math.abs(angleDifference) <= Math.PI) {
-				SystemManager.sendInstructionToRobot(m_backingUpStartTime + RobotSystem.intialBackUpTimeDuration > System.currentTimeMillis() ? RobotInstruction.BackUp : RobotInstruction.TurnLeft);
+				SystemManager.sendInstructionToRobot(minimumBackupTimeElapsed ? RobotInstruction.BackUp : RobotInstruction.TurnLeftSlowly);
 			}
 			else {
-				SystemManager.sendInstructionToRobot(m_backingUpStartTime + RobotSystem.intialBackUpTimeDuration > System.currentTimeMillis() ? RobotInstruction.BackUp : RobotInstruction.TurnRight);
+				SystemManager.sendInstructionToRobot(minimumBackupTimeElapsed ? RobotInstruction.BackUp : RobotInstruction.TurnRightSlowly);
 			}
 		}
 		// otherwise instruct the robot to turn right (as long as the turn distance is shorter than turning left)
 		else {
 			if(Math.abs(angleDifference) <= Math.PI) {
-				SystemManager.sendInstructionToRobot(m_backingUpStartTime + RobotSystem.intialBackUpTimeDuration > System.currentTimeMillis() ? RobotInstruction.BackUp : RobotInstruction.TurnRight);
+				SystemManager.sendInstructionToRobot(minimumBackupTimeElapsed ? RobotInstruction.BackUp : RobotInstruction.TurnRightSlowly);
 			}
 			else {
-				SystemManager.sendInstructionToRobot(m_backingUpStartTime + RobotSystem.intialBackUpTimeDuration > System.currentTimeMillis() ? RobotInstruction.BackUp : RobotInstruction.TurnLeft);
+				SystemManager.sendInstructionToRobot(minimumBackupTimeElapsed ? RobotInstruction.BackUp : RobotInstruction.TurnLeftSlowly);
 			}
 		}
 	}
