@@ -73,6 +73,10 @@ CON
   GRIPPERS_STRAIGHT = 1
   GRIPPERS_OPEN = 2
 
+  MODE_NORMAL = 0
+  MODE_FINDBLOCK = 1
+  MODE_DELIVERINGBLOCK = 2
+
   NULL = 0
   STOP = 1
   MOVE_FORWARD = 2
@@ -89,6 +93,11 @@ CON
   DROP_OFF = 13
   DONE = 14
 
+  FOUND_BLOCK = 0
+  GRABBED_BLOCK = 1
+  BLOCK_NOT_FOUND = 2
+  DROPPED_OFF_BLOCK = 3
+
 OBJ
   RBC:          "RBC"
   Beeper:       "Beeper"
@@ -101,16 +110,21 @@ VAR
   long seed
   long speed
   long trackStart
+  long foundBlockStart, dropOffStart
+  byte robotMode
   byte blockFound, blockGrabbed
   byte gripperState
   byte finished
   byte dataIn[2]
+  byte dataOut[2]
 
 PUB Main
   Init
   
   repeat while(NOT(finished)) 
     HandleInput
+    FindBlock
+    DeliverBlock
 
   Servos.Stop
 
@@ -122,6 +136,7 @@ PRI Init
   ' initialize local variables
   seed := 42
   speed := 20
+  robotMode := MODE_NORMAL
   blockFound := 0
   blockGrabbed := 0
   gripperState := GRIPPERS_CLOSED
@@ -219,10 +234,14 @@ PRI HandleInput
       RBC.DebugStrCr(STRING("Arcing Left"))
     
     elseif(dataIn[1] == PICK_UP)
+      robotMode := MODE_FINDBLOCK
+      Servos.HeadLookDown
+      foundBlockStart := cnt     
       RBC.DebugStrCr(STRING("Finding / Picking Up Block"))
     
     elseif(dataIn[1] == DROP_OFF)
-      blockFound := 0
+      robotMode := MODE_DELIVERINGBLOCK
+      dropOffStart := cnt
       RBC.DebugStrCr(STRING("Dropping Off Block"))
     
     elseif(dataIn[1] == DONE)
@@ -235,64 +254,71 @@ PRI HandleInput
       RBC.DebugLongCr(dataIn[1])
 
 PRI FindBlock
-  if(cnt => trackStart + (clkfreq / 4))
-    Camera.TrackColor
+  if(robotMode == MODE_FINDBLOCK)
+    if(cnt => trackStart + (clkfreq / 4))
+      Camera.TrackColor
+       
+      if(Camera.GetCenterX == 0 AND Camera.GetConfidence == 0)
+        Servos.SetPreferredSpeeds(12, 12)
+      elseif(Camera.GetCenterX > 55 AND Camera.GetConfidence > 5)
+        Servos.SetPreferredSpeeds(-7, 7)
+        OpenGrippers
+        if(NOT(blockFound))
+          dataOut[0] := FOUND_BLOCK
+          RBC.SendDataToPc(@dataOut, 2, RBC#OUTPUT_TO_LOG_AND_FILE)
+        blockFound := 1
+      elseif(Camera.GetCenterX < 15 AND Camera.GetConfidence > 5)
+        Servos.SetPreferredSpeeds(7, -7)
+        OpenGrippers
+        if(NOT(blockFound))
+          dataOut[0] := FOUND_BLOCK
+          RBC.SendDataToPc(@dataOut, 2, RBC#OUTPUT_TO_LOG_AND_FILE)
+        blockFound := 1
+        
+      if(Block.Detect AND NOT(blockGrabbed))
+        Servos.SetPreferredSpeeds(0, 0)
+        CloseGrippers
+        if(NOT(blockGrabbed))
+          Servos.HeadLookForwardVertical
+        blockGrabbed := 1
+        blockFound := 1
+        robotMode := MODE_NORMAL
+        dataOut[0] := GRABBED_BLOCK
+        RBC.SendDataToPc(@dataOut, 2, RBC#OUTPUT_TO_LOG_AND_FILE)
      
-    if(Camera.GetCenterX == 0 AND Camera.GetConfidence == 0)
-      Servos.SetPreferredSpeeds(12, 12)
-    elseif(Camera.GetCenterX > 55 AND Camera.GetConfidence > 5)
-      Servos.SetPreferredSpeeds(-7, 7)
-      OpenGrippers
-      blockFound := 1
-    elseif(Camera.GetCenterX < 15 AND Camera.GetConfidence > 5)
-      Servos.SetPreferredSpeeds(7, -7)
-      OpenGrippers
-      blockFound := 1
-    else
-      Servos.SetPreferredSpeeds(12, 12)
-      OpenGrippers
-      blockFound := 1
-     
-    if(Block.Detect)
-      Servos.SetPreferredSpeeds(0, 0)
-      CloseGrippers
-      if(NOT(blockGrabbed))
+      if(cnt => foundBlockStart + (3 * clkfreq) AND NOT(blockGrabbed))
+        CloseGrippers
         Servos.HeadLookForwardVertical
-      blockGrabbed := 1
-      blockFound := 1
-    
-    trackStart := cnt   
+        if(blockFound)
+          blockGrabbed := 1
+          dataOut[0] := GRABBED_BLOCK
+          RBC.SendDataToPc(@dataOut, 2, RBC#OUTPUT_TO_LOG_AND_FILE)
+        else
+          dataOut[0] := BLOCK_NOT_FOUND
+          RBC.SendDataToPc(@dataOut, 2, RBC#OUTPUT_TO_LOG_AND_FILE)
+          blockFound := 0
+          blockGrabbed := 0
+        robotMode := MODE_NORMAL
+           
+      trackStart := cnt
 
 PRI DeliverBlock
-  Sensors.Capture
-
-  Servos.SetPreferredSpeeds(30, 30)
-
-  if(Sensors.Detect(3) OR Sensors.Detect(2) OR Sensors.Detect(1))
-    Servos.SetPreferredSpeeds(0, 0)
-
-    waitcnt(cnt + (clkfreq / 2))
-
-    Servos.SetPreferredSpeeds(-20, -20)
-
-    waitcnt(cnt + (clkfreq / 6))
-
+  if(robotMode == MODE_DELIVERINGBLOCK) 
     Servos.OpenGrippers
-    
-    waitcnt(cnt + clkfreq)
 
-    Servos.CloseGrippers
+    Servos.SetPreferredSpeeds(-10, -10)
 
-    if(random(2, 0) == 0)
-      Servos.SetPreferredSpeeds(-20, 20)
-    else
-      Servos.SetPreferredSpeeds(20, -20)
+    waitcnt(cnt + (clkfreq / 8))
 
-    waitcnt(cnt + clkfreq)
-
-    blockFound := 0
-    blockGrabbed := 0
-    Servos.HeadLookDown
+    if(cnt => dropOffStart + clkfreq)
+      Servos.CloseGrippers
+     
+      dataOut[0] := DROPPED_OFF_BLOCK
+      RBC.SendDataToPc(@dataOut, 2, RBC#OUTPUT_TO_LOG_AND_FILE)
+     
+      blockFound := 0
+      blockGrabbed := 0
+      robotMode := MODE_NORMAL
 
 PRI CloseGrippers
   if(NOT(gripperState == GRIPPERS_CLOSED))
