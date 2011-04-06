@@ -207,7 +207,15 @@ public class PathSystem implements MouseListener, MouseMotionListener {
 			return renamePath(pathIndex);
 		}
 		
+		String oldPathName = m_paths.elementAt(pathIndex).getName();
 		m_paths.elementAt(pathIndex).setName(value);
+		
+		boolean updateTasks = JOptionPane.showConfirmDialog(null, "Update references to path \"" + oldPathName + "\" in Task Manager to new path name?", "Update Tasks?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION;
+		
+		if(updateTasks) {
+			SystemManager.taskManager.renamePathReferences(oldPathName, newPathName);
+		}
+		
 		return true;
 	}
 	

@@ -82,6 +82,34 @@ public class TaskManager implements Updatable {
 		return false;
 	}
 	
+	public boolean renamePathReferences(String oldPathName, String newPathName) {
+		if(oldPathName == null || newPathName == null) { return false; }
+		String oldPath = oldPathName.trim();
+		String newPath = newPathName.trim();
+		if(oldPath.length() == 0 || newPath.length() == 0) { return false; }
+		
+		for(int i=0;i<m_taskLists.size();i++) {
+			for(int j=0;j<m_taskLists.elementAt(i).numberOfTasks();j++) {
+				for(int k=0;k<m_taskLists.elementAt(i).getTask(j).numberOfObjectives();k++) {
+					Objective o = m_taskLists.elementAt(i).getTask(j).getObjective(k);
+					if(o.getType() == ObjectiveType.MoveToPosition) {
+						ObjectiveMoveToPosition o2 = (ObjectiveMoveToPosition) o;
+						o2.setPathName(newPathName);
+					}
+					else if(o.getType() == ObjectiveType.LookAtPosition) {
+						ObjectiveLookAtPosition o2 = (ObjectiveLookAtPosition) o;
+						o2.setPathName(newPathName);
+					}
+					else if(o.getType() == ObjectiveType.BackUpToPosition) {
+						ObjectiveBackUpToPosition o2 = (ObjectiveBackUpToPosition) o;
+						o2.setPathName(newPathName);
+					}
+				}
+			}
+		}
+		return true;
+	}
+	
 	public void reset() {
 		m_returnToSpawnPosition = null;
 		m_isFinished = false;
