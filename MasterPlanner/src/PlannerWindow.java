@@ -43,6 +43,7 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
 	private JCheckBoxMenuItem m_editDrawObjectivesMenuItem;
 	private JMenuItem m_editUpdateTrackerImageMenuItem;
 	private JMenuItem m_editResetPositionsMenuItem;
+	private JMenuItem m_editLoadDefaultPathMenuItem;
 	
 	private JMenu m_settingsMenu;
 	private JCheckBoxMenuItem m_settingsAutoConnectOnStartupMenuItem;
@@ -232,6 +233,7 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
     	m_editDrawObjectivesMenuItem = new JCheckBoxMenuItem("Draw Objectives");
     	m_editUpdateTrackerImageMenuItem = new JMenuItem("Update Tracker Image");
     	m_editResetPositionsMenuItem = new JMenuItem("Reset Positions");
+    	m_editLoadDefaultPathMenuItem = new JMenuItem("Load Default Path");
         
         m_settingsMenu = new JMenu("Settings");
         m_settingsAutoConnectOnStartupMenuItem = new JCheckBoxMenuItem("Auto-connect on Startup");
@@ -307,6 +309,7 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
     	m_editDrawObjectivesMenuItem.addActionListener(this);
         m_editUpdateTrackerImageMenuItem.addActionListener(this);
         m_editResetPositionsMenuItem.addActionListener(this);
+        m_editLoadDefaultPathMenuItem.addActionListener(this);
         m_settingsAutoConnectOnStartupMenuItem.addActionListener(this);
         m_settingsTakeWebcamSnapshotOnStartupMenuItem.addActionListener(this);
         m_settingsUseStaticStationImagesMenuItem.addActionListener(this);
@@ -372,6 +375,7 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
 		m_editMenu.add(m_editDrawObjectivesMenuItem);
         m_editMenu.add(m_editUpdateTrackerImageMenuItem);
         m_editMenu.add(m_editResetPositionsMenuItem);
+        m_editMenu.add(m_editLoadDefaultPathMenuItem);
         
         m_settingsMenu.add(m_settingsAutoConnectOnStartupMenuItem);
         m_settingsMenu.add(m_settingsTakeWebcamSnapshotOnStartupMenuItem);
@@ -1519,6 +1523,16 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
 		}
 		else if(e.getSource() == m_editResetPositionsMenuItem) {
 			SystemManager.resetPositions();
+		}
+		else if(e.getSource() == m_editLoadDefaultPathMenuItem) {
+			Path defaultPath = PathSystem.getDefaultPath();
+			
+			if(SystemManager.pathSystem.addPath(defaultPath)) {
+				JOptionPane.showMessageDialog(this, "Loaded default path successfully!", "Loaded Default Path", JOptionPane.INFORMATION_MESSAGE);
+			}
+			else {
+				JOptionPane.showMessageDialog(this, "Default path already exists, please rename or remove path \"" + defaultPath.getName() + "\" first.", "Default Path Already Exists", JOptionPane.ERROR_MESSAGE);
+			}
 		}
 		else if(e.getSource() == m_settingsAutoConnectOnStartupMenuItem) {
 			SystemManager.settings.setAutoConnectOnStartup(m_settingsAutoConnectOnStartupMenuItem.isSelected());
