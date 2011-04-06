@@ -67,9 +67,7 @@ public class DisplayWindow extends JFrame implements WindowListener, Updatable {
 	public void windowClosing(WindowEvent e) {
 		if(e.getSource() == this) {
 			if(SystemManager.settings.getAutoSaveOnExit()) {
-				SystemManager.pathSystem.writeTo(SystemManager.settings.getPathDataFileName());
-				SystemManager.taskManager.writeTo(SystemManager.settings.getTaskListFileName());
-				SystemManager.settings.save();
+				SystemManager.saveAll();
 			}
 			dispose();
 		}

@@ -70,14 +70,12 @@ public class SystemManager {
 		}
 		
 		if(settings.getUseStaticStationImages()) {
-			for(byte i=0;i<settings.getNumberOfTrackers();i++) {
-				displayWindow.setTrackerImage((byte) (i + 1), settings.getStaticStationImage((byte) (i + 1)));
-			}
+			updateStaticStationImages();
 		}
 		
 		client.initialize();
 		if(settings.getAutoConnectOnStartup()) {
-			client.connect();
+			connect();
 		}
 		
 		taskManager = TaskManager.readFrom(settings.getTaskListFileName());
@@ -93,6 +91,16 @@ public class SystemManager {
 	public static boolean isIdentified() { return trackerNumber > 0; }
 	
 	public static boolean isStarted() { return m_started; }
+	
+	public static void connect() {
+		client.connect();
+	}
+	
+	public static void disconnect() {
+		client.disconnect();
+		trackerNumber = -1;
+		m_started = false;
+	}
 	
 	public static void start() {
 		if(isStarted() || !isIdentified()) { return; }
@@ -111,6 +119,17 @@ public class SystemManager {
 	
 	public static void setTrackerImage(byte trackerNumber, BufferedImage trackerImage) {
 		displayWindow.setTrackerImage(trackerNumber, trackerImage);
+	}
+	
+	public static void loadStaticStationImages() {
+		settings.loadStaticStationImages();
+		updateStaticStationImages();
+	}
+	
+	public static void updateStaticStationImages() {
+		for(byte i=0;i<settings.getNumberOfTrackers();i++) {
+			displayWindow.setTrackerImage((byte) (i + 1), settings.getStaticStationImage((byte) (i + 1)));
+		}
 	}
 	
 	public static boolean loadLocalTrackerImage() {
@@ -187,6 +206,31 @@ public class SystemManager {
 		robotSystem.reset();
 		blockSystem.reset();
 		potSystem.reset();
+		taskManager.reset();
+	}
+	
+	public static void resetPositions() {
+		for(byte i=0;i<robotSystem.numberOfRobots();i++) {
+			robotSystem.getRobot(i).setInitialPosition(RobotSystem.defaultRobotPositions[i]);
+		}
+		for(byte i=0;i<blockSystem.numberOfBlocks();i++) {
+			blockSystem.getBlock(i).setInitialPosition(BlockSystem.defaultBlockPositions[i]);
+		}
+		for(byte i=0;i<blockSystem.numberOfDropOffLocations();i++) {
+			blockSystem.getDropOffLocation(i).setPosition(BlockSystem.defaultDropOffLocations[i]);
+		}
+		for(byte i=0;i<potSystem.numberOfPots();i++) {
+			potSystem.getPot(i).setInitialPosition(PotSystem.defaultPotPositions[i]);
+		}
+		robotSystem.reset();
+		blockSystem.reset();
+		potSystem.reset();
+	}
+	
+	public static void saveAll() {
+		pathSystem.writeTo(settings.getPathDataFileName());
+		taskManager.writeTo(settings.getTaskListFileName());
+		settings.save();
 	}
 	
 	public static void handlePose(Position position, int angle) {

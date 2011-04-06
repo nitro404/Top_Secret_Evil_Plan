@@ -1,5 +1,6 @@
 import java.util.StringTokenizer;
 import java.io.PrintWriter;
+import java.awt.Graphics;
 
 public class ObjectiveSkipTo extends Objective {
 	
@@ -35,11 +36,17 @@ public class ObjectiveSkipTo extends Objective {
 		return new ObjectiveSkipTo(objectiveID);
 	}
 	
+	public void reset() {
+		super.reset();
+	}
+	
 	public boolean writeTo(PrintWriter out) {
 		if(out == null) { return false; }
 		out.print("Objective " + m_objectiveID + Variable.SEPARATOR_CHAR + " Skip to Objective " + m_skipToObjectiveID);
 		return true;
 	}
+	
+	public void draw(Graphics g) { }
 	
 	public String toString() {
 		return "Objective " + m_objectiveID + Variable.SEPARATOR_CHAR + " Skip to Objective " + m_skipToObjectiveID;

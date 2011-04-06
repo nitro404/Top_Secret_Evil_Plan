@@ -1,4 +1,5 @@
 import java.util.StringTokenizer;
+import java.awt.Graphics;
 import java.io.PrintWriter;
 
 public class ObjectiveBackUpToPosition extends Objective {
@@ -14,7 +15,7 @@ public class ObjectiveBackUpToPosition extends Objective {
 		m_pathName = pathName;
 		m_positionIndex = positionIndex;
 		m_destinationVertex = null;
-		m_backingUpStartTime = System.currentTimeMillis();
+		m_backingUpStartTime = -1;
 	}
 	
 	public String getPathName() { return m_pathName; }
@@ -36,6 +37,7 @@ public class ObjectiveBackUpToPosition extends Objective {
 		
 		if(m_destinationVertex == null) {
 			m_destinationVertex = SystemManager.pathSystem.getPath(m_pathName).getVertex(m_positionIndex);
+			m_backingUpStartTime = System.currentTimeMillis();
 		}
 		
 		RobotPosition p = SystemManager.robotSystem.getActiveRobot().getActualPosition();
@@ -75,19 +77,19 @@ public class ObjectiveBackUpToPosition extends Objective {
 		// otherwise instruct the robot to turn left (as long as the turn distance is shorter than turning right)
 		else if(angle > p.getAngleRadians()) {
 			if(Math.abs(angleDifference) <= Math.PI) {
-				SystemManager.sendInstructionToRobot(minimumBackupTimeElapsed ? RobotInstruction.BackUp : (shouldTurnSlowly ? RobotInstruction.TurnLeftSlowly : RobotInstruction.TurnLeft));
+				SystemManager.sendInstructionToRobot(minimumBackupTimeElapsed ? (shouldBackUpSlowly ? RobotInstruction.BackUpSlowly : RobotInstruction.BackUp) : (shouldTurnSlowly ? RobotInstruction.TurnLeftSlowly : RobotInstruction.TurnLeft));
 			}
 			else {
-				SystemManager.sendInstructionToRobot(minimumBackupTimeElapsed ? RobotInstruction.BackUp : (shouldTurnSlowly ? RobotInstruction.TurnRightSlowly : RobotInstruction.TurnRight));
+				SystemManager.sendInstructionToRobot(minimumBackupTimeElapsed ? (shouldBackUpSlowly ? RobotInstruction.BackUpSlowly : RobotInstruction.BackUp) : (shouldTurnSlowly ? RobotInstruction.TurnRightSlowly : RobotInstruction.TurnRight));
 			}
 		}
 		// otherwise instruct the robot to turn right (as long as the turn distance is shorter than turning left)
 		else {
 			if(Math.abs(angleDifference) <= Math.PI) {
-				SystemManager.sendInstructionToRobot(minimumBackupTimeElapsed ? RobotInstruction.BackUp : (shouldTurnSlowly ? RobotInstruction.TurnRightSlowly : RobotInstruction.TurnRight));
+				SystemManager.sendInstructionToRobot(minimumBackupTimeElapsed ? (shouldBackUpSlowly ? RobotInstruction.BackUpSlowly : RobotInstruction.BackUp) : (shouldTurnSlowly ? RobotInstruction.TurnRightSlowly : RobotInstruction.TurnRight));
 			}
 			else {
-				SystemManager.sendInstructionToRobot(minimumBackupTimeElapsed ? RobotInstruction.BackUp : (shouldTurnSlowly ? RobotInstruction.TurnLeftSlowly : RobotInstruction.TurnLeft));
+				SystemManager.sendInstructionToRobot(minimumBackupTimeElapsed ? (shouldBackUpSlowly ? RobotInstruction.BackUpSlowly : RobotInstruction.BackUp) : (shouldTurnSlowly ? RobotInstruction.TurnLeftSlowly : RobotInstruction.TurnLeft));
 			}
 		}
 	}
@@ -114,10 +116,28 @@ public class ObjectiveBackUpToPosition extends Objective {
 		return new ObjectiveBackUpToPosition(pathName, positionIndex);
 	}
 	
+	public void reset() {
+		super.reset();
+		m_destinationVertex = null;
+		m_backingUpStartTime = System.currentTimeMillis();
+	}
+	
 	public boolean writeTo(PrintWriter out) {
 		if(out == null) { return false; }
 		out.print("Objective " + m_objectiveID + Variable.SEPARATOR_CHAR + " Back Up to Position " + m_positionIndex + " of Path " + m_pathName);
 		return true;
+	}
+	
+	public void draw(Graphics g) {
+		if(g == null || m_destinationVertex == null) { return; }
+		
+		g.setColor(SystemManager.settings.getObjectiveColour());
+		
+		RobotPosition p = SystemManager.robotSystem.getActiveRobot().getActualPosition();
+		
+		g.drawLine(p.getX(), p.getY(), m_destinationVertex.x, m_destinationVertex.y);
+		
+		m_destinationVertex.drawSelection(g, SystemManager.settings.getObjectiveColour());
 	}
 	
 	public String toString() {

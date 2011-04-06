@@ -36,7 +36,10 @@ public class ServerOutputSignalQueue extends Thread {
 				   SystemManager.settings.getSignalDebugLevel() == SignalDebugLevel.Both) {
 					if(!SystemManager.settings.getIgnorePingPongSignals() || 
 					   !((s.getSignalType() == SignalType.Ping || s.getSignalType() == SignalType.Pong) && SystemManager.settings.getIgnorePingPongSignals())) {
-						SystemManager.console.writeLine("Sending: " + s.toString());
+						if(!SystemManager.settings.getIgnorePositionSignals() || 
+						   !((s.getSignalType() == SignalType.UpdateActualRobotPosition || s.getSignalType() == SignalType.UpdateEstimatedRobotPosition || s.getSignalType() == SignalType.UpdateBlockPosition || s.getSignalType() == SignalType.UpdatePotPosition) && SystemManager.settings.getIgnorePositionSignals())) {
+							SystemManager.console.writeLine("Sending: " + s.toString());
+						}
 					}
 				}
 				

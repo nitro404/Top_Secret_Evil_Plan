@@ -1,6 +1,10 @@
+import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.Point;
 
 public class Position extends Point {
+	
+	public static int SELECTION_SIZE = 6;
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -35,6 +39,22 @@ public class Position extends Point {
 	public static int getMaxY() {
 		return SystemManager.settings.getWebcamResolution().height * SystemManager.settings.getNumberOfTrackers();
 	}
+	
+	public void drawSelection(Graphics g, Color c) {
+		if(g == null || c == null) { return; }
+		
+		g.setColor(c);
+		
+		g.drawOval(x - (SELECTION_SIZE/2), y - (SELECTION_SIZE/2), SELECTION_SIZE, SELECTION_SIZE);
+	}
+	
+	public void draw(Graphics g) {
+		if(g == null) { return; }
+		
+		int radius = 2;
+		g.fillOval(x - radius, y - radius,radius * 2, radius * 2);
+	}
+	
 	
 	public String toString() {
 		return "(" + x + ", " +  y + ")";

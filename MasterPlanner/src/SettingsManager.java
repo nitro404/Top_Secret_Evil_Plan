@@ -21,8 +21,10 @@ public class SettingsManager {
 	private InetAddress m_serverIPAddress;
 	private int m_serverPort;
 	private boolean m_ignorePingPongSignals;
+	private boolean m_ignorePositionSignals;
 	private byte m_signalDebugLevel;
 	private boolean m_autoScrollConsoleWindow;
+	private int m_maxConsoleHistory;
 	private boolean m_autoConnectOnStartup;
 	private boolean m_takeWebcamSnapshotOnStartup;
 	private boolean m_useStaticStationImages;
@@ -37,6 +39,7 @@ public class SettingsManager {
 	private Color m_blockColour;
 	private Color m_potColour;
 	private Color m_dropOffLocationColour;
+	private Color m_objectiveColour;
 	private Vector<RobotPosition> m_initialRobotPositions;
 	private Vector<Position> m_initialBlockPositions;
 	private Vector<Position> m_initialPotPositions;
@@ -52,8 +55,10 @@ public class SettingsManager {
 	public static InetAddress defaultServerIPAddress;
 	final public static int defaultServerPort = Client.DEFAULT_PORT;
 	final public static boolean defaultIgnorePingPongSignals = true;
+	final public static boolean defaultIgnorePositionSignals = true;
 	final public static byte defaultSignalDebugLevel = SignalDebugLevel.Off;
 	final public static boolean defaultAutoScrollConsoleWindow = true;
+	final public static int defaultMaxConsoleHistory = 1024;
 	final public static boolean defaultAutoConnectOnStartup = true;
 	final public static boolean defaultTakeWebcamSnapshotOnStartup = false;
 	final public static boolean defaultUseStaticStationImages = true;
@@ -65,16 +70,23 @@ public class SettingsManager {
 	final public static Color defaultVertexColour = Color.BLUE;
 	final public static Color defaultEdgeColour = Color.GREEN;
 	final public static Color defaultRobotColour = Color.GREEN;
-	final public static Color defaultBlockColour = Color.RED;
+	final public static Color defaultBlockColour = new Color(255, 102, 0);
 	final public static Color defaultPotColour = Color.BLUE;
 	final public static Color defaultDropOffLocationColour = Color.MAGENTA;
+	final public static Color defaultObjectiveColour = new Color(0, 128, 255);
 	
 	public SettingsManager() {
 		m_settings = new VariableSystem();
+		reset();
+	}
+	
+	public void reset() {
 		m_pathDataFileName = defaultPathDataFileName;
 		m_taskListFileName = defaultTaskListFileName;
 		m_trackerImageFileName = defaultTrackerImageFileName;
 		m_staticStationImageFileNameFormat = defaultStaticStationImageFileNameFormat;
+		m_numberOfTrackers = defaultNumberOfTrackers;
+		m_staticStationImage = new BufferedImage[m_numberOfTrackers];
 		m_autoSaveOnExit = defaultAutoSaveOnExit;
 		m_frameRate = defaultFrameRate;
 		try { defaultServerIPAddress = InetAddress.getByName(Client.DEFAULT_HOST); }
@@ -85,14 +97,15 @@ public class SettingsManager {
 		m_serverIPAddress = defaultServerIPAddress;
 		m_serverPort = defaultServerPort;
 		m_ignorePingPongSignals = defaultIgnorePingPongSignals;
+		m_ignorePositionSignals = defaultIgnorePositionSignals;
 		m_signalDebugLevel = defaultSignalDebugLevel;
 		m_autoScrollConsoleWindow = defaultAutoScrollConsoleWindow;
+		m_maxConsoleHistory = defaultMaxConsoleHistory;
 		m_autoConnectOnStartup = defaultAutoConnectOnStartup;
 		m_takeWebcamSnapshotOnStartup = defaultTakeWebcamSnapshotOnStartup;
 		m_useStaticStationImages = defaultUseStaticStationImages;
 		m_webcamResolution = defaultWebcamResolution;
 		m_timeLimit = defaultTimeLimit;
-		m_numberOfTrackers = defaultNumberOfTrackers;
 		m_selectedColour = defaultSelectedColour;
 		m_missingColour = defaultMissingColour;
 		m_vertexColour = defaultVertexColour;
@@ -101,6 +114,7 @@ public class SettingsManager {
 		m_blockColour = defaultBlockColour;
 		m_potColour = defaultPotColour;
 		m_dropOffLocationColour = defaultDropOffLocationColour;
+		m_objectiveColour = defaultObjectiveColour;
 		m_initialRobotPositions = new Vector<RobotPosition>();
 		for(int i=0;i<RobotSystem.defaultRobotPositions.length;i++) {
 			m_initialRobotPositions.add(RobotSystem.defaultRobotPositions[i]);
@@ -117,6 +131,8 @@ public class SettingsManager {
 		for(int i=0;i<BlockSystem.defaultDropOffLocations.length;i++) {
 			m_dropOffLocations.add(BlockSystem.defaultDropOffLocations[i]);
 		}
+		
+		loadStaticStationImages();
 	}
 	
 	public String getPathDataFileName() { return m_pathDataFileName; }
@@ -178,9 +194,13 @@ public class SettingsManager {
 	
 	public boolean getIgnorePingPongSignals() { return m_ignorePingPongSignals; }
 	
+	public boolean getIgnorePositionSignals() { return m_ignorePositionSignals; }
+	
 	public byte getSignalDebugLevel() { return m_signalDebugLevel; }
 	
 	public boolean getAutoScrollConsoleWindow() { return m_autoScrollConsoleWindow; }
+	
+	public int getMaxConsoleHistory() { return m_maxConsoleHistory; }
 	
 	public boolean getAutoConnectOnStartup() { return m_autoConnectOnStartup; }
 	
@@ -202,6 +222,7 @@ public class SettingsManager {
 	public Color getBlockColour() { return m_blockColour; }
 	public Color getPotColour() { return m_potColour; }
 	public Color getDropOffLocationColour() { return m_dropOffLocationColour; }
+	public Color getObjectiveColour() { return m_objectiveColour; }
 	
 	public RobotPosition getInitialRobotPosition(byte robotID) {
 		if(robotID < 0 || robotID >= m_initialRobotPositions.size()) { return null; }
@@ -311,6 +332,22 @@ public class SettingsManager {
 		return false;
 	}
 	
+	public void setIgnorePositionSignals(boolean ignorePositionSignals) { m_ignorePositionSignals = ignorePositionSignals; }
+	
+	public boolean setIgnorePositionSignals(String data) {
+		if(data == null) { return false; }
+		String value = data.trim();
+		if(value.equalsIgnoreCase("true")) {
+			m_ignorePositionSignals = true;
+			return true;
+		}
+		else if(value.equalsIgnoreCase("false")) {
+			m_ignorePositionSignals = false;
+			return true;
+		}
+		return false;
+	}
+	
 	public void setSignalDebugLevel(byte signalDebugLevel) { if(SignalDebugLevel.isValid(signalDebugLevel)) { m_signalDebugLevel = signalDebugLevel; } }
 	
 	public void setAutoScrollConsoleWindow(boolean autoScroll) { m_autoScrollConsoleWindow = autoScroll; }
@@ -328,6 +365,8 @@ public class SettingsManager {
 		}
 		return false;
 	}
+	
+	public void setMaxConsoleHistory(int maxConsoleHistory) { m_maxConsoleHistory = maxConsoleHistory; }
 	
 	public void setAutoConnectOnStartup(boolean autoConnect) { m_autoConnectOnStartup = autoConnect; }
 	
@@ -420,18 +459,11 @@ public class SettingsManager {
 	public boolean setNumberOfTrackers(int numberOfTrackers) {
 		if(numberOfTrackers < 1) { return false; }
 		m_numberOfTrackers = numberOfTrackers;
+		
+		m_staticStationImage = new BufferedImage[m_numberOfTrackers];
+		loadStaticStationImages();
+		
 		return true;
-	}
-	
-	public void resetAllColours() {
-		m_selectedColour = defaultSelectedColour;
-		m_missingColour = defaultMissingColour;
-		m_vertexColour = defaultVertexColour;
-		m_edgeColour = defaultEdgeColour;
-		m_robotColour = defaultRobotColour;
-		m_blockColour = defaultBlockColour;
-		m_potColour = defaultPotColour;
-		m_dropOffLocationColour = defaultDropOffLocationColour;
 	}
 	
 	public boolean setSelectedColour(Color c) { if(c != null) { m_selectedColour = c; return true; } return false; }
@@ -442,6 +474,7 @@ public class SettingsManager {
 	public boolean setBlockColour(Color c) { if(c != null) { m_blockColour = c; return true; } return false; }
 	public boolean setPotColour(Color c) { if(c != null) { m_potColour = c; return true; } return false; }
 	public boolean setDropOffLocationColour(Color c) { if(c != null) { m_dropOffLocationColour = c; return true; } return false; }
+	public boolean setObjectiveColour(Color c) { if(c != null) { m_objectiveColour = c; return true; } return false; }
 	
 	public boolean setSelectedColour(String data) { return setSelectedColour(parseColour(data)); }
 	public boolean setMissingColour(String data) { return setMissingColour(parseColour(data)); }
@@ -451,6 +484,7 @@ public class SettingsManager {
 	public boolean setBlockColour(String data) { return setBlockColour(parseColour(data)); }
 	public boolean setPotColour(String data) { return setPotColour(parseColour(data)); }
 	public boolean setDropOffLocationColour(String data) { return setDropOffLocationColour(parseColour(data)); }
+	public boolean setObjectiveColour(String data) { return setObjectiveColour(parseColour(data)); }
 	
 	public boolean setInitialRobotPosition(byte robotID, RobotPosition initialPosition) {
 		if(robotID < 0 || robotID >= m_initialRobotPositions.size() || !RobotPosition.isValid(initialPosition)) { return false; }
@@ -605,14 +639,29 @@ public class SettingsManager {
 		return p;
 	}
 	
-	private void loadStaticStationImages() {
-		m_staticStationImage = new BufferedImage[m_numberOfTrackers];
+	public void loadStaticStationImages() {
+		if(m_staticStationImage == null) {
+			m_staticStationImage = new BufferedImage[m_numberOfTrackers];
+		}
+		
 		for(byte i=0;i<m_numberOfTrackers;i++) {
 			try {
 				m_staticStationImage[i] = ImageIO.read(new File(getStaticStationImageFileName((byte) (i+1))));
 			}
 			catch(Exception e) { }
 		}
+	}
+	
+	public void resetAllColours() {
+		m_selectedColour = defaultSelectedColour;
+		m_missingColour = defaultMissingColour;
+		m_vertexColour = defaultVertexColour;
+		m_edgeColour = defaultEdgeColour;
+		m_robotColour = defaultRobotColour;
+		m_blockColour = defaultBlockColour;
+		m_potColour = defaultPotColour;
+		m_dropOffLocationColour = defaultDropOffLocationColour;
+		m_objectiveColour = defaultObjectiveColour;
 	}
 	
 	public boolean load() { return loadFrom(defaultSettingsFileName); }
@@ -638,8 +687,10 @@ public class SettingsManager {
 		setServerIPAddress(m_settings.getValue("Server IP Address", "Settings"));
 		try { setServerPort(Integer.parseInt(m_settings.getValue("Server Port", "Settings"))); } catch(NumberFormatException e) { }
 		setIgnorePingPongSignals(m_settings.getValue("Ignore Ping Pong Signals", "Settings"));
+		setIgnorePositionSignals(m_settings.getValue("Ignore Position Signals", "Settings"));
 		setSignalDebugLevel(SignalDebugLevel.parseFrom(m_settings.getValue("Signal Debug Level", "Settings")));
 		setAutoScrollConsoleWindow(m_settings.getValue("Auto-scroll Console Window", "Settings"));
+		try { setMaxConsoleHistory(Integer.parseInt(m_settings.getValue("Max Console History", "Settings"))); } catch(NumberFormatException e) { }
 		setAutoConnectOnStartup(m_settings.getValue("Auto-connect on Startup", "Settings"));
 		setTakeWebcamSnapshotOnStartup(m_settings.getValue("Take Webcam Snapshot on Startup", "Settings"));
 		setUseStaticStationImages(m_settings.getValue("Use Static Station Image", "Settings"));
@@ -653,6 +704,7 @@ public class SettingsManager {
 		setBlockColour(parseColour(m_settings.getValue("Block Colour", "Colours")));
 		setPotColour(parseColour(m_settings.getValue("Pot Colour", "Colours")));
 		setDropOffLocationColour(parseColour(m_settings.getValue("Drop Off Location Colour", "Colours")));
+		setObjectiveColour(parseColour(m_settings.getValue("Objective Colour", "Colours")));
 		for(int i=0;i<m_initialRobotPositions.size();i++) {
 			setInitialRobotPosition(m_settings.getVariable("Robot " + i, "Robot Positions"));
 		}
@@ -683,8 +735,10 @@ public class SettingsManager {
 		m_settings.setValue("Server IP Address", m_serverIPAddress.getHostName(), "Settings");
 		m_settings.setValue("Server Port", m_serverPort, "Settings");
 		m_settings.setValue("Ignore Ping Pong Signals", m_ignorePingPongSignals, "Settings");
+		m_settings.setValue("Ignore Position Signals", m_ignorePositionSignals, "Settings");
 		m_settings.setValue("Signal Debug Level", SignalDebugLevel.toString(m_signalDebugLevel), "Settings");
 		m_settings.setValue("Auto-scroll Console Window", m_autoScrollConsoleWindow, "Settings");
+		m_settings.setValue("Max Console History", m_maxConsoleHistory, "Settings");
 		m_settings.setValue("Auto-connect on Startup", m_autoConnectOnStartup, "Settings");
 		m_settings.setValue("Take Webcam Snapshot on Startup", m_takeWebcamSnapshotOnStartup, "Settings");
 		m_settings.setValue("Use Static Station Image", m_useStaticStationImages, "Settings");
@@ -698,6 +752,7 @@ public class SettingsManager {
 		m_settings.setValue("Block Colour", m_blockColour.getRed() + ", " + m_blockColour.getGreen() + ", " + m_blockColour.getBlue(), "Colours");
 		m_settings.setValue("Pot Colour", m_potColour.getRed() + ", " + m_potColour.getGreen() + ", " + m_potColour.getBlue(), "Colours");
 		m_settings.setValue("Drop Off Location Colour", m_dropOffLocationColour.getRed() + ", " + m_dropOffLocationColour.getGreen() + ", " + m_dropOffLocationColour.getBlue(), "Colours");
+		m_settings.setValue("Objective Colour", m_objectiveColour.getRed() + ", " + m_objectiveColour.getGreen() + ", " + m_objectiveColour.getBlue(), "Colours");
 		for(byte i=0;i<SystemManager.robotSystem.numberOfRobots();i++) {
 			m_settings.setValue("Robot " + i, SystemManager.robotSystem.getRobot(i).getInitialPosition().toString(), "Robot Positions");
 		}

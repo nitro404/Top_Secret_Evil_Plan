@@ -44,7 +44,7 @@ public class SystemTimer {
 	
 	public long getTimeRemaining() {
 		if(m_startTime < 0) { return 0; }
-		return m_endTime - System.currentTimeMillis();
+		return (System.currentTimeMillis() >= m_endTime) ? 0 : m_endTime - System.currentTimeMillis();
 	}
 	
 	public String getTimeRemainingString() {

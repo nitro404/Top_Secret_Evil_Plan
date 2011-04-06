@@ -1,5 +1,6 @@
 import java.io.*;
 import java.awt.Point;
+import java.awt.Color;
 import java.awt.Graphics;
 
 /**
@@ -16,6 +17,9 @@ public class Vertex {
 	
 	/** The y coordinate of the Vertex. */
 	public int y;
+	
+	/** The size of a selection circle around a Vertex. */
+	public static int SELECTION_SIZE = 6;
 	
 	public Vertex() {
 		this.x = this.y = 0;
@@ -123,11 +127,27 @@ public class Vertex {
 	}
 	
 	/**
+	 * Renders a selection circle around the Vertex..
+	 * 
+	 * @param g the Graphics object to render the Vertex selection circle onto.
+	 * @param c the colour of the selection circle.
+	 */
+	public void drawSelection(Graphics g, Color c) {
+		if(g == null || c == null) { return; }
+		
+		g.setColor(c);
+		
+		g.drawOval(x - (SELECTION_SIZE/2), y - (SELECTION_SIZE/2), SELECTION_SIZE, SELECTION_SIZE);
+	}
+	
+	/**
 	 * Renders the Vertex onto the specified Graphics object.
 	 * 
 	 * @param g the Graphics object to render the Vertex onto.
 	 */
 	public void paintOn(Graphics g) {
+		if(g == null) { return; }
+		
 		int radius = 2;
 		g.fillOval(x - radius, 
 				   y - radius,

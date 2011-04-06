@@ -1,11 +1,10 @@
 import java.util.Vector;
-import java.awt.Graphics2D;
+import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.*;
 
 public class PotSystem implements MouseListener, MouseMotionListener {
 	
-	private byte m_activePotID;
 	private Vector<Pot> m_pots;
 	
 	private int m_selectedPot;
@@ -22,7 +21,6 @@ public class PotSystem implements MouseListener, MouseMotionListener {
 		for(byte i=0;i<defaultPotPositions.length;i++) {
 			m_pots.add(new Pot(i, SystemManager.settings.getInitialPotPosition(i)));
 		}
-		m_activePotID = -1;
 		m_selectedPot = -1;
 		m_potToMove = -1;
 	}
@@ -42,22 +40,6 @@ public class PotSystem implements MouseListener, MouseMotionListener {
 	public Pot getPot(byte potID) {
 		if(potID < 0 || potID >= m_pots.size()) { return null; }
 		return m_pots.elementAt(potID);
-	}
-	
-	public Pot getActivePot() {
-		return m_activePotID < 0 || m_activePotID >= m_pots.size() ? null : m_pots.elementAt(m_activePotID);
-	}
-	
-	public byte getActivePotID() {
-		return m_activePotID;
-	}
-	
-	public boolean hasActivePot() {
-		return m_activePotID >= 0 && m_activePotID < m_pots.size();
-	}
-	
-	public void setActivePotID(byte potID) {
-		m_activePotID = (potID < -1) ? -1 : potID;
 	}
 	
 	public boolean setPotState(byte potID, byte robotID, byte potState) {
@@ -82,9 +64,7 @@ public class PotSystem implements MouseListener, MouseMotionListener {
 	}
 	
 	public void mouseReleased(MouseEvent e) {
-		if(e.getButton() == MouseEvent.BUTTON2) {
-			m_potToMove = -1;
-		}
+		m_potToMove = -1;
 	}
 	
 	public void mouseDragged(MouseEvent e) {
@@ -112,6 +92,8 @@ public class PotSystem implements MouseListener, MouseMotionListener {
 	}
 
 	public void reset() {
+		m_selectedPot = -1;
+		m_potToMove = -1;
 		for(int i=0;i<m_pots.size();i++) {
 			m_pots.elementAt(i).reset();
 		}
@@ -122,9 +104,13 @@ public class PotSystem implements MouseListener, MouseMotionListener {
 		m_potToMove = -1;
 	}
 	
-	public void draw(Graphics2D g) {
+	public void draw(Graphics g) {
 		for(int i=0;i<m_pots.size();i++) {
 			m_pots.elementAt(i).draw(g);
+		}
+		
+		if(m_potToMove != -1) {
+			m_pots.elementAt(m_selectedPot).drawSelection(g, SystemManager.settings.getSelectedColour());
 		}
 	}
 	

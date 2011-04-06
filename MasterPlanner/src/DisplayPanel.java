@@ -306,18 +306,18 @@ public class DisplayPanel extends JPanel implements MouseListener, MouseMotionLi
 				}
 			}
 			
-			Graphics2D g2 = (Graphics2D) g;
-			if(SystemManager.potSystem != null) { SystemManager.potSystem.draw(g2); }
-			if(SystemManager.blockSystem != null) { SystemManager.blockSystem.draw(g2); }
-			if(SystemManager.robotSystem != null) { SystemManager.robotSystem.draw(g2); }
+			if(SystemManager.potSystem != null) { SystemManager.potSystem.draw(g); }
+			if(SystemManager.blockSystem != null) { SystemManager.blockSystem.draw(g); }
+			if(SystemManager.robotSystem != null) { SystemManager.robotSystem.draw(g); }
 			if(SystemManager.pathSystem != null) {
 				if(m_editMode == EditMode.ViewOnly) {
-					SystemManager.pathSystem.drawAll(g2);
+					SystemManager.pathSystem.drawAll(g);
 				}
 				else {
 					SystemManager.pathSystem.draw(g);
 				}
 			}
+			if(SystemManager.taskManager != null) { SystemManager.taskManager.draw(g); }
 		}
 		catch(Exception e) { }
 	}

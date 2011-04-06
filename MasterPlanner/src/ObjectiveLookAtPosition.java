@@ -1,4 +1,5 @@
 import java.util.StringTokenizer;
+import java.awt.Graphics;
 import java.io.PrintWriter;
 
 public class ObjectiveLookAtPosition extends Objective {
@@ -55,6 +56,8 @@ public class ObjectiveLookAtPosition extends Objective {
 			angleDifference = p.getAngleRadians() - angle;
 		}
 		
+		boolean shouldTurnSlowly = Math.abs(angleDifference) <= RobotSystem.slowDownAngleDifference;
+		
 		// instruct the robot to continue forwards (if the angle difference is within a certain accuracy)
 		if(Math.abs(angleDifference) < RobotSystem.angleAccuracy) {
 			m_objectiveState = ObjectiveState.Completed;
@@ -63,19 +66,19 @@ public class ObjectiveLookAtPosition extends Objective {
 		// otherwise instruct the robot to turn left (as long as the turn distance is shorter than turning right)
 		else if(angle > p.getAngleRadians()) {
 			if(Math.abs(angleDifference) <= Math.PI) {
-				SystemManager.sendInstructionToRobot(RobotInstruction.TurnLeft);
+				SystemManager.sendInstructionToRobot(shouldTurnSlowly ? RobotInstruction.TurnLeftSlowly : RobotInstruction.TurnLeftSlowly);
 			}
 			else {
-				SystemManager.sendInstructionToRobot(RobotInstruction.TurnRight);
+				SystemManager.sendInstructionToRobot(shouldTurnSlowly ? RobotInstruction.TurnRightSlowly : RobotInstruction.TurnRight);
 			}
 		}
 		// otherwise instruct the robot to turn right (as long as the turn distance is shorter than turning left)
 		else {
 			if(Math.abs(angleDifference) <= Math.PI) {
-				SystemManager.sendInstructionToRobot(RobotInstruction.TurnRight);
+				SystemManager.sendInstructionToRobot(shouldTurnSlowly ? RobotInstruction.TurnRightSlowly : RobotInstruction.TurnRight);
 			}
 			else {
-				SystemManager.sendInstructionToRobot(RobotInstruction.TurnLeft);
+				SystemManager.sendInstructionToRobot(shouldTurnSlowly ? RobotInstruction.TurnLeftSlowly : RobotInstruction.TurnLeftSlowly);
 			}
 		}
 	}
@@ -101,10 +104,27 @@ public class ObjectiveLookAtPosition extends Objective {
 		return new ObjectiveLookAtPosition(pathName, positionIndex);
 	}
 	
+	public void reset() {
+		super.reset();
+		m_lookAtVertex = null;
+	}
+	
 	public boolean writeTo(PrintWriter out) {
 		if(out == null) { return false; }
 		out.print("Objective " + m_objectiveID + Variable.SEPARATOR_CHAR + " Look at Position " + m_positionIndex + " of Path " + m_pathName);
 		return true;
+	}
+	
+	public void draw(Graphics g) {
+		if(g == null || m_lookAtVertex == null) { return; }
+		
+		g.setColor(SystemManager.settings.getObjectiveColour());
+		
+		RobotPosition p = SystemManager.robotSystem.getActiveRobot().getActualPosition();
+		
+		g.drawLine(p.getX(), p.getY(), m_lookAtVertex.x, m_lookAtVertex.y);
+		
+		m_lookAtVertex.drawSelection(g, SystemManager.settings.getObjectiveColour());
 	}
 	
 	public String toString() {

@@ -1,5 +1,7 @@
 package shared;
 
+import server.*;
+
 import java.util.Vector; 
 
 public class SystemConsole {
@@ -28,6 +30,9 @@ public class SystemConsole {
     
     public void writeLine(String text) {
 		m_consoleEntries.add(new SystemConsoleEntry(text));
+		while(m_consoleEntries.size() > SystemManager.settings.getMaxConsoleHistory()) {
+			m_consoleEntries.remove(0);
+		}
 		if(m_target != null) { m_target.update(); }
     }
     
@@ -39,10 +44,7 @@ public class SystemConsole {
     public String toString() {
     	String data = "";
 		for(int i=0;i<m_consoleEntries.size();i++) {
-			data += m_consoleEntries.elementAt(i).getText();
-			if(i < m_consoleEntries.size() - 1) {
-				data += "\n";
-			}
+			data += m_consoleEntries.elementAt(i).getText() + "\n";
 		}
 		return data;
     }

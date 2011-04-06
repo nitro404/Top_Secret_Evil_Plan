@@ -1,4 +1,5 @@
 import java.util.StringTokenizer;
+import java.awt.Graphics;
 import java.io.PrintWriter;
 
 public class ObjectiveMoveToPosition extends Objective {
@@ -56,7 +57,11 @@ public class ObjectiveMoveToPosition extends Objective {
 		
 		// compute the angle of this vector
 		float angle = (float) Math.atan2(-y, x);
-		if(angle < 0) { angle += Math.PI * 2; }
+//TODO: TEST:
+		angle = (float) (Math.PI - angle);
+		while(angle < 0) { angle += Math.PI * 2; }
+		while(angle > Math.PI * 2) { angle -= Math.PI * 2; }
+		//if(angle < 0) { angle += Math.PI * 2; }
 		
 		// compute the amount to turn
 		float angleDifference = 0;
@@ -117,10 +122,27 @@ public class ObjectiveMoveToPosition extends Objective {
 		return new ObjectiveMoveToPosition(pathName, positionIndex);
 	}
 	
+	public void reset() {
+		super.reset();
+		m_initiallyLookingAtDestination = false;
+	}
+	
 	public boolean writeTo(PrintWriter out) {
 		if(out == null) { return false; }
 		out.print("Objective " + m_objectiveID + Variable.SEPARATOR_CHAR + " Move to Position " + m_positionIndex + " of Path " + m_pathName);
 		return true;
+	}
+	
+	public void draw(Graphics g) {
+		if(g == null || m_destinationVertex == null) { return; }
+		
+		g.setColor(SystemManager.settings.getObjectiveColour());
+		
+		RobotPosition p = SystemManager.robotSystem.getActiveRobot().getActualPosition();
+		
+		g.drawLine(p.getX(), p.getY(), m_destinationVertex.x, m_destinationVertex.y);
+		
+		m_destinationVertex.drawSelection(g, SystemManager.settings.getObjectiveColour());
 	}
 	
 	public String toString() {

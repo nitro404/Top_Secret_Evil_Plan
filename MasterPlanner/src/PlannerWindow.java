@@ -17,10 +17,12 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
 	private JMenuItem m_fileConnectMenuItem;
 	private JMenuItem m_fileDisconnectMenuItem;
 	private JMenuItem m_fileStartSimulationMenuItem;
+	private JMenuItem m_fileServerIPMenuItem;
+	private JMenuItem m_fileServerPortMenuItem;
 	private JMenuItem m_fileExitMenuItem;
     
 	private JMenu m_editMenu;
-	private JMenuItem m_taskEditorMenuItem; 
+	private JMenuItem m_editTaskEditorMenuItem; 
 	private JMenu m_editModeMenu;
 	private JRadioButtonMenuItem[] m_editModeMenuItem;
 	private ButtonGroup m_editModeButtonGroup;
@@ -33,8 +35,10 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
 	private JMenuItem m_editColourBlockMenuItem;
 	private JMenuItem m_editColourPotMenuItem;
 	private JMenuItem m_editColourDropOffLocationMenuItem;
+	private JMenuItem m_editColourObjectiveMenuItem;
 	private JMenuItem m_editColourResetAllMenuItem;
 	private JMenuItem m_editUpdateTrackerImageMenuItem;
+	private JMenuItem m_editResetPositionsMenuItem;
 	
 	private JMenu m_settingsMenu;
 	private JCheckBoxMenuItem m_settingsAutoConnectOnStartupMenuItem;
@@ -44,17 +48,22 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
 	private JMenuItem m_settingsPathDataFileNameMenuItem;
 	private JMenuItem m_settingsTaskListFileNameMenuItem;
 	private JCheckBoxMenuItem m_settingsAutoScrollConsoleWindowMenuItem;
+	private JMenuItem m_settingsMaxConsoleHistoryMenuItem;
 	private JMenu m_settingsSignalsMenu;
 	private JCheckBoxMenuItem m_settingsSignalsIgnorePingPongMenuItem;
+	private JCheckBoxMenuItem m_settingsSignalsIgnorePositionMenuItem;
 	private JRadioButtonMenuItem[] m_settingsSignalsMenuItem;
 	private ButtonGroup m_settingsSignalsButtonGroup;
 	private JMenuItem m_settingsNumberOfTrackersMenuItem;
+	private JMenuItem m_settingsTrackerFrameRateMenuItem;
 	private JMenuItem m_settingsTimeLimitMenuItem;
 	private JMenuItem m_settingsWebcamResolutionMenuItem;
 	private JCheckBoxMenuItem m_settingsAutoSaveOnExitMenuItem;
 	private JMenuItem m_settingsSavePathDataMenuItem;
 	private JMenuItem m_settingsSaveTaskListMenuItem;
 	private JMenuItem m_settingsSaveSettingsMenuItem;
+	private JMenuItem m_settingsSaveAllMenuItem;
+	private JMenuItem m_settingsResetMenuItem;
 	
 	private JMenu m_helpMenu;
 	private JMenuItem m_helpAboutMenuItem;
@@ -189,10 +198,12 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
         m_fileConnectMenuItem = new JMenuItem("Connect");
     	m_fileDisconnectMenuItem = new JMenuItem("Disconnect");
         m_fileStartSimulationMenuItem = new JMenuItem("Start Simulation");
+        m_fileServerIPMenuItem = new JMenuItem("Server IP Address");
+    	m_fileServerPortMenuItem = new JMenuItem("Server Port");
         m_fileExitMenuItem = new JMenuItem("Exit");
         
         m_editMenu = new JMenu("Edit");
-        m_taskEditorMenuItem = new JMenuItem("Task Editor");
+        m_editTaskEditorMenuItem = new JMenuItem("Task Editor");
     	m_editModeMenu = new JMenu("Editing Mode");
     	m_editModeMenuItem = new JRadioButtonMenuItem[EditMode.displayEditModes.length];
     	for(int i=0;i<EditMode.displayEditModes.length;i++) {
@@ -207,8 +218,10 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
     	m_editColourBlockMenuItem = new JMenuItem("Block Colour");
     	m_editColourPotMenuItem = new JMenuItem("Pot Colour");
     	m_editColourDropOffLocationMenuItem = new JMenuItem("Drop Off Location Colour");
+    	m_editColourObjectiveMenuItem = new JMenuItem("Objective Colour");
     	m_editColourResetAllMenuItem = new JMenuItem("Reset All Colours");
     	m_editUpdateTrackerImageMenuItem = new JMenuItem("Update Tracker Image");
+    	m_editResetPositionsMenuItem = new JMenuItem("Reset Positions");
         
         m_settingsMenu = new JMenu("Settings");
         m_settingsAutoConnectOnStartupMenuItem = new JCheckBoxMenuItem("Auto-connect on Startup");
@@ -218,19 +231,24 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
     	m_settingsPathDataFileNameMenuItem = new JMenuItem("Path Data File Name");
     	m_settingsTaskListFileNameMenuItem = new JMenuItem("Task List File Name");
         m_settingsAutoScrollConsoleWindowMenuItem = new JCheckBoxMenuItem("Auto-scroll Console Window");
+        m_settingsMaxConsoleHistoryMenuItem = new JMenuItem("Max Console History");
         m_settingsSignalsMenu = new JMenu("Signal Debugging");
         m_settingsSignalsIgnorePingPongMenuItem = new JCheckBoxMenuItem("Ignore Ping Pong Signals");
+        m_settingsSignalsIgnorePositionMenuItem = new JCheckBoxMenuItem("Ignore Position Signals");
         m_settingsSignalsMenuItem = new JRadioButtonMenuItem[SignalDebugLevel.signalDebugLevels.length];
         for(byte i=0;i<SignalDebugLevel.signalDebugLevels.length;i++) {
         	m_settingsSignalsMenuItem[i] = new JRadioButtonMenuItem(SignalDebugLevel.signalDebugLevels[i]); 
         }
         m_settingsNumberOfTrackersMenuItem = new JMenuItem("Number of Trackers");
+        m_settingsTrackerFrameRateMenuItem = new JMenuItem("Tracker Frame Rate");
     	m_settingsTimeLimitMenuItem = new JMenuItem("Time Limit");
     	m_settingsWebcamResolutionMenuItem = new JMenuItem("Webcam Resolution");
     	m_settingsAutoSaveOnExitMenuItem = new JCheckBoxMenuItem("Autosave on Exit");
     	m_settingsSavePathDataMenuItem = new JMenuItem("Save Path Data");
     	m_settingsSaveTaskListMenuItem = new JMenuItem("Save Task List");
         m_settingsSaveSettingsMenuItem = new JMenuItem("Save Settings");
+    	m_settingsSaveAllMenuItem = new JMenuItem("Save All");
+    	m_settingsResetMenuItem = new JMenuItem("Reset Settings");
         
         m_helpMenu = new JMenu("Help");
         m_helpAboutMenuItem = new JMenuItem("About");
@@ -241,6 +259,7 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
         m_settingsAutoScrollConsoleWindowMenuItem.setSelected(SettingsManager.defaultAutoScrollConsoleWindow);
         m_editModeMenuItem[0].setSelected(true);
         m_settingsSignalsIgnorePingPongMenuItem.setSelected(SettingsManager.defaultIgnorePingPongSignals);
+        m_settingsSignalsIgnorePositionMenuItem.setSelected(SettingsManager.defaultIgnorePositionSignals);
         m_settingsSignalsMenuItem[SettingsManager.defaultSignalDebugLevel].setSelected(true);
         m_settingsAutoSaveOnExitMenuItem.setSelected(SettingsManager.defaultAutoSaveOnExit);
 		m_fileDisconnectMenuItem.setEnabled(false);
@@ -252,8 +271,10 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
         m_fileConnectMenuItem.addActionListener(this);
         m_fileDisconnectMenuItem.addActionListener(this);
         m_fileStartSimulationMenuItem.addActionListener(this);
+        m_fileServerIPMenuItem.addActionListener(this);
+        m_fileServerPortMenuItem.addActionListener(this);
         m_fileExitMenuItem.addActionListener(this);
-        m_taskEditorMenuItem.addActionListener(this);
+        m_editTaskEditorMenuItem.addActionListener(this);
         for(byte i=0;i<EditMode.displayEditModes.length;i++) {
         	m_editModeMenuItem[i].addActionListener(this);
         }
@@ -265,8 +286,10 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
     	m_editColourBlockMenuItem.addActionListener(this);
     	m_editColourPotMenuItem.addActionListener(this);
     	m_editColourDropOffLocationMenuItem.addActionListener(this);
+    	m_editColourObjectiveMenuItem.addActionListener(this);
     	m_editColourResetAllMenuItem.addActionListener(this);
         m_editUpdateTrackerImageMenuItem.addActionListener(this);
+        m_editResetPositionsMenuItem.addActionListener(this);
         m_settingsAutoConnectOnStartupMenuItem.addActionListener(this);
         m_settingsTakeWebcamSnapshotOnStartupMenuItem.addActionListener(this);
         m_settingsUseStaticStationImagesMenuItem.addActionListener(this);
@@ -274,17 +297,22 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
     	m_settingsPathDataFileNameMenuItem.addActionListener(this);
     	m_settingsTaskListFileNameMenuItem.addActionListener(this);
         m_settingsAutoScrollConsoleWindowMenuItem.addActionListener(this);
+        m_settingsMaxConsoleHistoryMenuItem.addActionListener(this);
         m_settingsSignalsIgnorePingPongMenuItem.addActionListener(this);
+        m_settingsSignalsIgnorePositionMenuItem.addActionListener(this);
         for(byte i=0;i<SignalDebugLevel.signalDebugLevels.length;i++) {
         	m_settingsSignalsMenuItem[i].addActionListener(this);
         }
         m_settingsNumberOfTrackersMenuItem.addActionListener(this);
+        m_settingsTrackerFrameRateMenuItem.addActionListener(this);
     	m_settingsTimeLimitMenuItem.addActionListener(this);
     	m_settingsWebcamResolutionMenuItem.addActionListener(this);
     	m_settingsAutoSaveOnExitMenuItem.addActionListener(this);
     	m_settingsSavePathDataMenuItem.addActionListener(this);
     	m_settingsSaveTaskListMenuItem.addActionListener(this);
         m_settingsSaveSettingsMenuItem.addActionListener(this);
+        m_settingsSaveAllMenuItem.addActionListener(this);
+    	m_settingsResetMenuItem.addActionListener(this);
         m_helpAboutMenuItem.addActionListener(this);
         
         for(byte i=0;i<EditMode.displayEditModes.length;i++) {
@@ -297,9 +325,11 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
         m_fileMenu.add(m_fileConnectMenuItem);
         m_fileMenu.add(m_fileDisconnectMenuItem);
         m_fileMenu.add(m_fileStartSimulationMenuItem);
+        m_fileMenu.add(m_fileServerIPMenuItem);
+        m_fileMenu.add(m_fileServerPortMenuItem);
         m_fileMenu.add(m_fileExitMenuItem);
         
-        m_editMenu.add(m_taskEditorMenuItem);
+        m_editMenu.add(m_editTaskEditorMenuItem);
         for(byte i=0;i<EditMode.displayEditModes.length;i++) {
         	m_editModeMenu.add(m_editModeMenuItem[i]);
         }
@@ -312,9 +342,11 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
 		m_editColourMenu.add(m_editColourBlockMenuItem);
 		m_editColourMenu.add(m_editColourPotMenuItem);
 		m_editColourMenu.add(m_editColourDropOffLocationMenuItem);
+		m_editColourMenu.add(m_editColourObjectiveMenuItem);
 		m_editColourMenu.add(m_editColourResetAllMenuItem);
         m_editMenu.add(m_editColourMenu);
         m_editMenu.add(m_editUpdateTrackerImageMenuItem);
+        m_editMenu.add(m_editResetPositionsMenuItem);
         
         m_settingsMenu.add(m_settingsAutoConnectOnStartupMenuItem);
         m_settingsMenu.add(m_settingsTakeWebcamSnapshotOnStartupMenuItem);
@@ -323,18 +355,23 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
     	m_settingsMenu.add(m_settingsPathDataFileNameMenuItem);
     	m_settingsMenu.add(m_settingsTaskListFileNameMenuItem);
         m_settingsMenu.add(m_settingsAutoScrollConsoleWindowMenuItem);
+        m_settingsMenu.add(m_settingsMaxConsoleHistoryMenuItem);
         m_settingsSignalsMenu.add(m_settingsSignalsIgnorePingPongMenuItem);
+        m_settingsSignalsMenu.add(m_settingsSignalsIgnorePositionMenuItem);
         for(byte i=0;i<SignalDebugLevel.signalDebugLevels.length;i++) {
         	m_settingsSignalsMenu.add(m_settingsSignalsMenuItem[i]);
         }
         m_settingsMenu.add(m_settingsSignalsMenu);
         m_settingsMenu.add(m_settingsNumberOfTrackersMenuItem);
+        m_settingsMenu.add(m_settingsTrackerFrameRateMenuItem);
         m_settingsMenu.add(m_settingsTimeLimitMenuItem);
         m_settingsMenu.add(m_settingsWebcamResolutionMenuItem);
         m_settingsMenu.add(m_settingsAutoSaveOnExitMenuItem);
         m_settingsMenu.add(m_settingsSavePathDataMenuItem);
         m_settingsMenu.add(m_settingsSaveTaskListMenuItem);
         m_settingsMenu.add(m_settingsSaveSettingsMenuItem);
+        m_settingsMenu.add(m_settingsSaveAllMenuItem);
+        m_settingsMenu.add(m_settingsResetMenuItem);
         
         m_helpMenu.add(m_helpAboutMenuItem);
 
@@ -1361,9 +1398,7 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
 	public void windowClosing(WindowEvent e) {
 		if(e.getSource() == this) {
 			if(SystemManager.settings.getAutoSaveOnExit()) {
-				SystemManager.pathSystem.writeTo(SystemManager.settings.getPathDataFileName());
-				SystemManager.taskManager.writeTo(SystemManager.settings.getTaskListFileName());
-				SystemManager.settings.save();
+				SystemManager.saveAll();
 			}
 			dispose();
 		}
@@ -1373,28 +1408,43 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
 		if(m_updating) { return; }
 		
 		if(e.getSource() == m_fileConnectMenuItem) {
-			SystemManager.client.connect();
+			SystemManager.connect();
 			m_fileConnectMenuItem.setEnabled(!SystemManager.client.isConnected());
 			m_fileDisconnectMenuItem.setEnabled(SystemManager.client.isConnected());
 			m_fileStartSimulationMenuItem.setEnabled(SystemManager.client.isConnected());
+			m_fileServerIPMenuItem.setEnabled(!SystemManager.client.isConnected());
+			m_fileServerPortMenuItem.setEnabled(!SystemManager.client.isConnected());
 			m_editModeMenu.setEnabled(!SystemManager.client.isConnected());
-			m_taskEditorMenuItem.setEnabled(!SystemManager.client.isConnected());
+			m_editTaskEditorMenuItem.setEnabled(!SystemManager.client.isConnected());
 		}
 		else if(e.getSource() == m_fileDisconnectMenuItem) {
-			SystemManager.client.disconnect();
+			SystemManager.disconnect();
 			m_fileConnectMenuItem.setEnabled(true);
 			m_fileDisconnectMenuItem.setEnabled(false);
 			m_fileStartSimulationMenuItem.setEnabled(false);
+			m_fileServerIPMenuItem.setEnabled(true);
+			m_fileServerPortMenuItem.setEnabled(true);
 			m_editModeMenu.setEnabled(true);
-			m_taskEditorMenuItem.setEnabled(true);
+			m_editTaskEditorMenuItem.setEnabled(true);
 		}
 		else if(e.getSource() == m_fileStartSimulationMenuItem) {
 			SystemManager.start();
 		}
+		else if(e.getSource() == m_fileServerIPMenuItem) {
+			String input = JOptionPane.showInputDialog(this, "Enter the ip address of the Master Server:", SystemManager.settings.getServerIPAddressHostName());
+			if(input == null) { return; }
+			SystemManager.settings.setServerIPAddress(input);
+		}
+		else if(e.getSource() == m_fileServerPortMenuItem) {
+			String input = JOptionPane.showInputDialog(this, "Enter the port of the Master Server:", SystemManager.settings.getServerPort());
+			if(input == null) { return; }
+			try {SystemManager.settings.setServerPort(Integer.parseInt(input)); }
+			catch(NumberFormatException e2) { }
+		}
 		else if(e.getSource() == m_fileExitMenuItem) {
 			System.exit(0);
 		}
-		else if(e.getSource() == m_taskEditorMenuItem) {
+		else if(e.getSource() == m_editTaskEditorMenuItem) {
 			SystemManager.showTaskEditorWindow();
 		}
 		else if(e.getSource() == m_editColourSelectedMenuItem) {
@@ -1429,11 +1479,18 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
 			Color c = JColorChooser.showDialog(this, "Choose a colour for drop off locations:", SystemManager.settings.getDropOffLocationColour());
 			SystemManager.settings.setDropOffLocationColour(c);
 		}
+		else if(e.getSource() == m_editColourObjectiveMenuItem) {
+			Color c = JColorChooser.showDialog(this, "Choose a colour for objectives:", SystemManager.settings.getObjectiveColour());
+			SystemManager.settings.setObjectiveColour(c);
+		}
 		else if(e.getSource() == m_editColourResetAllMenuItem) {
 			SystemManager.settings.resetAllColours();
 		}
 		else if(e.getSource() == m_editUpdateTrackerImageMenuItem) {
 			SystemManager.updateLocalTrackerImage();
+		}
+		else if(e.getSource() == m_editResetPositionsMenuItem) {
+			SystemManager.resetPositions();
 		}
 		else if(e.getSource() == m_settingsAutoConnectOnStartupMenuItem) {
 			SystemManager.settings.setAutoConnectOnStartup(m_settingsAutoConnectOnStartupMenuItem.isSelected());
@@ -1448,6 +1505,8 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
 			String input = JOptionPane.showInputDialog(this, "Enter the file name format for static tracker images (ie. \"Station.jpg\":\n(Images will be read as \"Station X.jpg\" where X is the tracker number.", SystemManager.settings.getStaticStationImageFileNameFormat());
 			if(input == null) { return; }
 			SystemManager.settings.setStaticStationImageFileNameFormat(input.trim());
+			
+			SystemManager.loadStaticStationImages();
 		}
     	else if(e.getSource() == m_settingsPathDataFileNameMenuItem) {
     		String input = JOptionPane.showInputDialog(this, "Enter the file name where path data is stored:", SystemManager.settings.getPathDataFileName());
@@ -1478,8 +1537,23 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
 		else if(e.getSource() == m_settingsAutoScrollConsoleWindowMenuItem) {
 			SystemManager.settings.setAutoScrollConsoleWindow(m_settingsAutoScrollConsoleWindowMenuItem.isSelected());
 		}
+		else if(e.getSource() == m_settingsMaxConsoleHistoryMenuItem) {
+			String input = JOptionPane.showInputDialog(this, "Please enter the maximum console history size:", SystemManager.settings.getMaxConsoleHistory());
+			if(input == null) { return; }
+			
+			int maxConsoleHistory = -1;
+			try {
+				maxConsoleHistory = Integer.parseInt(input);
+			}
+			catch(NumberFormatException e2) { }
+			
+			SystemManager.settings.setMaxConsoleHistory(maxConsoleHistory);
+		}
 		else if(e.getSource() == m_settingsSignalsIgnorePingPongMenuItem) {
 			SystemManager.settings.setIgnorePingPongSignals(m_settingsSignalsIgnorePingPongMenuItem.isSelected());
+		}
+		else if(e.getSource() == m_settingsSignalsIgnorePositionMenuItem) {
+			SystemManager.settings.setIgnorePositionSignals(m_settingsSignalsIgnorePositionMenuItem.isSelected());
 		}
 		else if(e.getSource() == m_settingsNumberOfTrackersMenuItem) {
 			String input = JOptionPane.showInputDialog(this, "Please enter the number of trackers:", SystemManager.settings.getNumberOfTrackers());
@@ -1496,6 +1570,26 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
 			}
 			else {
 				JOptionPane.showMessageDialog(this, "Failed to change number of trackers.", "Number of Trackers Change Failed", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		else if(e.getSource() == m_settingsTrackerFrameRateMenuItem) {
+			String input = JOptionPane.showInputDialog(this, "Please enter the tracker frame rate:\nFrame rate must be between 1 and 30.", SystemManager.settings.getFrameRate());
+			if(input == null) { return; }
+			
+			int frameRate = -1;
+			try {
+				frameRate = Integer.parseInt(input);
+			}
+			catch(NumberFormatException e2) { }
+			
+			if(SystemManager.settings.setFrameRate(frameRate)) {
+				if(SystemManager.planner != null) {
+					SystemManager.planner.setTrackerFrameRate(frameRate);
+					JOptionPane.showMessageDialog(this, "Successfully changed tracker frame rate to " + SystemManager.settings.getFrameRate() + ".", "Tracker Frame Rate Changed", JOptionPane.INFORMATION_MESSAGE);
+				}
+			}
+			else {
+				JOptionPane.showMessageDialog(this, "Failed to change tracker frame rate.", "Tracker Frame Rate Change Failed", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		else if(e.getSource() == m_settingsTimeLimitMenuItem) {
@@ -1538,6 +1632,12 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
 		else if(e.getSource() == m_settingsSaveSettingsMenuItem) {
 			SystemManager.settings.save();
 		}
+		else if(e.getSource() == m_settingsSaveAllMenuItem) {
+			SystemManager.saveAll();
+		}
+		else if(e.getSource() == m_settingsResetMenuItem) {
+			SystemManager.settings.reset();
+		}
 		else if(e.getSource() == m_helpAboutMenuItem) {
 			JOptionPane.showMessageDialog(this, "MasterPlanner Created by Kevin Scroggins (nitro404@hotmail.com).\nCreated for the COMP 4807 Final Project - April 4, 2011.", "About MasterPlanner", JOptionPane.INFORMATION_MESSAGE);
 		}
@@ -1563,6 +1663,7 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
 		
 		m_editModeMenuItem[SystemManager.displayWindow.getEditMode()].setSelected(true);
 		m_settingsSignalsIgnorePingPongMenuItem.setSelected(SystemManager.settings.getIgnorePingPongSignals());
+		m_settingsSignalsIgnorePositionMenuItem.setSelected(SystemManager.settings.getIgnorePositionSignals());
 		m_settingsSignalsMenuItem[SystemManager.settings.getSignalDebugLevel()].setSelected(true);
 		m_settingsAutoConnectOnStartupMenuItem.setSelected(SystemManager.settings.getAutoConnectOnStartup());
         m_settingsTakeWebcamSnapshotOnStartupMenuItem.setSelected(SystemManager.settings.getTakeWebcamSnapshotOnStartup());
@@ -1570,9 +1671,11 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
         m_settingsAutoScrollConsoleWindowMenuItem.setSelected(SystemManager.settings.getAutoScrollConsoleWindow());
 		m_fileConnectMenuItem.setEnabled(!SystemManager.client.isConnected());
 		m_fileDisconnectMenuItem.setEnabled(SystemManager.client.isConnected());
-		m_fileStartSimulationMenuItem.setEnabled(SystemManager.client.isConnected());
+		m_fileStartSimulationMenuItem.setEnabled(SystemManager.client.isConnected() && !SystemManager.isStarted());
+		m_fileServerIPMenuItem.setEnabled(!SystemManager.client.isConnected());
+		m_fileServerPortMenuItem.setEnabled(!SystemManager.client.isConnected());
 		m_editModeMenu.setEnabled(!SystemManager.client.isConnected());
-		m_taskEditorMenuItem.setEnabled(!SystemManager.client.isConnected());
+		m_editTaskEditorMenuItem.setEnabled(!SystemManager.client.isConnected());
 		
         currentTimeTextField.setText("00:00");
         maxTimeTextField.setText(SystemManager.timer.getTimeLimitString());

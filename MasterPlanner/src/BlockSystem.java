@@ -140,10 +140,8 @@ public class BlockSystem implements MouseListener, MouseMotionListener {
 	}
 	
 	public void mouseReleased(MouseEvent e) {
-		if(e.getButton() == MouseEvent.BUTTON2) {
-			m_blockToMove = -1;
-			m_dropOffLocationToMove = -1;
-		}
+		m_blockToMove = -1;
+		m_dropOffLocationToMove = -1;
 	}
 	
 	public void mouseDragged(MouseEvent e) {
@@ -218,6 +216,10 @@ public class BlockSystem implements MouseListener, MouseMotionListener {
 	}
 	
 	public void reset() {
+		m_selectedBlock = -1;
+		m_blockToMove = -1;
+		m_selectedDropOffLocation = -1;
+		m_dropOffLocationToMove = -1;
 		for(int i=0;i<m_blocks.size();i++) {
 			m_blocks.elementAt(i).reset();
 		}
@@ -233,12 +235,21 @@ public class BlockSystem implements MouseListener, MouseMotionListener {
 		m_dropOffLocationToMove = -1;
 	}
 	
-	public void draw(Graphics2D g) {
+	public void draw(Graphics g) {
 		for(int i=0;i<m_dropOffLocations.size();i++) {
 			m_dropOffLocations.elementAt(i).draw(g);
 		}
+		
 		for(int i=0;i<m_blocks.size();i++) {
 			m_blocks.elementAt(i).draw(g);
+		}
+		
+		if(m_blockToMove != -1) {
+			m_blocks.elementAt(m_selectedBlock).drawSelection(g, SystemManager.settings.getSelectedColour());
+		}
+		
+		if(m_dropOffLocationToMove != -1) {
+			m_dropOffLocations.elementAt(m_selectedDropOffLocation).drawSelection(g, SystemManager.settings.getSelectedColour());
 		}
 	}
 	

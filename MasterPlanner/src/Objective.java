@@ -1,5 +1,6 @@
 import java.util.StringTokenizer;
 import java.io.PrintWriter;
+import java.awt.Graphics;
 
 public abstract class Objective {
 	
@@ -54,6 +55,12 @@ public abstract class Objective {
 		return objectiveID;
 	}
 	
+	public void reset() {
+		m_objectiveState = ObjectiveState.New;
+	}
+	
 	abstract public boolean writeTo(PrintWriter out);
+	
+	abstract public void draw(Graphics g);
 	
 }

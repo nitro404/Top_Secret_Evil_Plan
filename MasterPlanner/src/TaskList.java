@@ -1,5 +1,6 @@
 import java.util.Vector;
 import java.io.*;
+import java.awt.Graphics;
 
 public class TaskList implements Updatable {
 	
@@ -180,6 +181,15 @@ public class TaskList implements Updatable {
 		return !hasMoreTasks() && isCurrentTaskCompleted();
 	}
 	
+	public void reset() {
+		m_currentTask = 0;
+		m_isFinished = false;
+		m_waitForOtherRobots = false;
+		for(int i=0;i<m_tasks.size();i++) {
+			m_tasks.elementAt(i).reset();
+		}
+	}
+	
 	public void update() {
 		if(m_currentTask < 0 || m_currentTask >= m_tasks.size()) { return; }
 		
@@ -269,6 +279,12 @@ public class TaskList implements Updatable {
 		}
 		
 		return true;
+	}
+	
+	public void draw(Graphics g) {
+		if(g == null || m_currentTask < 0 || m_currentTask >= m_tasks.size()) { return; }
+		
+		m_tasks.elementAt(m_currentTask).draw(g);
 	}
 	
 }

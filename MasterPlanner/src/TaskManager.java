@@ -1,5 +1,6 @@
 import java.util.Vector;
 import java.io.*;
+import java.awt.Graphics;
 
 public class TaskManager implements Updatable {
 	
@@ -81,6 +82,14 @@ public class TaskManager implements Updatable {
 		return false;
 	}
 	
+	public void reset() {
+		m_returnToSpawnPosition = null;
+		m_isFinished = false;
+		for(int i=0;i<m_taskLists.size();i++) {
+			m_taskLists.elementAt(i).reset();
+		}
+	}
+	
 	public void update() {
 		if(SystemManager.robotSystem.hasActiveRobot()) {
 			if(!m_taskLists.elementAt(SystemManager.robotSystem.getActiveRobotID()).allTasksCompleted()) {
@@ -89,7 +98,7 @@ public class TaskManager implements Updatable {
 			else {
 				if(m_returnToSpawnPosition == null) {
 					m_returnToSpawnPosition = new ObjectiveMoveToPosition(null, -1);
-					m_returnToSpawnPosition.setDestinationVertex(SystemManager.robotSystem.getActiveRobot().getActualPosition().getX(), SystemManager.robotSystem.getActiveRobot().getActualPosition().getY());
+					m_returnToSpawnPosition.setDestinationVertex(SystemManager.robotSystem.getActiveRobot().getSpawnPosition().getX(), SystemManager.robotSystem.getActiveRobot().getSpawnPosition().getY());
 					m_returnToSpawnPosition.setID(Objective.getNextObjectiveID());
 				}
 				
@@ -259,6 +268,12 @@ public class TaskManager implements Updatable {
 			return null;
 		}
 		return taskManager;
+	}
+	
+	public void draw(Graphics g) {
+		if(g == null || !SystemManager.robotSystem.hasActiveRobot()) { return; }
+		
+		m_taskLists.elementAt(SystemManager.robotSystem.getActiveRobotID()).draw(g);
 	}
 	
 }

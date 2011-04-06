@@ -1,5 +1,5 @@
 import java.util.Vector;
-import java.awt.Graphics2D;
+import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.*;
 
@@ -135,11 +135,13 @@ public class RobotSystem implements MouseListener, MouseMotionListener {
 			
 			SystemManager.robotSystem.getActiveRobot().setState(RobotState.Idle);
 			SystemManager.robotSystem.getActiveRobot().getActiveBlock().setState(BlockState.Delivered);
+			SystemManager.robotSystem.getActiveRobot().getActiveDropOffLocation().setState(DropOffLocationState.Full);
 			
 			SystemManager.client.sendSignal(new RobotStateChangeSignal(SystemManager.robotSystem.getActiveRobotID(), SystemManager.robotSystem.getActiveRobot().getState()));
 			SystemManager.client.sendSignal(new BlockStateChangeSignal(SystemManager.robotSystem.getActiveRobot().getActiveBlockID(), SystemManager.robotSystem.getActiveRobotID(), SystemManager.robotSystem.getActiveRobot().getActiveBlock().getState()));
 			
 			SystemManager.robotSystem.getActiveRobot().setActiveBlockID((byte) -1);
+			SystemManager.robotSystem.getActiveRobot().setActiveDropOffLocationID((byte) -1);
 			
 			SystemManager.taskManager.getTaskList(SystemManager.robotSystem.getActiveRobotID()).getCurrentTask().getCurrentObjective().setState(ObjectiveState.Completed);
 			return true;
@@ -159,9 +161,7 @@ public class RobotSystem implements MouseListener, MouseMotionListener {
 	}
 	
 	public void mouseReleased(MouseEvent e) {
-		if(e.getButton() == MouseEvent.BUTTON2) {
-			m_robotToMove = -1;
-		}
+		m_robotToMove = -1;
 	}
 	
 	public void mouseDragged(MouseEvent e) {
@@ -189,6 +189,9 @@ public class RobotSystem implements MouseListener, MouseMotionListener {
 	}
 	
 	public void reset() {
+		m_activeRobotID = -1;
+		m_selectedRobot = -1;
+		m_robotToMove = -1;
 		for(int i=0;i<m_robots.size();i++) {
 			m_robots.elementAt(i).reset();
 		}
@@ -199,9 +202,13 @@ public class RobotSystem implements MouseListener, MouseMotionListener {
 		m_robotToMove = -1;
 	}
 	
-	public void draw(Graphics2D g) {
+	public void draw(Graphics g) {
 		for(int i=0;i<m_robots.size();i++) {
 			m_robots.elementAt(i).draw(g);
+		}
+		
+		if(m_robotToMove != -1) {
+			m_robots.elementAt(m_selectedRobot).drawSelection(g, SystemManager.settings.getSelectedColour());
 		}
 	}
 	

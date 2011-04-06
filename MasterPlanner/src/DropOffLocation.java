@@ -1,4 +1,5 @@
-import java.awt.Graphics2D;
+import java.awt.Color;
+import java.awt.Graphics;
 
 public class DropOffLocation {
 	
@@ -7,6 +8,7 @@ public class DropOffLocation {
 	private byte m_state;
 	
 	final public static int SIZE = (int) (2.8 * 3); // size in cm * pixel scaling
+	final public static int SELECTION_RADIUS = SIZE + 6;
 	
 	public DropOffLocation(byte id, Position position) {
 		m_id = id;
@@ -54,7 +56,15 @@ public class DropOffLocation {
 		m_state = DropOffLocationState.Empty;
 	}
 	
-	public void draw(Graphics2D g) {
+	public void drawSelection(Graphics g, Color c) {
+		if(g == null || c == null) { return; }
+		
+		g.setColor(c);
+		
+		g.drawOval(m_position.x - (Block.SELECTION_RADIUS/2), m_position.y - (Block.SELECTION_RADIUS/2), Block.SELECTION_RADIUS, Block.SELECTION_RADIUS);
+	}
+	
+	public void draw(Graphics g) {
 		if(g == null) { return; }
 		
 		g.setColor(SystemManager.settings.getDropOffLocationColour());

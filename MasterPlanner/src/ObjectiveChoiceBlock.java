@@ -1,5 +1,6 @@
 import java.util.StringTokenizer;
 import java.io.PrintWriter;
+import java.awt.Graphics;
 
 public class ObjectiveChoiceBlock extends Objective {
 	
@@ -60,11 +61,17 @@ public class ObjectiveChoiceBlock extends Objective {
 		return new ObjectiveChoiceBlock(hasBlockObjectiveID, noBlockObjectiveID);
 	}
 	
+	public void reset() {
+		super.reset();
+	}
+	
 	public boolean writeTo(PrintWriter out) {
 		if(out == null) { return false; }
 		out.print("Objective " + m_objectiveID + Variable.SEPARATOR_CHAR + " Choice Block Objective - Has Block " + m_hasBlockObjectiveID + " - No Block " + m_noBlockObjectiveID);
 		return true;
 	}
+	
+	public void draw(Graphics g) { }
 	
 	public String toString() {
 		return "Objective " + m_objectiveID + Variable.SEPARATOR_CHAR + " Choice Block Objective - Has Block " + m_hasBlockObjectiveID + " - No Block " + m_noBlockObjectiveID;

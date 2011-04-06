@@ -1,5 +1,6 @@
 import java.util.Vector;
 import java.io.*;
+import java.awt.Graphics;
 
 public class Task implements Updatable{
 	
@@ -179,6 +180,14 @@ public class Task implements Updatable{
 		return m_taskState == TaskState.Completed;
 	}
 	
+	public void reset() {
+		m_taskState = TaskState.New;
+		m_currentObjectiveIndex = 0;
+		for(int i=0;i<m_objectives.size();i++) {
+			m_objectives.elementAt(i).reset();
+		}
+	}
+	
 	public void update() {
 		if(m_taskState == TaskState.New) {
 			return;
@@ -248,6 +257,12 @@ public class Task implements Updatable{
 		out.println();
 		
 		return true;
+	}
+	
+	public void draw(Graphics g) {
+		if(g == null || m_currentObjectiveIndex < 0 || m_currentObjectiveIndex >= m_objectives.size()) { return; }
+		
+		m_objectives.elementAt(m_currentObjectiveIndex).draw(g);
 	}
 	
 }

@@ -1,5 +1,6 @@
 import java.util.StringTokenizer;
 import java.io.PrintWriter;
+import java.awt.Graphics;
 
 public class ObjectiveLast extends Objective {
 	
@@ -21,11 +22,17 @@ public class ObjectiveLast extends Objective {
 		return new ObjectiveLast();
 	}
 	
+	public void reset() {
+		super.reset();
+	}
+	
 	public boolean writeTo(PrintWriter out) {
 		if(out == null) { return false; }
 		out.print("Objective " + m_objectiveID + Variable.SEPARATOR_CHAR + " Last Objective");
 		return true;
 	}
+	
+	public void draw(Graphics g) { }
 	
 	public String toString() {
 		return "Objective " + m_objectiveID + Variable.SEPARATOR_CHAR + " Last Objective";

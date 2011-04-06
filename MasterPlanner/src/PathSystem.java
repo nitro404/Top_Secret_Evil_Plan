@@ -226,7 +226,7 @@ public class PathSystem implements MouseListener, MouseMotionListener {
 		
 		boolean vertexRemoved = m_paths.elementAt(m_activePath).removeVertex(m_selectedVertex);
 		if(vertexRemoved) {
-			m_selectedVertex = null;
+			clearSelection();
 			return true;
 		}
 		return false;
@@ -378,6 +378,9 @@ public class PathSystem implements MouseListener, MouseMotionListener {
 					m_paths.elementAt(m_activePath).addEdge(new Edge(m_lastSelectedVertex, newVertex));
 				}
 			}
+			else {
+				m_vertexToMove = null;
+			}
 		}
 		else if(e.getButton() == MouseEvent.BUTTON2) {
 			m_vertexToMove = null;
@@ -402,7 +405,8 @@ public class PathSystem implements MouseListener, MouseMotionListener {
 			selectVertex(e.getPoint(), Path.DEFAULT_SELECTION_RADIUS);
 		}
 		else if(e.getButton() == MouseEvent.BUTTON2) {
-			m_vertexToMove = null;
+			m_selectedVertex = null;
+			m_lastSelectedVertex = null;
 		}
 		else if(e.getButton() == MouseEvent.BUTTON1) {
 			Vertex previousVertex = null;
@@ -448,7 +452,7 @@ public class PathSystem implements MouseListener, MouseMotionListener {
 			if(Math.sqrt( Math.pow( (m_selectedPoint.x - v.x) , 2) + Math.pow( (m_selectedPoint.y - v.y) , 2) ) <= r) {
 				m_selectedVertex = v;
 				m_lastSelectedVertex = m_selectedVertex;
-				break;
+				return;
 			}
 		}
 	}
@@ -488,6 +492,13 @@ public class PathSystem implements MouseListener, MouseMotionListener {
 		if(g == null || m_activePath < 0 || m_activePath >= m_paths.size()) { return; }
 		
 		m_paths.elementAt(m_activePath).draw(g, SystemManager.settings.getEdgeColour(), SystemManager.settings.getVertexColour());
+		
+		if(m_vertexToMove != null) {
+			m_vertexToMove.drawSelection(g, SystemManager.settings.getSelectedColour());
+		}
+		else if(m_lastSelectedVertex != null) {
+			m_lastSelectedVertex.drawSelection(g, SystemManager.settings.getSelectedColour());
+		}
 	}
 	
 	public String toString() {

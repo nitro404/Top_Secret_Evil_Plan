@@ -28,4 +28,8 @@ public class SystemManager {
 		serverWindow.initialize();
 	}
 	
+	public static void save() {
+		settings.save();
+	}
+	
 }

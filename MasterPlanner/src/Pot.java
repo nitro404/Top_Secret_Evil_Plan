@@ -1,4 +1,5 @@
-import java.awt.Graphics2D;
+import java.awt.Color;
+import java.awt.Graphics;
 
 public class Pot {
 	
@@ -8,6 +9,7 @@ public class Pot {
 	private byte m_state;
 	
 	final public static int SIZE = (int) (21.6 * 3); // size in cm * pixel scaling
+	final public static int SELECTION_RADIUS = SIZE + 6;
 	
 	public Pot(byte id, Position position) {
 		m_id = id;
@@ -59,7 +61,17 @@ public class Pot {
 		m_state = PotState.Origin;
 	}
 	
-	public void draw(Graphics2D g) {
+	public void drawSelection(Graphics g, Color c) {
+		if(g == null || c == null) { return; }
+		
+		g.setColor(c);
+		
+		Position p = SystemManager.isStarted() ? m_actualPosition : m_initialPosition ;
+		
+		g.drawOval(p.x - (SELECTION_RADIUS/2), p.y - (SELECTION_RADIUS/2), SELECTION_RADIUS, SELECTION_RADIUS);
+	}
+	
+	public void draw(Graphics g) {
 		if(g == null) { return; }
 		
 		g.setColor(SystemManager.settings.getPotColour());

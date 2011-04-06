@@ -1,4 +1,5 @@
-import java.awt.Graphics2D;
+import java.awt.Color;
+import java.awt.Graphics;
 
 public class Block {
 	
@@ -8,6 +9,7 @@ public class Block {
 	private byte m_state;
 	
 	final public static int SIZE = (int) (2.8 * 3); // size in cm * pixel scaling
+	final public static int SELECTION_RADIUS = SIZE + 6;
 	
 	public Block(byte id, Position position) {
 		m_id = id;
@@ -59,7 +61,20 @@ public class Block {
 		m_state = BlockState.Unknown;
 	}
 	
-	public void draw(Graphics2D g) {
+	public void drawSelection(Graphics g, Color c) {
+		if(g == null || c == null) { return; }
+		
+		g.setColor(c);
+		
+		if(m_state == BlockState.Unknown || m_state == BlockState.Missing) {
+			g.drawOval(m_initialPosition.x - (SELECTION_RADIUS/2), m_initialPosition.y - (SELECTION_RADIUS/2), SELECTION_RADIUS, SELECTION_RADIUS);
+		}
+		else {
+			g.drawOval(m_actualPosition.x - (SELECTION_RADIUS/2), m_actualPosition.y - (SELECTION_RADIUS/2), SELECTION_RADIUS, SELECTION_RADIUS);
+		}
+	}
+	
+	public void draw(Graphics g) {
 		if(g == null) { return; }
 		
 		g.setColor(m_state == BlockState.Missing ? SystemManager.settings.getMissingColour() : SystemManager.settings.getBlockColour());

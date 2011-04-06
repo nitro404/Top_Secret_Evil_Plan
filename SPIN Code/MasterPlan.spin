@@ -91,7 +91,9 @@ CON
   ARC_RIGHT = 11
   PICK_UP = 12
   DROP_OFF = 13
-  DONE = 14
+  OPEN_GRIPPERS = 14
+  CLOSE_GRIPPERS = 15
+  FINISHED = 16
 
   FOUND_BLOCK = 0
   GRABBED_BLOCK = 1
@@ -113,14 +115,14 @@ VAR
   byte robotMode
   byte blockFound, blockGrabbed
   byte gripperState
-  byte finished
+  byte running
   byte dataIn[2]
   byte dataOut[2]
 
 PUB Main
   Init
   
-  repeat while(NOT(finished)) 
+  repeat while(running) 
     HandleInput
     FindBlock
     DeliverBlock
@@ -139,7 +141,7 @@ PRI Init
   blockFound := 0
   blockGrabbed := 0
   gripperState := GRIPPERS_CLOSED
-  finished := 0
+  running := 1
 
   ' initialize camera
   Camera.Start
@@ -166,7 +168,7 @@ PRI Init
   else
     RBC.DebugStr(STRING("Missing Calibration Values for Robot #"))
     RBC.DebugLongCr(ROBOT_NUMBER)
-    finished := 1
+    running := 0
   Servos.StraightGrippers
   Servos.HeadLookForward
   waitcnt(cnt + (clkfreq / 2))
@@ -230,19 +232,31 @@ PRI HandleInput
       RBC.DebugStrCr(STRING("Arcing Left"))
     
     elseif(dataIn[1] == PICK_UP)
+      blockGrabbed := 0
+      blockFound := 0
       robotMode := MODE_FINDBLOCK
       Servos.HeadLookDown
       blockFindStart := cnt     
       RBC.DebugStrCr(STRING("Finding / Picking Up Block"))
     
     elseif(dataIn[1] == DROP_OFF)
+      blockGrabbed := 1
+      blockFound := 1
       robotMode := MODE_DELIVERINGBLOCK
       dropOffStart := cnt
       RBC.DebugStrCr(STRING("Dropping Off Block"))
     
-    elseif(dataIn[1] == DONE)
+    elseif(dataIn[1] == OPEN_GRIPPERS)
+      OpenGrippers
+      RBC.DebugStrCr(STRING("Opening Grippers"))
+
+    elseif(dataIn[1] == CLOSE_GRIPPERS)
+      CloseGrippers
+      RBC.DebugStrCr(STRING("Closing Grippers"))
+    
+    elseif(dataIn[1] == FINISHED)
       Servos.SetPreferredSpeeds(0, 0)
-      finished := 1
+      running := 0
       RBC.DebugStrCr(STRING("Finished!"))
     
     else
@@ -252,9 +266,11 @@ PRI HandleInput
 PRI FindBlock
   if(robotMode == MODE_FINDBLOCK)
     Camera.TrackColor
-     
+
+    ' block not found 
     if(Camera.GetCenterX == 0 AND Camera.GetConfidence == 0)
       Servos.SetPreferredSpeeds(12, 12)
+    'block found to the left
     elseif(Camera.GetCenterX > 55 AND Camera.GetConfidence > 5)
       Servos.SetPreferredSpeeds(-7, 7)
       OpenGrippers
@@ -262,6 +278,8 @@ PRI FindBlock
         dataOut[0] := FOUND_BLOCK
         RBC.SendDataToPc(@dataOut, 2, RBC#OUTPUT_TO_LOG_AND_FILE)
       blockFound := 1
+      blockFindStart := cnt
+    ' block found to the right
     elseif(Camera.GetCenterX < 15 AND Camera.GetConfidence > 5)
       Servos.SetPreferredSpeeds(7, -7)
       OpenGrippers
@@ -269,6 +287,8 @@ PRI FindBlock
         dataOut[0] := FOUND_BLOCK
         RBC.SendDataToPc(@dataOut, 2, RBC#OUTPUT_TO_LOG_AND_FILE)
       blockFound := 1
+      blockFindStart := cnt
+    ' block is straight ahead
     else
       Servos.SetPreferredSpeeds(12, 12)
       OpenGrippers
@@ -276,7 +296,9 @@ PRI FindBlock
         dataOut[0] := FOUND_BLOCK
         RBC.SendDataToPc(@dataOut, 2, RBC#OUTPUT_TO_LOG_AND_FILE)      
       blockFound := 1
-      
+      blockFindStart := cnt
+
+    ' block is inbetween grippers  
     if(Block.Detect AND NOT(blockGrabbed))
       Servos.SetPreferredSpeeds(0, 0)
       CloseGrippers
@@ -287,8 +309,9 @@ PRI FindBlock
       robotMode := MODE_NORMAL
       dataOut[0] := GRABBED_BLOCK
       RBC.SendDataToPc(@dataOut, 2, RBC#OUTPUT_TO_LOG_AND_FILE)
-     
-    if((cnt => blockFindStart + (14 * clkfreq)) AND NOT(blockGrabbed))
+
+    ' assume robot has block 
+    if((cnt => blockFindStart + (4 * clkfreq)) AND NOT(blockGrabbed))
       CloseGrippers
       Servos.HeadLookForwardVertical
       if(blockFound)
@@ -307,9 +330,7 @@ PRI DeliverBlock
     Servos.OpenGrippers
 
     Servos.SetPreferredSpeeds(-10, -10)
-
-    waitcnt(cnt + (clkfreq / 8))
-
+    
     if(cnt => dropOffStart + clkfreq)
       Servos.CloseGrippers
      

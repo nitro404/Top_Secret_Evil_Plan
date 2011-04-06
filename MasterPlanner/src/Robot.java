@@ -1,4 +1,5 @@
-import java.awt.Graphics2D;
+import java.awt.Color;
+import java.awt.Graphics;
 
 public class Robot {
 	
@@ -14,8 +15,11 @@ public class Robot {
 	private byte m_state;
 	
 	private byte m_activeBlockID;
+	private byte m_activeDropOffLocationID;
+	private byte m_activePotID;
 	
 	final public static int SIZE = (int) (10 * 3); // size in cm * pixel scaling
+	final public static int SELECTION_RADIUS = SIZE + 6;
 	final public static int DISTANCE_TO_FRONT = (int) (4.318 * 3); // length in cm * pixel scaling
 	
 	public Robot(byte id, byte robotNumber, int x, int y, int angle) {
@@ -40,6 +44,8 @@ public class Robot {
 		m_initialPosition = position;
 		m_state = RobotState.Idle;
 		m_activeBlockID = -1;
+		m_activeDropOffLocationID = -1;
+		m_activePotID = -1;
 		m_timeReceivedLastValidActualPosition = -1;
 	}
 	
@@ -56,7 +62,7 @@ public class Robot {
 	}
 
 	public RobotPosition getActualPosition() {
-		return m_actualPosition;
+		return (!RobotPosition.isValid(m_actualPosition)) ? m_lastValidActualPosition : m_actualPosition;
 	}
 	
 	public RobotPosition getLastValidActualPosition() {
@@ -95,6 +101,30 @@ public class Robot {
 		return m_activeBlockID >= 0 && m_activeBlockID < SystemManager.blockSystem.numberOfBlocks();
 	}
 	
+	public DropOffLocation getActiveDropOffLocation() {
+		return (m_activeDropOffLocationID < 0 || m_activeDropOffLocationID >= SystemManager.blockSystem.numberOfDropOffLocations()) ? null : SystemManager.blockSystem.getDropOffLocation(m_activeDropOffLocationID);
+	}
+	
+	public byte getActiveDropOffLocationID() {
+		return m_activeDropOffLocationID;
+	}
+	
+	public boolean hasActiveDropOffLocation() {
+		return m_activeDropOffLocationID >= 0 && m_activeDropOffLocationID < SystemManager.blockSystem.numberOfDropOffLocations();
+	}
+	
+	public Pot getActivePot() {
+		return m_activePotID < 0 || m_activePotID >= SystemManager.potSystem.numberOfPots() ? null : SystemManager.potSystem.getPot(m_activePotID);
+	}
+	
+	public byte getActivePotID() {
+		return m_activePotID;
+	}
+	
+	public boolean hasActivePot() {
+		return m_activePotID >= 0 && m_activePotID < SystemManager.potSystem.numberOfPots();
+	}
+	
 	public void setID(byte id) {
 		m_id = id;
 	}
@@ -106,10 +136,11 @@ public class Robot {
 	public boolean setActualPosition(RobotPosition actualPosition) {
 		if(actualPosition == null) { return false; }
 		m_actualPosition = actualPosition;
+		
 		if(m_actualPosition.isValid()) {
-			m_lastValidActualPosition = m_actualPosition;
+			m_lastValidActualPosition = actualPosition;
 			if(!RobotPosition.isValid(m_spawnPosition)) {
-				m_spawnPosition = m_actualPosition;
+				m_spawnPosition = actualPosition;
 				m_timeReceivedLastValidActualPosition = System.currentTimeMillis();
 			}
 		}
@@ -144,20 +175,42 @@ public class Robot {
 		m_activeBlockID = (blockID < -1) ? -1 : blockID;
 	}
 	
+	public void setActiveDropOffLocationID(byte dropOffLocationID) {
+		m_activeDropOffLocationID = (dropOffLocationID < -1) ? -1 : dropOffLocationID;
+	}
+	
+	public void setActivePotID(byte potID) {
+		m_activePotID = (potID < -1) ? -1 : potID;
+	}
+	
 	public void reset() {
 		m_actualPosition = new RobotPosition(-1, -1, -1);
 		m_lastValidActualPosition = m_actualPosition;
+		m_timeReceivedLastValidActualPosition = -1;
 		m_estimatedPosition = new RobotPosition(-1, -1, -1);
 		m_spawnPosition = new RobotPosition(-1, -1, -1);
+		m_activeBlockID = -1;
+		m_activeDropOffLocationID = -1;
+		m_activePotID = -1;
 		m_state = RobotState.Idle;
 	}
 	
-	public void draw(Graphics2D g) {
+	public void drawSelection(Graphics g, Color c) {
+		if(g == null || c == null) { return; }
+		
+		g.setColor(c);
+		
+		RobotPosition position = !SystemManager.isStarted() ? m_initialPosition : (RobotPosition.isValid(m_actualPosition) ? m_actualPosition : m_lastValidActualPosition);
+		
+		g.drawOval(position.getX() - (SELECTION_RADIUS/2), position.getY() - (SELECTION_RADIUS/2), SELECTION_RADIUS, SELECTION_RADIUS);
+	}
+	
+	public void draw(Graphics g) {
 		if(g == null) { return; }
 		
 		g.setColor(SystemManager.settings.getRobotColour());
 		
-		RobotPosition position = !RobotPosition.isValid(m_actualPosition) ? m_initialPosition : (RobotPosition.isValid(m_actualPosition) ? m_actualPosition : m_lastValidActualPosition);
+		RobotPosition position = !SystemManager.isStarted() ? m_initialPosition : (RobotPosition.isValid(m_actualPosition) ? m_actualPosition : m_lastValidActualPosition);
 		
 		int x = (int) (position.getX() - (Math.cos(Math.PI - position.getAngleRadians()) * (Robot.SIZE / 2)));
 		int y = (int) (position.getY() - (Math.sin(Math.PI - position.getAngleRadians()) * (Robot.SIZE / 2)));

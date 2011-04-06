@@ -26,6 +26,9 @@ public class SystemConsole {
     
     public void writeLine(String text) {
 		m_consoleEntries.add(new SystemConsoleEntry(text));
+		while(m_consoleEntries.size() > SystemManager.settings.getMaxConsoleHistory()) {
+			m_consoleEntries.remove(0);
+		}
 		if(m_target != null) { m_target.update(); }
     }
     
