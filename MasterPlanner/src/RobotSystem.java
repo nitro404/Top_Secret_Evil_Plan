@@ -20,9 +20,9 @@ public class RobotSystem implements MouseListener, MouseMotionListener {
 	final public static long intialBackUpTimeDuration = (long) (1.5f * 1000L); // amount of time to wait before slowing down if no valid pose is received (seconds * millisecond scaling)
 	
 	final public static RobotPosition[] defaultRobotPositions = {
-		new RobotPosition(361, 208, 180),
-		new RobotPosition(357, 709, 180),
-		new RobotPosition(356, 1189, 180),
+		new RobotPosition(350, 247, 180),
+		new RobotPosition(350, 714, 180),
+		new RobotPosition(350, 1189, 180),
 	};
 	
 	final public static byte[] robotNumbers = { 0, 7, 5 };
