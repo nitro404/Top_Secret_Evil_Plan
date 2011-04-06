@@ -23,6 +23,8 @@ public class SettingsManager {
 	private boolean m_ignorePingPongSignals;
 	private boolean m_ignorePositionSignals;
 	private byte m_signalDebugLevel;
+	private byte m_drawPathType;
+	private boolean m_drawObjectives;
 	private boolean m_autoScrollConsoleWindow;
 	private int m_maxConsoleHistory;
 	private boolean m_autoConnectOnStartup;
@@ -57,6 +59,8 @@ public class SettingsManager {
 	final public static boolean defaultIgnorePingPongSignals = true;
 	final public static boolean defaultIgnorePositionSignals = true;
 	final public static byte defaultSignalDebugLevel = SignalDebugLevel.Off;
+	final public static byte defaultDrawPathType = DrawPathType.AllPaths;
+	final public static boolean defaultDrawObjectives = true;
 	final public static boolean defaultAutoScrollConsoleWindow = true;
 	final public static int defaultMaxConsoleHistory = 1024;
 	final public static boolean defaultAutoConnectOnStartup = true;
@@ -99,6 +103,8 @@ public class SettingsManager {
 		m_ignorePingPongSignals = defaultIgnorePingPongSignals;
 		m_ignorePositionSignals = defaultIgnorePositionSignals;
 		m_signalDebugLevel = defaultSignalDebugLevel;
+		m_drawPathType = defaultDrawPathType;
+		m_drawObjectives = defaultDrawObjectives;
 		m_autoScrollConsoleWindow = defaultAutoScrollConsoleWindow;
 		m_maxConsoleHistory = defaultMaxConsoleHistory;
 		m_autoConnectOnStartup = defaultAutoConnectOnStartup;
@@ -197,6 +203,10 @@ public class SettingsManager {
 	public boolean getIgnorePositionSignals() { return m_ignorePositionSignals; }
 	
 	public byte getSignalDebugLevel() { return m_signalDebugLevel; }
+	
+	public byte getDrawPathType() { return m_drawPathType; }
+	
+	public boolean getDrawObjectives() { return m_drawObjectives; }
 	
 	public boolean getAutoScrollConsoleWindow() { return m_autoScrollConsoleWindow; }
 	
@@ -349,6 +359,24 @@ public class SettingsManager {
 	}
 	
 	public void setSignalDebugLevel(byte signalDebugLevel) { if(SignalDebugLevel.isValid(signalDebugLevel)) { m_signalDebugLevel = signalDebugLevel; } }
+	
+	public void setDrawPathType(byte drawPathType) { if(DrawPathType.isValid(drawPathType)) { m_drawPathType = drawPathType; } }
+	
+	public void setDrawObjectives(boolean drawObjectives) { m_drawObjectives = drawObjectives; }
+	
+	public boolean setDrawObjectives(String data) {
+		if(data == null) { return false; }
+		String value = data.trim();
+		if(value.equalsIgnoreCase("true")) {
+			m_drawObjectives = true;
+			return true;
+		}
+		else if(value.equalsIgnoreCase("false")) {
+			m_drawObjectives = false;
+			return true;
+		}
+		return false;
+	}
 	
 	public void setAutoScrollConsoleWindow(boolean autoScroll) { m_autoScrollConsoleWindow = autoScroll; }
 	
@@ -689,6 +717,8 @@ public class SettingsManager {
 		setIgnorePingPongSignals(m_settings.getValue("Ignore Ping Pong Signals", "Settings"));
 		setIgnorePositionSignals(m_settings.getValue("Ignore Position Signals", "Settings"));
 		setSignalDebugLevel(SignalDebugLevel.parseFrom(m_settings.getValue("Signal Debug Level", "Settings")));
+		setDrawPathType(DrawPathType.parseFrom(m_settings.getValue("Draw Path Type", "Settings")));
+		setDrawObjectives(m_settings.getValue("Draw Objectives", "Settings"));
 		setAutoScrollConsoleWindow(m_settings.getValue("Auto-scroll Console Window", "Settings"));
 		try { setMaxConsoleHistory(Integer.parseInt(m_settings.getValue("Max Console History", "Settings"))); } catch(NumberFormatException e) { }
 		setAutoConnectOnStartup(m_settings.getValue("Auto-connect on Startup", "Settings"));
@@ -737,6 +767,8 @@ public class SettingsManager {
 		m_settings.setValue("Ignore Ping Pong Signals", m_ignorePingPongSignals, "Settings");
 		m_settings.setValue("Ignore Position Signals", m_ignorePositionSignals, "Settings");
 		m_settings.setValue("Signal Debug Level", SignalDebugLevel.toString(m_signalDebugLevel), "Settings");
+		m_settings.setValue("Draw Path Type", m_drawPathType, "Settings");
+		m_settings.setValue("Draw Objectives", m_drawObjectives, "Settings");
 		m_settings.setValue("Auto-scroll Console Window", m_autoScrollConsoleWindow, "Settings");
 		m_settings.setValue("Max Console History", m_maxConsoleHistory, "Settings");
 		m_settings.setValue("Auto-connect on Startup", m_autoConnectOnStartup, "Settings");

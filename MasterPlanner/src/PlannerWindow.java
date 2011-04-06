@@ -37,6 +37,10 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
 	private JMenuItem m_editColourDropOffLocationMenuItem;
 	private JMenuItem m_editColourObjectiveMenuItem;
 	private JMenuItem m_editColourResetAllMenuItem;
+	private JMenu m_editDrawPathTypeMenu;
+	private JRadioButtonMenuItem[] m_editDrawPathTypeMenuItem;
+	private ButtonGroup m_editDrawPathTypeButtonGroup;
+	private JCheckBoxMenuItem m_editDrawObjectivesMenuItem;
 	private JMenuItem m_editUpdateTrackerImageMenuItem;
 	private JMenuItem m_editResetPositionsMenuItem;
 	
@@ -220,6 +224,12 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
     	m_editColourDropOffLocationMenuItem = new JMenuItem("Drop Off Location Colour");
     	m_editColourObjectiveMenuItem = new JMenuItem("Objective Colour");
     	m_editColourResetAllMenuItem = new JMenuItem("Reset All Colours");
+    	m_editDrawPathTypeMenu = new JMenu("Draw Path Type");
+    	m_editDrawPathTypeMenuItem = new JRadioButtonMenuItem[DrawPathType.drawPathTypes.length];
+    	for(int i=0;i<DrawPathType.drawPathTypes.length;i++) {
+    		m_editDrawPathTypeMenuItem[i] = new JRadioButtonMenuItem(DrawPathType.drawPathTypes[i]);
+    	}
+    	m_editDrawObjectivesMenuItem = new JCheckBoxMenuItem("Draw Objectives");
     	m_editUpdateTrackerImageMenuItem = new JMenuItem("Update Tracker Image");
     	m_editResetPositionsMenuItem = new JMenuItem("Reset Positions");
         
@@ -258,6 +268,8 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
         m_settingsUseStaticStationImagesMenuItem.setSelected(SettingsManager.defaultUseStaticStationImages);
         m_settingsAutoScrollConsoleWindowMenuItem.setSelected(SettingsManager.defaultAutoScrollConsoleWindow);
         m_editModeMenuItem[0].setSelected(true);
+        m_editDrawPathTypeMenuItem[SettingsManager.defaultDrawPathType].setSelected(true);
+        m_editDrawObjectivesMenuItem.setSelected(SettingsManager.defaultDrawObjectives);
         m_settingsSignalsIgnorePingPongMenuItem.setSelected(SettingsManager.defaultIgnorePingPongSignals);
         m_settingsSignalsIgnorePositionMenuItem.setSelected(SettingsManager.defaultIgnorePositionSignals);
         m_settingsSignalsMenuItem[SettingsManager.defaultSignalDebugLevel].setSelected(true);
@@ -266,6 +278,7 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
 		m_fileStartSimulationMenuItem.setEnabled(false);
         
         m_editModeButtonGroup = new ButtonGroup();
+        m_editDrawPathTypeButtonGroup = new ButtonGroup();
         m_settingsSignalsButtonGroup = new ButtonGroup();
         
         m_fileConnectMenuItem.addActionListener(this);
@@ -288,6 +301,10 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
     	m_editColourDropOffLocationMenuItem.addActionListener(this);
     	m_editColourObjectiveMenuItem.addActionListener(this);
     	m_editColourResetAllMenuItem.addActionListener(this);
+    	for(byte i=0;i<DrawPathType.drawPathTypes.length;i++) {
+    		m_editDrawPathTypeMenuItem[i].addActionListener(this);
+    	}
+    	m_editDrawObjectivesMenuItem.addActionListener(this);
         m_editUpdateTrackerImageMenuItem.addActionListener(this);
         m_editResetPositionsMenuItem.addActionListener(this);
         m_settingsAutoConnectOnStartupMenuItem.addActionListener(this);
@@ -318,6 +335,9 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
         for(byte i=0;i<EditMode.displayEditModes.length;i++) {
         	m_editModeButtonGroup.add(m_editModeMenuItem[i]);
         }
+        for(byte i=0;i<DrawPathType.drawPathTypes.length;i++) {
+        	m_editDrawPathTypeButtonGroup.add(m_editDrawPathTypeMenuItem[i]);
+    	}
         for(byte i=0;i<SignalDebugLevel.signalDebugLevels.length;i++) {
         	m_settingsSignalsButtonGroup.add(m_settingsSignalsMenuItem[i]);
         }
@@ -345,6 +365,11 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
 		m_editColourMenu.add(m_editColourObjectiveMenuItem);
 		m_editColourMenu.add(m_editColourResetAllMenuItem);
         m_editMenu.add(m_editColourMenu);
+		for(byte i=0;i<DrawPathType.drawPathTypes.length;i++) {
+			m_editDrawPathTypeMenu.add(m_editDrawPathTypeMenuItem[i]);
+		}
+		m_editMenu.add(m_editDrawPathTypeMenu);
+		m_editMenu.add(m_editDrawObjectivesMenuItem);
         m_editMenu.add(m_editUpdateTrackerImageMenuItem);
         m_editMenu.add(m_editResetPositionsMenuItem);
         
@@ -1486,6 +1511,9 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
 		else if(e.getSource() == m_editColourResetAllMenuItem) {
 			SystemManager.settings.resetAllColours();
 		}
+		else if(e.getSource() == m_editDrawObjectivesMenuItem) {
+			SystemManager.settings.setDrawObjectives(m_editDrawObjectivesMenuItem.isSelected());
+		}
 		else if(e.getSource() == m_editUpdateTrackerImageMenuItem) {
 			SystemManager.updateLocalTrackerImage();
 		}
@@ -1655,6 +1683,13 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
 					return;
 				}
 			}
+			
+			for(byte i=0;i<DrawPathType.drawPathTypes.length;i++) {
+				if(e.getSource() == m_editDrawPathTypeMenuItem[i]) {
+					SystemManager.settings.setDrawPathType(i);
+					return;
+				}
+			}
 		}
 	}
 	
@@ -1662,6 +1697,7 @@ public class PlannerWindow extends JFrame implements ActionListener, WindowListe
 		m_updating = true;
 		
 		m_editModeMenuItem[SystemManager.displayWindow.getEditMode()].setSelected(true);
+		m_editDrawObjectivesMenuItem.setSelected(SystemManager.settings.getDrawObjectives());
 		m_settingsSignalsIgnorePingPongMenuItem.setSelected(SystemManager.settings.getIgnorePingPongSignals());
 		m_settingsSignalsIgnorePositionMenuItem.setSelected(SystemManager.settings.getIgnorePositionSignals());
 		m_settingsSignalsMenuItem[SystemManager.settings.getSignalDebugLevel()].setSelected(true);

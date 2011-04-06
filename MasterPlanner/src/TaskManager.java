@@ -271,7 +271,7 @@ public class TaskManager implements Updatable {
 	}
 	
 	public void draw(Graphics g) {
-		if(g == null || !SystemManager.robotSystem.hasActiveRobot()) { return; }
+		if(g == null || !SystemManager.robotSystem.hasActiveRobot() || !SystemManager.settings.getDrawObjectives()) { return; }
 		
 		m_taskLists.elementAt(SystemManager.robotSystem.getActiveRobotID()).draw(g);
 	}

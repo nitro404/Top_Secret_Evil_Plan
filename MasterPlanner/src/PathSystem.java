@@ -49,6 +49,19 @@ public class PathSystem implements MouseListener, MouseMotionListener {
 		return false;
 	}
 	
+	public boolean containsPath(String pathName) {
+		if(pathName == null) { return false; }
+		String value = pathName.trim();
+		if(value.length() == 0) { return false; }
+		
+		for(int i=0;i<m_paths.size();i++) {
+			if(m_paths.elementAt(i).getName().equalsIgnoreCase(value)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public boolean hasActivePath() { return m_paths.size() > 0 && m_activePath >= 0 && m_activePath < m_paths.size(); }
 	
 	public boolean getAutoConnectVertices() { return m_autoConnectVertices; }
@@ -133,7 +146,7 @@ public class PathSystem implements MouseListener, MouseMotionListener {
 		String pathName = JOptionPane.showInputDialog(null, "Please enter a name for this path:", "Path Name", JOptionPane.QUESTION_MESSAGE);
 		if(pathName == null) { return false; }
 		
-		if(getPath(pathName) != null) {
+		if(containsPath(pathName)) {
 			JOptionPane.showMessageDialog(null, "This path name already exists!\nPlease choose another name.", "Duplicate Path Name", JOptionPane.ERROR_MESSAGE);
 			return createPath();
 		}
@@ -150,6 +163,51 @@ public class PathSystem implements MouseListener, MouseMotionListener {
 			clearSelection();
 		}
 		
+		return true;
+	}
+	
+	public boolean renamePath() {
+		if(m_paths.size() == 0) {
+			JOptionPane.showMessageDialog(null, "Please create a path first!", "No Paths Available", JOptionPane.WARNING_MESSAGE);
+			return false;
+		}
+		
+		Object[] pathNames = new Object[m_paths.size()];
+		for(int i=0;i<m_paths.size();i++) {
+			pathNames[i] = m_paths.elementAt(i).getName();
+		}
+		Object input = JOptionPane.showInputDialog(null, "Please choose a path to rename.", "Choose Path", JOptionPane.QUESTION_MESSAGE, null, pathNames, (m_activePath < 0 || m_activePath >= m_paths.size()) ? null : pathNames[m_activePath]);
+		if(input == null) { return false; }
+		
+		int pathIndex = -1;
+		for(int i=0;i<pathNames.length;i++) {
+			if(input == pathNames[i]) {
+				pathIndex = i;
+				break;
+			}
+		}
+		
+		return renamePath(pathIndex);
+	}
+	
+	public boolean renamePath(int pathIndex) {
+		if(m_paths.size() == 0 || pathIndex < 0 || pathIndex >= m_paths.size()) { return false; }
+		
+		String newPathName = JOptionPane.showInputDialog(null, "Please enter a new name for this path:", "Rename Path", JOptionPane.QUESTION_MESSAGE);
+		if(newPathName == null) { return false; }
+		
+		if(containsPath(newPathName)) {
+			JOptionPane.showMessageDialog(null, "This path name already exists!\nPlease choose another name.", "Duplicate Path Name", JOptionPane.ERROR_MESSAGE);
+			return renamePath(pathIndex);
+		}
+		
+		String value = newPathName.trim();
+		if(value.length() == 0) {
+			JOptionPane.showMessageDialog(null, "Path names must contain at least one character!\nPlease choose another name.", "Invalid Path Name", JOptionPane.ERROR_MESSAGE);
+			return renamePath(pathIndex);
+		}
+		
+		m_paths.elementAt(pathIndex).setName(value);
 		return true;
 	}
 	

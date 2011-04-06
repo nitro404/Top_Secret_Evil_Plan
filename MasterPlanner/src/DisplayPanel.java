@@ -20,6 +20,7 @@ public class DisplayPanel extends JPanel implements MouseListener, MouseMotionLi
 	private JMenuItem m_removeVertexMenuItem;
 	private JMenuItem m_choosePathMenuItem;
 	private JMenuItem m_createPathMenuItem;
+	private JMenuItem m_renamePathMenuItem;
 	private JMenuItem m_removePathMenuItem;
 	
 	private boolean m_updating;
@@ -57,6 +58,7 @@ public class DisplayPanel extends JPanel implements MouseListener, MouseMotionLi
     	m_removeVertexMenuItem = new JMenuItem("Remove Vertex");
     	m_choosePathMenuItem = new JMenuItem("Choose Path");
     	m_createPathMenuItem = new JMenuItem("Create Path");
+    	m_renamePathMenuItem = new JMenuItem("Rename Path");
     	m_removePathMenuItem = new JMenuItem("Remove Path");
     	
     	m_editModeMenuItem[0].setSelected(true);
@@ -72,6 +74,7 @@ public class DisplayPanel extends JPanel implements MouseListener, MouseMotionLi
     	m_removeVertexMenuItem.addActionListener(this);
     	m_choosePathMenuItem.addActionListener(this);
     	m_createPathMenuItem.addActionListener(this);
+    	m_renamePathMenuItem.addActionListener(this);
     	m_removePathMenuItem.addActionListener(this);
     	
     	for(byte i=0;i<EditMode.displayEditModes.length;i++) {
@@ -88,6 +91,7 @@ public class DisplayPanel extends JPanel implements MouseListener, MouseMotionLi
         m_popupMenu.add(m_removeVertexMenuItem);
         m_popupMenu.add(m_choosePathMenuItem);
         m_popupMenu.add(m_createPathMenuItem);
+        m_popupMenu.add(m_renamePathMenuItem);
         m_popupMenu.add(m_removePathMenuItem);
 	}
 	
@@ -266,6 +270,9 @@ public class DisplayPanel extends JPanel implements MouseListener, MouseMotionLi
 		else if(e.getSource() == m_createPathMenuItem) {
 			SystemManager.pathSystem.createPath();
 		}
+		else if(e.getSource() == m_renamePathMenuItem) {
+			SystemManager.pathSystem.renamePath();
+		}
 		else if(e.getSource() == m_removePathMenuItem) {
 			SystemManager.pathSystem.removePath();
 		}
@@ -289,6 +296,7 @@ public class DisplayPanel extends JPanel implements MouseListener, MouseMotionLi
 		m_removeVertexMenuItem.setEnabled(m_editMode == EditMode.Path && SystemManager.pathSystem.getSelectedVertex() != null);
 		m_choosePathMenuItem.setEnabled(m_editMode == EditMode.Path && SystemManager.pathSystem.numberOfPaths() > 0);
 		m_createPathMenuItem.setEnabled(m_editMode == EditMode.Path);
+		m_renamePathMenuItem.setEnabled(m_editMode == EditMode.Path && SystemManager.pathSystem.numberOfPaths() > 0);
 		m_removePathMenuItem.setEnabled(m_editMode == EditMode.Path && SystemManager.pathSystem.numberOfPaths() > 0);
 		
 		m_popupMenu.show(this, x, y);
@@ -310,12 +318,18 @@ public class DisplayPanel extends JPanel implements MouseListener, MouseMotionLi
 			if(SystemManager.blockSystem != null) { SystemManager.blockSystem.draw(g); }
 			if(SystemManager.robotSystem != null) { SystemManager.robotSystem.draw(g); }
 			if(SystemManager.pathSystem != null) {
-				if(m_editMode == EditMode.ViewOnly) {
-					SystemManager.pathSystem.drawAll(g);
-				}
-				else {
+				if(m_editMode == EditMode.Path) {
 					SystemManager.pathSystem.draw(g);
 				}
+				else {
+					if(SystemManager.settings.getDrawPathType() == DrawPathType.AllPaths) {
+						SystemManager.pathSystem.drawAll(g);
+					}
+					else if(SystemManager.settings.getDrawPathType() == DrawPathType.ActivePathOnly) {
+						SystemManager.pathSystem.draw(g);
+					}
+				}
+				
 			}
 			if(SystemManager.taskManager != null) { SystemManager.taskManager.draw(g); }
 		}
