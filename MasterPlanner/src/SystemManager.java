@@ -98,8 +98,7 @@ public class SystemManager {
 	
 	public static void disconnect() {
 		client.disconnect();
-		trackerNumber = -1;
-		m_started = false;
+		reset();
 	}
 	
 	public static void start() {
@@ -110,8 +109,6 @@ public class SystemManager {
 		
 		taskEditorWindow.setVisible(false);
 		plannerWindow.update();
-		
-		reset();
 		
 		taskManager.start();
 		timer.start();
@@ -203,6 +200,8 @@ public class SystemManager {
 	}
 	
 	public static void reset() {
+		trackerNumber = -1;
+		m_started = false;
 		robotSystem.reset();
 		blockSystem.reset();
 		potSystem.reset();

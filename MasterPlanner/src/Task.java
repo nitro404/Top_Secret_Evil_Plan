@@ -177,7 +177,7 @@ public class Task implements Updatable{
 	}
 	
 	public boolean isCompleted() {
-		return m_taskState == TaskState.Completed;
+		return m_objectives.size() == 0 || (m_taskState == TaskState.Completed);
 	}
 	
 	public void reset() {

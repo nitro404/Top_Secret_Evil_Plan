@@ -178,7 +178,7 @@ public class TaskList implements Updatable {
 	}
 	
 	public boolean allTasksCompleted() {
-		return !hasMoreTasks() && isCurrentTaskCompleted();
+		return m_tasks.size() == 0 || (!hasMoreTasks() && isCurrentTaskCompleted());
 	}
 	
 	public void reset() {
