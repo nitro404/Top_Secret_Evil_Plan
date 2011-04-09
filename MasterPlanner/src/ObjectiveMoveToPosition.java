@@ -57,7 +57,7 @@ public class ObjectiveMoveToPosition extends Objective {
 		
 		// compute the angle of this vector
 		float angle = (float) Math.atan2(-y, x);
-		if(angle < 0) { angle += Math.PI * 2; }
+		while(angle < 0) { angle += Math.PI * 2; }
 		
 		// compute the amount to turn
 		float angleDifference = 0;
