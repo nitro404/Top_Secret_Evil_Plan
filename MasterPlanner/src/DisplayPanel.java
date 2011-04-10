@@ -194,7 +194,7 @@ public class DisplayPanel extends JPanel implements MouseListener, MouseMotionLi
 			showPopupMenu(e.getX(), e.getY());
 		}
 		else if(e.getButton() == MouseEvent.BUTTON1) {
-			if(!SystemManager.taskEditorWindow.isVisible()) { return; }
+			if(SystemManager.taskEditorWindow == null || !SystemManager.taskEditorWindow.isVisible()) { return; }
 			
 			if(SystemManager.taskEditorWindow.lookingForVertex()) {
 				Path selectedPath = SystemManager.pathSystem.getSelectedPath(e.getPoint());
