@@ -767,7 +767,7 @@ public class SettingsManager {
 		m_settings.setValue("Ignore Ping Pong Signals", m_ignorePingPongSignals, "Settings");
 		m_settings.setValue("Ignore Position Signals", m_ignorePositionSignals, "Settings");
 		m_settings.setValue("Signal Debug Level", SignalDebugLevel.toString(m_signalDebugLevel), "Settings");
-		m_settings.setValue("Draw Path Type", m_drawPathType, "Settings");
+		m_settings.setValue("Draw Path Type", DrawPathType.toString(m_drawPathType), "Settings");
 		m_settings.setValue("Draw Objectives", m_drawObjectives, "Settings");
 		m_settings.setValue("Auto-scroll Console Window", m_autoScrollConsoleWindow, "Settings");
 		m_settings.setValue("Max Console History", m_maxConsoleHistory, "Settings");

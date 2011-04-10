@@ -28,6 +28,9 @@ public class ServerDisconnectHandler extends Thread {
 				if(m_client.timeout()) {
 					SystemManager.console.writeLine("Connection to server timed out.");
 				}
+				else {
+					SystemManager.console.writeLine("Disconnected from server.");
+				}
 			}
 			
 			try { sleep(Client.TIMEOUT_INTERVAL); }

@@ -19,7 +19,7 @@ public class Server extends Thread {
 	final public static long CONNECTION_LISTEN_INTERVAL = 75;
 	final public static long TIMEOUT_INTERVAL = 100;
 	final public static long PING_INTERVAL = 5000;
-	final public static long CONNECTION_TIMEOUT = 12000;
+	final public static long CONNECTION_TIMEOUT = 32000;
 	
 	public Server() {
 		m_clients = new Vector<Client>();
