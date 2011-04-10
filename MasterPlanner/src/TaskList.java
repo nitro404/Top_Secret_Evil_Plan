@@ -207,7 +207,8 @@ public class TaskList implements Updatable {
 			TaskList t;
 			for(int i=0;i<SystemManager.taskManager.numberOfTaskLists();i++) {
 				t = SystemManager.taskManager.getTaskList(i);
-				if(!t.isCurrentTaskCompleted() && t != this) {
+//				if(!t.isCurrentTaskCompleted() && t != this) {
+				if(!t.getTask(m_currentTask).isCompleted() && t != this) {
 					if(!m_waitForOtherRobots) {
 						SystemManager.sendInstructionToRobot(RobotInstruction.Stop);
 						SystemManager.robotSystem.getActiveRobot().setState(RobotState.Idle);

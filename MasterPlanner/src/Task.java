@@ -177,7 +177,7 @@ public class Task implements Updatable{
 	}
 	
 	public boolean isCompleted() {
-		return m_objectives.size() == 0 || (m_taskState == TaskState.Completed);
+		return m_taskState == TaskState.Completed;
 	}
 	
 	public void reset() {
@@ -193,15 +193,17 @@ public class Task implements Updatable{
 			return;
 		}
 		
+		/*
 		if(SystemManager.blockSystem.allBlocksInZoneDelivered(SystemManager.trackerNumber) &&
 		   m_objectives.elementAt(m_currentObjectiveIndex).getType() == ObjectiveType.Last ||
 		   m_currentObjectiveIndex == m_objectives.size() - 1) {
 			m_taskState = TaskState.Completed;
 			
 			SystemManager.sendInstructionToRobot(RobotInstruction.Stop);
-			SystemManager.client.sendSignal(new TaskCompletedSignal(SystemManager.robotSystem.getActiveRobotID(), m_taskID));
+			SystemManager.client.sendSignal(new TaskCompletedSignal(m_taskID, SystemManager.robotSystem.getActiveRobotID()));
 			return;
 		}
+		*/
 		
 		if(m_currentObjectiveIndex >= 0 && m_currentObjectiveIndex < m_objectives.size() &&
 		   m_objectives.elementAt(m_currentObjectiveIndex).getState() == ObjectiveState.Completed) {
@@ -221,10 +223,10 @@ public class Task implements Updatable{
 		}
 		
 		if(m_taskState != TaskState.Completed) {
-			if(m_currentObjectiveIndex >= m_objectives.size() - 1 && m_objectives.elementAt(m_objectives.size() - 1).isCompleted()) {
+			if(m_objectives.size() == 0 || (m_currentObjectiveIndex >= m_objectives.size() - 1 && m_objectives.elementAt(m_objectives.size() - 1).isCompleted())) {
 				m_taskState = TaskState.Completed;
 				SystemManager.sendInstructionToRobot(RobotInstruction.Stop);
-				SystemManager.client.sendSignal(new TaskCompletedSignal(SystemManager.robotSystem.getActiveRobotID(), m_taskID));
+				SystemManager.client.sendSignal(new TaskCompletedSignal(m_taskID, SystemManager.robotSystem.getActiveRobotID()));
 			}
 		}
 		

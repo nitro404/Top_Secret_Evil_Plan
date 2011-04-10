@@ -196,7 +196,7 @@ public class TaskManager implements Updatable {
 					// if a task was already read, then store it
 					if(parseObjectives) {
 						if(newTask.getRobotID() >= 0 && newTask.getRobotID() < taskManager.numberOfTaskLists()) {
-							taskManager.m_taskLists.elementAt(newTask.getRobotID()).addTask(newTask);
+							taskManager.getTaskList((int) newTask.getRobotID()).addTask(newTask);
 						}
 						newTask = new Task();
 						parseObjectives = false;
@@ -270,7 +270,7 @@ public class TaskManager implements Updatable {
 			// if the end of the file is reached while a task was being parsed, store it
 			if(parseObjectives) {
 				if(newTask.getRobotID() >= 0 && newTask.getRobotID() < taskManager.numberOfTaskLists()) {
-					taskManager.m_taskLists.elementAt(newTask.getRobotID()).addTask(newTask);
+					taskManager.getTaskList((int) newTask.getRobotID()).addTask(newTask);
 				}
 			}
 			

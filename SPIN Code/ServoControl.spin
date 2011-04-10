@@ -72,10 +72,10 @@ VAR
   byte  headYawStraight
   byte  headYawLeft
   byte  headYawRight
-  long rampStart
-  long preferredLeftSpeed, preferredRightSpeed
-  long acceleration
-  long servoStart
+  long  preferredLeftSpeed, preferredRightSpeed
+  long  acceleration
+  long  rampStack[32]                         
+  byte  rampCog
 
 PUB Start(leftServoStoppedValue, rightServoStoppedValue, useWheels, useGrippers, usePitch, useYaw)
   {{ Start a cog to control the servos.
@@ -114,10 +114,8 @@ PUB Start(leftServoStoppedValue, rightServoStoppedValue, useWheels, useGrippers,
   acceleration := 2
   preferredLeftSpeed := 0
   preferredRightSpeed := 0
-  rampStart := cnt
-  servoStart := cnt
          
-  result := (cog := cognew(Run, @stack) + 1) > 0  'return true iff new cog has been created OK
+  result := (cog := cognew(Run, @stack) + 1) > 0 AND (rampCog := cognew(UpdateSpeeds, @rampStack) + 1) > 0 'return true iff new cog has been created OK
 
 PUB InitGrippers(leftOpen, leftStraight, leftClosed, rightOpen, rightStraight, rightClosed)
   leftGripperOpen := leftOpen
@@ -224,33 +222,28 @@ PUB Stop
     
 PRI Run | i
   ' Set pin directions to output
-  if (enableWheels)
-     dira[PIN_LEFT_SERVO]~~                                       
-     dira[PIN_RIGHT_SERVO]~~                                        
-  if (enablePitch)
-     dira[PIN_HEAD_PITCH_SERVO]~~ 
-  if (enableYaw)
-     dira[PIN_HEAD_YAW_SERVO]~~ 
-  if (enableGrippers)
-     dira[PIN_LEFT_GRIPPER_SERVO]~~ 
-     dira[PIN_RIGHT_GRIPPER_SERVO]~~ 
+  if(enableWheels)
+    dira[PIN_LEFT_SERVO]~~                                       
+    dira[PIN_RIGHT_SERVO]~~                                        
+  if(enablePitch)
+    dira[PIN_HEAD_PITCH_SERVO]~~ 
+  if(enableYaw)
+    dira[PIN_HEAD_YAW_SERVO]~~ 
+  if(enableGrippers)
+    dira[PIN_LEFT_GRIPPER_SERVO]~~ 
+    dira[PIN_RIGHT_GRIPPER_SERVO]~~ 
 
   repeat
-    UpdateSpeeds
+    if(enableWheels)
+      MoveWheels
+    if(enablePitch)
+      MovePitch
+    if(enableYaw)
+      MoveYaw
+    if(enableGrippers)
+      MoveGrippers
     
-    if(cnt => servoStart + 1600000)
-      if(enableWheels)
-         MoveWheels
-      if(enablePitch)
-         MovePitch
-      if(enableYaw)
-         MoveYaw
-      if(enableGrippers)
-         MoveGrippers
-         
-      servoStart := cnt
-
-    waitcnt((clkfreq / 48) + cnt)             
+    waitcnt(1600000 + cnt)             
 
 PRI MoveWheels | clkCycles
   ' Move the left wheel
@@ -300,30 +293,33 @@ PRI MoveGrippers
   'waitcnt(clkfreq/100+cnt)                    'Wait 10ms between pulses
 
 PRI UpdateSpeeds
-  ' ramp left servo
-  if(preferredLeftSpeed =< 0)
-    ' ramp down
-    if(leftSpeed > preferredLeftSpeed)
-      leftSpeed -= acceleration
-    else
-      leftSpeed := preferredLeftSpeed      
-  elseif(preferredLeftSpeed => 0)
-    ' ramp up
-    if(leftSpeed < preferredLeftSpeed)
-      leftSpeed += acceleration
-    else
-      leftSpeed := preferredLeftSpeed
-   
-  ' ramp right servo 
-  if(preferredRightSpeed =< 0)
-    ' ramp down
-    if(rightSpeed > preferredRightSpeed)
-      rightSpeed -= acceleration
-    else
-      rightSpeed := preferredRightSpeed
-  elseif(preferredRightSpeed => 0)
-    ' ramp up
-    if(rightSpeed < preferredRightSpeed)
-      rightSpeed += acceleration
-    else
-      rightSpeed := preferredRightSpeed
+  repeat
+    ' ramp left servo
+    if(preferredLeftSpeed =< 0)
+      ' ramp down
+      if(leftSpeed > preferredLeftSpeed)
+        leftSpeed -= acceleration
+      else
+        leftSpeed := preferredLeftSpeed      
+    elseif(preferredLeftSpeed => 0)
+      ' ramp up
+      if(leftSpeed < preferredLeftSpeed)
+        leftSpeed += acceleration
+      else
+        leftSpeed := preferredLeftSpeed
+     
+    ' ramp right servo 
+    if(preferredRightSpeed =< 0)
+      ' ramp down
+      if(rightSpeed > preferredRightSpeed)
+        rightSpeed -= acceleration
+      else
+        rightSpeed := preferredRightSpeed
+    elseif(preferredRightSpeed => 0)
+      ' ramp up
+      if(rightSpeed < preferredRightSpeed)
+        rightSpeed += acceleration
+      else
+        rightSpeed := preferredRightSpeed
+
+    waitcnt((clkfreq / 48) + cnt)

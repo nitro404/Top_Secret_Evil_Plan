@@ -12,7 +12,7 @@ public class RobotSystem implements MouseListener, MouseMotionListener {
 	private int m_robotToMove;
 	
 	final public static float distanceAccuracy = 15.0f; // +- 15 pixels (5 cm) (total 10 cm)
-	final public static float angleAccuracy = (float) Math.toRadians(7.5f); // +- 7.5 degrees (total 15 degrees)
+	final public static float angleAccuracy = (float) Math.toRadians(10.0f); // +- 10 degrees (total 20 degrees)
 	final public static float slowDownDistance = 45.0f; // 45 pixels (15 cm)
 	final public static float slowDownAngleDifference = (float) Math.toRadians(45.0f); // slow down if distance left to turn is under 45 degrees
 	final public static float maxArcAngleDifference = (float) Math.toRadians(20.0f); // +- 20 degrees (total 40 degrees)
